@@ -1,0 +1,3 @@
+help: "Set Diffie-Hellman key exchange"
+type: u32
+syntax: ($(@) == 2 || $(@) == 5); "must be 2 or 5"

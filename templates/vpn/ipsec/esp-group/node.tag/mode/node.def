@@ -1,0 +1,4 @@
+help: "ESP mode configuration"
+type:  txt 
+default:  "tunnel"
+syntax: $(@) in "tunnel", "transport"; "must be tunnel or transport"

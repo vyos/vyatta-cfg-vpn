@@ -1,0 +1,4 @@
+tag:
+type: txt
+help: "Encapsulating Security Payload configuration"
+syntax: pattern $(@) "^[-_a-zA-Z0-9.]+$" ; "invalid ESP group name \"$(@)\""

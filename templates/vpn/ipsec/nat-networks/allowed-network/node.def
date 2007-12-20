@@ -1,0 +1,3 @@
+tag:
+type: ipv4net
+help: "NAT networks configuration"

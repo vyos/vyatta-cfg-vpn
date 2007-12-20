@@ -1,0 +1,3 @@
+help: "Set log level"
+type:txt
+syntax: $(@) in "alert", "crit", "debug", "emerg", "err", "info", "notice", "warning"; "must be one of the following: crit, debug, emerg, err, info, notice, warning"

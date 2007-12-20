@@ -1,0 +1,4 @@
+help: "IKE aggressive-mode configuration"
+type:  txt 
+default:  "disable"
+syntax: $(@) in "enable", "disable"; "enable or disable"

@@ -1,0 +1,6 @@
+vyatta-cfg-vpn (0.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Wed, 19 Dec 2007 14:09:00 -0700
+

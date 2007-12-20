@@ -1,0 +1,4 @@
+tag:
+help: "Configure a ike-group proposal"
+type: u32
+syntax: ($(@) >= 1 && $(@) <= 65535) ; "must be in the range 1 to 65535 inclusive"

@@ -1,0 +1,6 @@
+The Debian Package vyatta-cfg-vpn
+---------------------------------
+
+This package has the Vyatta VPN configuration templates and scripts.
+
+ -- Stig Thormodsrud <stig@vyatta.com> Wed, 19 Dec 2007

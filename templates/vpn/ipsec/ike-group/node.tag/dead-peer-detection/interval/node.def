@@ -1,0 +1,4 @@
+help: "Set keep-alive interval"
+type:  u32 
+default:  30
+syntax: ($(@) >= 15 && $(@) <= 86400) ; "must be in the range 15 to 86400 seconds inclusive"

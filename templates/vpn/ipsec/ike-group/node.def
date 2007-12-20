@@ -1,0 +1,4 @@
+tag:
+type: txt
+help: "Internet Key Exchange configuration"
+syntax: pattern $(@) "^[-_a-zA-Z0-9.]+$" ; "invalid IKE group name \"$(@)\""

@@ -1,0 +1,3 @@
+help: "Set local RSA key file location"
+type:  txt 
+default:  "/opt/vyatta/etc/config/ipsec.d/rsa-keys/localhost.key"

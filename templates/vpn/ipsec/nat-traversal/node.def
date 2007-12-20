@@ -1,0 +1,3 @@
+help: "NAT traversal configuration"
+type: txt
+syntax: $(@) in "enable", "disable"; "must be enable or disable"

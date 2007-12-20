@@ -1,0 +1,4 @@
+help: "Set keep-alive failure action"
+type:  txt 
+default:  "hold"
+syntax: $(@) in "hold", "clear", "restart"; "must be hold, or clear, or restart"

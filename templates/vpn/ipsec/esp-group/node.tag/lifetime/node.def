@@ -1,0 +1,4 @@
+help: "ESP lifetime configuration"
+type:  u32 
+default:  3600
+syntax: ($(@) >= 30 && $(@) <= 86400) ; "must be in the range 30 to 86400 seconds inclusive"

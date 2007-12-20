@@ -1,0 +1,4 @@
+help: "Set NAT networks"
+type:  txt 
+default:  "disable"
+syntax: $(@) in "enable", "disable"; "must be enable or disable"

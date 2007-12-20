@@ -1,0 +1,4 @@
+help: "Configure authentication mode"
+type:  txt 
+default:  "pre-shared-secret"
+syntax: $(@) in "pre-shared-secret", "rsa"; "must be pre-shared-secret or rsa"

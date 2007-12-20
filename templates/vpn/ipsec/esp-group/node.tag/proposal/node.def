@@ -1,0 +1,4 @@
+tag:
+type: u32
+help: "Configure a esp-group proposal"
+syntax: ($(@) >= 1 && $(@) <= 65535) ; "must be in the range 1 to 65535 inclusive"
