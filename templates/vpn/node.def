@@ -1,1 +1,2 @@
-end: "/opt/vyatta/sbin/vpn-config.pl --config_file='/etc/ipsec.conf' --secrets_file='/etc/ipsec.secrets' --init_script='/etc/init.d/ipsec' >> /tmp/ipsec.log"
+help: "Configure VPN"
+end: "sudo /opt/vyatta/sbin/vpn-config.pl --config_file='/etc/ipsec.conf' --secrets_file='/etc/ipsec.secrets' --init_script='/etc/init.d/ipsec' "
