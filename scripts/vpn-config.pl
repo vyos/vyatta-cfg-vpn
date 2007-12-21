@@ -218,7 +218,6 @@ if ($vcVPN->exists('.')) {
     # Interfaces
     #
     my @interfaces = $vcVPN->returnValues('ipsec ipsec-interfaces interface');
-    my %vpn_interfaces = map { $_ => 1 } @interfaces;
     if (@interfaces == 0) {
 	$error = 1;
 	print STDERR "VPN configuration error.  No IPSEC interfaces specified.\n";
@@ -352,7 +351,7 @@ if ($vcVPN->exists('.')) {
 	    print STDERR "VPN configuration error.  No local IP specified for peer \"$peer\"\n";
 	} else {
 	    use VyattaMisc;
-	    if (!VyattaMisc::isIPinInterfaces($vc, \%vpn_interfaces, $lip)) {
+	    if (!VyattaMisc::isIPinInterfaces($vc, $lip, @interfaces)) {
 		
 		# Due to Bug 2411, the quick short-term fix
 		# as described in comment #4, is to assume
