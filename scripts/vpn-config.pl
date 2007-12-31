@@ -88,8 +88,9 @@ if ($vcVPN->exists('.')) {
     #
     my @esp_groups = $vcVPN->listNodes('ipsec esp-group');
     if (@esp_groups == 0) {
-	$error = 1;
-	print STDERR "VPN configuration error.  No ESP groups configured.  At least one ESP group required.\n";
+	#$error = 1;
+	#print STDERR "VPN configuration error.  No ESP groups configured.  At least one ESP group required.\n";
+        # XXX for now this will be checked below for site-to-site peer
     } else {
 	foreach my $esp_group (@esp_groups) {
 	    my @esp_group_proposals = $vcVPN->listNodes("ipsec esp-group $esp_group proposal");
@@ -122,8 +123,9 @@ if ($vcVPN->exists('.')) {
     #
     my @ike_groups = $vcVPN->listNodes('ipsec ike-group');
     if (@ike_groups == 0) {
-	$error = 1;
-	print STDERR "VPN configuration error.  No IKE groups configured.  At least one IKE group required.\n";
+	#$error = 1;
+	#print STDERR "VPN configuration error.  No IKE groups configured.  At least one IKE group required.\n";
+        # XXX for now this will be checked below for site-to-site peer
     } else {
 	foreach my $ike_group (@ike_groups) {
 	    my @ike_group_proposals = $vcVPN->listNodes("ipsec ike-group $ike_group proposal");
@@ -332,8 +334,9 @@ if ($vcVPN->exists('.')) {
     #
     my @peers = $vcVPN->listNodes('ipsec site-to-site peer');
     if (@peers == 0) {
-	$error = 1;
-	print STDERR "VPN configuration error.  No peers configured.  At least one peer required.\n";
+	#$error = 1;
+	#print STDERR "VPN configuration error.  No peers configured.  At least one peer required.\n";
+        print "Warning: There are no site-to-site peers configured for IPSec.\n";
     }
     foreach my $peer (@peers) {
 	my $peer_ike_group = $vcVPN->returnValue("ipsec site-to-site peer $peer ike-group");
