@@ -81,7 +81,7 @@ $genout_secrets .=  "# using 'new config' directory:     $vcVPN->{_new_config_di
 
 $vcVPN->setLevel('vpn');
 
-if ($vcVPN->exists('.')) {
+if ($vcVPN->exists('ipsec')) {
 
     #
     # Check that ESP groups have been specified
@@ -725,7 +725,8 @@ if (!(defined($config_file) && ($config_file ne '') && defined($secrets_file) &&
 
 
 if ($error == 0) {
-    if ($vcVPN->isDeleted('.') || !$vcVPN->exists('.')) {
+    if ($vcVPN->isDeleted('.') || !$vcVPN->exists('.')
+        || $vcVPN->isDeleted('ipsec') || !$vcVPN->exists('ipsec')) {
 	if (VyattaVPNUtil::is_vpn_running()) {
 	    vpn_exec('ipsec setup --stop', 'stop ipsec');
 	}
