@@ -152,57 +152,54 @@ if ($vcVPN->exists('ipsec')) {
 	}
     }
 
-    {
-	#
-	# Check the local key file
-	#
-	my $local_key_file = $vcVPN->returnValue('rsa-keys local-key file');
-	if (defined($local_key_file) && $local_key_file ne '') {
+    #
+    # Check the local key file
+    # Note: $local_key_file will be used later when reading the keys
+    # 
+    my $running_local_key_file = VyattaVPNUtil::rsa_get_local_key_file();
+    my $local_key_file = $vcVPN->returnValue('rsa-keys local-key file');
+    if (!defined($local_key_file)) {
+	$local_key_file = VyattaVPNUtil::LOCAL_KEY_FILE_DEFAULT;
+    }
+    if ($local_key_file ne $running_local_key_file) {
 	    
-	    # Sanity check the usr specified local_key_file
-	    #
-	    # 1). Must start with "/"
-	    # 2). Only allow alpha-numeric, ".", "-", "_", or "/".
-	    # 3). Don't allow "//"
-	    # 4). Verify that it's not a directory
-	    #
-	    if ($local_key_file !~ /^\//) {
-		$error = 1;
-		print STDERR "VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Does not start with a '/'.\n";
-	    }
-	    if ($local_key_file =~ /[^a-zA-Z0-9\.\-\_\/]/g) {
-		$error = 1;
-		print STDERR "VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Contains a character that is not alpha-numeric and not '.', '-', '_', '/'.\n";
-	    }
-	    if ($local_key_file =~ /\/\//g) {
-		$error = 1;
-		print STDERR "VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Contains string \"//\".\n";
-	    }
-	    if (-d $local_key_file) {
-		$error = 1;
-		print STDERR "VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Path is a directory rather than a file.\n";
-	    }
-	    
-	    if ($error == 0) {
-		my $prev_local_key_file = $vcVPN->returnOrigValue('rsa-keys local-key file');
-		if (!defined($prev_local_key_file) || $prev_local_key_file eq '') {
-		    $prev_local_key_file = VyattaVPNUtil::LOCAL_KEY_FILE_DEFAULT;
-		}
-		if ($local_key_file ne $prev_local_key_file) {
-		    if (-r $prev_local_key_file && !(-e $local_key_file)) {
-			VyattaVPNUtil::vpn_debug "cp $prev_local_key_file $local_key_file";
-			my ($dirpath) = ($local_key_file =~ m#^(.*/)?.*#s);
-			my $rc = system("mkdir -p $dirpath");
-			if ($rc != 0) {
-			    $error = 1;
-			    print STDERR "VPN configuration error.  Could not copy previous local RSA key file \"$prev_local_key_file\" to new local RSA key file \"$local_key_file\".  Could not mkdir [$dirpath] $!\n";
-			} else {
-			    $rc = system("cp $prev_local_key_file $local_key_file");
-			    if ($rc != 0) {
-				$error = 1;
-				print STDERR "VPN configuration error.  Could not copy previous local RSA key file \"$prev_local_key_file\" to new local RSA key file \"$local_key_file\".  $!\n";
-			    }
-			}
+	# Sanity check the usr specified local_key_file
+	#
+	# 1). Must start with "/"
+	# 2). Only allow alpha-numeric, ".", "-", "_", or "/".
+	# 3). Don't allow "//"
+	# 4). Verify that it's not a directory
+	#
+	if ($local_key_file !~ /^\//) {
+	    $error = 1;
+	    print STDERR "VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Does not start with a '/'.\n";
+	}
+	if ($local_key_file =~ /[^a-zA-Z0-9\.\-\_\/]/g) {
+	    $error = 1;
+	    print STDERR "VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Contains a character that is not alpha-numeric and not '.', '-', '_', '/'.\n";
+	}
+	if ($local_key_file =~ /\/\//g) {
+	    $error = 1;
+	    print STDERR "VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Contains string \"//\".\n";
+	}
+	if (-d $local_key_file) {
+	    $error = 1;
+	    print STDERR "VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Path is a directory rather than a file.\n";
+	}
+	
+	if ($error == 0) {
+	    if (-r $running_local_key_file && !(-e $local_key_file)) {
+		VyattaVPNUtil::vpn_debug "cp $running_local_key_file $local_key_file";
+		my ($dirpath) = ($local_key_file =~ m#^(.*/)?.*#s);
+		my $rc = system("mkdir -p $dirpath");
+		if ($rc != 0) {
+		    $error = 1;
+		    print STDERR "VPN configuration error.  Could not copy previous local RSA key file \"$running_local_key_file\" to new local RSA key file \"$local_key_file\".  Could not mkdir [$dirpath] $!\n";
+		} else {
+		    $rc = system("cp $running_local_key_file $local_key_file");
+		    if ($rc != 0) {
+			$error = 1;
+			print STDERR "VPN configuration error.  Could not copy previous local RSA key file \"$running_local_key_file\" to new local RSA key file \"$local_key_file\".  $!\n";
 		    }
 		}
 	    }
@@ -664,7 +661,6 @@ if ($vcVPN->exists('ipsec')) {
 		$genout .= "\tauthby=secret\n";
 	    } elsif (defined($auth_mode) && $auth_mode eq 'rsa') {
 		
-		my $local_key_file = VyattaVPNUtil::rsa_get_local_key_file();
 		unless (-r $local_key_file) {
 		    $error = 1;
 		    if (-e $local_key_file) {

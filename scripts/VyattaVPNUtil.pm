@@ -47,7 +47,7 @@ sub rsa_get_local_key_file {
     #
     my $vc = new VyattaConfig();
     $vc->setLevel('vpn');
-    my $key_file_override = $vc->returnValue('rsa-keys local-key file');
+    my $key_file_override = $vc->returnOrigValue('rsa-keys local-key file');
     
     #
     # We'll assume validation for valid path/file was handled in the
