@@ -1,3 +1,6 @@
 help: "Set Diffie-Hellman key exchange"
 type: u32
 syntax: ($(@) == 2 || $(@) == 5); "must be 2 or 5"
+#comp_help: possible completions
+# 2	    	     Set dh2
+# 5		     Set dh5

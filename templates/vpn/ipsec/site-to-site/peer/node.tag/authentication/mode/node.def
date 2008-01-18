@@ -1,4 +1,7 @@
 help: "Configure authentication mode"
-type:  txt 
-default:  "pre-shared-secret"
+type: txt 
+default: "pre-shared-secret"
 syntax: $(@) in "pre-shared-secret", "rsa"; "must be pre-shared-secret or rsa"
+#comp_help: possible completions:
+# pre-shared-secret   Set authentication mode to use pre shared secret key
+# rsa                 Set authentication mode to use RSA key

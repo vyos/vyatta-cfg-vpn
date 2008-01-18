@@ -2,3 +2,7 @@ help: "Set keep-alive failure action"
 type:  txt 
 default:  "hold"
 syntax: $(@) in "hold", "clear", "restart"; "must be hold, or clear, or restart"
+#comp_help: possible completions
+# hold	    	     Set action to hold (default)
+# clear		     Set action to clear
+# restart	     Set action to restart

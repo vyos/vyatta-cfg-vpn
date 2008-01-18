@@ -1,4 +1,12 @@
 multi:
 help: "Set log mode"
-type:txt
-syntax: $(@) in "raw", "crypt", "parsing", "emitting", "control", "all", "private"; "must be one of the following: raw, crypt, parsing, emitting, control, all, private"
+type: txt
+syntax: $(@) in "raw", "crypt", "parsing", "emitting", "control", "all", "private" ; "must be one of the following: raw, crypt, parsing, emitting, control, all, private"
+#comp_help: Additional pluto debug log options:
+# raw
+# crypt
+# parsing
+# emitting
+# control
+# all
+# private

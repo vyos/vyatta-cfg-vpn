@@ -1,4 +1,7 @@
 tag:
 help: "Configure a ike-group proposal"
 type: u32
-syntax: ($(@) >= 1 && $(@) <= 65535) ; "must be in the range 1 to 65535 inclusive"
+syntax: ($(@) >= 1 && $(@) <= 65535) ; "must be between 1-65535"
+#comp_help: possible completions
+# <1-65535> 	     Set ike-group proposal
+

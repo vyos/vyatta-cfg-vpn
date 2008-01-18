@@ -1,3 +1,6 @@
 multi:
 type: txt
 help: "ipsec interfaces"
+#allowed: local -a array ;
+# array=( /sys/class/net/* ) ;
+# echo -n ${array[@]##*/}

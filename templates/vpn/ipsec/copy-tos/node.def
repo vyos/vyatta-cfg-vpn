@@ -2,3 +2,6 @@ help: "copy TOS configuration"
 type:  txt 
 default:  "disable"
 syntax: $(@) in "enable", "disable"; "must be enable or disable"
+#comp_help: possible completions
+# enable             Set copy TOS enabled
+# disable            Set copy TOS disabled (default)

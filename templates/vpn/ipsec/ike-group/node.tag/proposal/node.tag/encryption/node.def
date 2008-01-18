@@ -2,3 +2,7 @@ help: "Set encryption"
 type: txt
 default: "aes128"
 syntax: $(@) in "aes128", "aes256", "3des"; "must be aes128, or aes256, or 3des"
+#comp_help: possible completions
+# aes128             Set aes128 encryption (default)
+# aes256             Set aes256 encryption
+# 3des               Set 3des encryption

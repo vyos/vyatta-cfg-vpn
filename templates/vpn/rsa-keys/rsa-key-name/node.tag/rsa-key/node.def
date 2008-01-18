@@ -1,2 +1,4 @@
 help: "Set remote RSA key"
 type:  txt
+#comp_help: possible completions:
+# <text>    	     Set the actual RSA key

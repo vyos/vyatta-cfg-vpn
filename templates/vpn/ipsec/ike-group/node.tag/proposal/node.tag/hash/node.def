@@ -2,3 +2,6 @@ help: "Set hash algorithm"
 type: txt
 default: "sha1"
 syntax: $(@) in "md5", "sha1"; "must be md5 or sha1"
+#comp_help: possible completions
+# md5	    	     Set md5 hash
+# sha1		     Set sha1 hash (default)

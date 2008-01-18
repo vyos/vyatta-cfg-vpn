@@ -1,3 +1,5 @@
 tag:
 type: txt
 help: "Set remote RSA key"
+#comp_help: possible completions:
+# <text>    	     Set name of RSA key

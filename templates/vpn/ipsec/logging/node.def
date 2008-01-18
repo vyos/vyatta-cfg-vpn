@@ -1,1 +1,2 @@
+help: "Configure ipsec logging"
 activate: "echo activating logging"
