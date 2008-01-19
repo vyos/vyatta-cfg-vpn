@@ -478,161 +478,167 @@ if ($vcVPN->exists('ipsec')) {
 	    #
 	    # Write IKE configuration from group
 	    #
+	    my $ikelifetime = IKELIFETIME_DEFAULT;
 	    $genout .= "\tike=";
 	    my $ike_group = $vcVPN->returnValue("ipsec site-to-site peer $peer ike-group");
-	    my @ike_proposals = $vcVPN->listNodes("ipsec ike-group $ike_group proposal");
+	    if (defined($ike_group) && $ike_group ne '') {
+	        my @ike_proposals = $vcVPN->listNodes("ipsec ike-group $ike_group proposal");
 	    
-	    my $first_ike_proposal = 1;
-	    foreach my $ike_proposal (@ike_proposals) {
-		#
-		# Get encryption, hash & Diffie-Hellman  key size
-		#
-		my $encryption = $vcVPN->returnValue("ipsec ike-group $ike_group proposal $ike_proposal encryption");
-		my $hash = $vcVPN->returnValue("ipsec ike-group $ike_group proposal $ike_proposal hash");
-		my $dh_group = $vcVPN->returnValue("ipsec ike-group $ike_group proposal $ike_proposal dh-group");
+                my $first_ike_proposal = 1;
+	        foreach my $ike_proposal (@ike_proposals) {
+		    #
+		    # Get encryption, hash & Diffie-Hellman  key size
+	            #
+		    my $encryption = $vcVPN->returnValue("ipsec ike-group $ike_group proposal $ike_proposal encryption");
+		    my $hash = $vcVPN->returnValue("ipsec ike-group $ike_group proposal $ike_proposal hash");
+		    my $dh_group = $vcVPN->returnValue("ipsec ike-group $ike_group proposal $ike_proposal dh-group");
 		
-		#
-		# Write separator if not first proposal
-		#
-		if ($first_ike_proposal) {
-		    $first_ike_proposal = 0;
-		} else {
-		    $genout .= ",";
-		}
+		    #
+		    # Write separator if not first proposal
+		    #
+		    if ($first_ike_proposal) {
+		        $first_ike_proposal = 0;
+		    } else {
+		        $genout .= ",";
+		    }
 		
-		#
-		# Write values
-		#
-		if (defined($encryption) && defined($hash)) {
-		    $genout .= "$encryption-$hash";
-		    if (defined($dh_group)) {
-			if ($dh_group eq '2') {
-			    $genout .= '-modp1024';
-			} elsif ($dh_group eq '5') {
-			    $genout .= '-modp1536';
-			} elsif ($dh_group ne '') {
-			    $error = 1;
-			    print STDERR "VPN configuration error.  Invalid 'dh-group' $dh_group specified for peer \"$peer\" tunnel $tunnel.  Only 2 or 5 accepted.\n";
-			}
+		    #
+		    # Write values
+		    #
+		    if (defined($encryption) && defined($hash)) {
+		        $genout .= "$encryption-$hash";
+		        if (defined($dh_group)) {
+			    if ($dh_group eq '2') {
+			        $genout .= '-modp1024';
+			    } elsif ($dh_group eq '5') {
+			        $genout .= '-modp1536';
+			    } elsif ($dh_group ne '') {
+			        $error = 1;
+			        print STDERR "VPN configuration error.  Invalid 'dh-group' $dh_group specified for peer \"$peer\" tunnel $tunnel.  Only 2 or 5 accepted.\n";
+			    }
+		        }
 		    }
 		}
-	    }
-	    $genout .= "\n";
+	        $genout .= "\n";
 	    
-	    my $ikelifetime = $vcVPN->returnValue("ipsec ike-group $ike_group lifetime");
-	    if (!defined($ikelifetime) || $ikelifetime eq '') {
-		$ikelifetime = IKELIFETIME_DEFAULT;
-	    }
-	    $genout .= "\tikelifetime=$ikelifetime" . "s\n";
+	        my $t_ikelifetime = $vcVPN->returnValue("ipsec ike-group $ike_group lifetime");
+	        if (defined($t_ikelifetime) && $t_ikelifetime ne '') {
+		    $ikelifetime = $t_ikelifetime;
+	        }
+	        $genout .= "\tikelifetime=$ikelifetime" . "s\n";
 	    
-	    #
-	    # Check for agressive-mode
-	    #
-	    my $aggressive_mode = $vcVPN->returnValue("ipsec ike-group $ike_group aggressive-mode");
-	    if (defined($aggressive_mode)) {
-		if ($aggressive_mode eq 'enable') {
-		    $genout .= "\taggrmode=yes\n";
-		} else {
-		    $genout .= "\taggrmode=no\n";
-		}
-	    }
+	        #
+	        # Check for agressive-mode
+	        #
+	        my $aggressive_mode = $vcVPN->returnValue("ipsec ike-group $ike_group aggressive-mode");
+	        if (defined($aggressive_mode)) {
+		    if ($aggressive_mode eq 'enable') {
+		        $genout .= "\taggrmode=yes\n";
+		    } else {
+		        $genout .= "\taggrmode=no\n";
+		    }
+	        }
 	    
 
-	    #
-	    # Check for Dead Peer Detection DPD
-	    #
-	    my $dpd_interval = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection interval");
-	    my $dpd_timeout = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection timeout");
-	    my $dpd_action = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection action");
-	    if (defined($dpd_interval) && defined($dpd_timeout) && defined($dpd_action)) {
-		$genout .= "\tdpddelay=$dpd_interval" . "s\n";
-		$genout .= "\tdpdtimeout=$dpd_timeout" . "s\n";
-		$genout .= "\tdpdaction=$dpd_action\n";
+	        #
+	        # Check for Dead Peer Detection DPD
+	        #
+	        my $dpd_interval = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection interval");
+	        my $dpd_timeout = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection timeout");
+	        my $dpd_action = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection action");
+	        if (defined($dpd_interval) && defined($dpd_timeout) && defined($dpd_action)) {
+		    $genout .= "\tdpddelay=$dpd_interval" . "s\n";
+		    $genout .= "\tdpdtimeout=$dpd_timeout" . "s\n";
+		    $genout .= "\tdpdaction=$dpd_action\n";
+		}
 	    }
 
 	    #
 	    # Write ESP configuration from group
 	    #
+	    my $esplifetime = ESPLIFETIME_DEFAULT;
 	    $genout .= "\tesp=";
 	    my $esp_group = $vcVPN->returnValue("ipsec site-to-site peer $peer tunnel $tunnel esp-group");
-	    my @esp_proposals = $vcVPN->listNodes("ipsec esp-group $esp_group proposal");
-	    my $first_esp_proposal = 1;
-	    foreach my $esp_proposal (@esp_proposals) {
-		#
-		# Get encryption, hash
-		#
-		my $encryption = $vcVPN->returnValue("ipsec esp-group $esp_group proposal $esp_proposal encryption");
-		my $hash = $vcVPN->returnValue("ipsec esp-group $esp_group proposal $esp_proposal hash");
+	    if (defined($esp_group) && $esp_group ne '') {
+                my @esp_proposals = $vcVPN->listNodes("ipsec esp-group $esp_group proposal");
+                my $first_esp_proposal = 1;
+                foreach my $esp_proposal (@esp_proposals) {
+		    #
+		    # Get encryption, hash
+		    #
+		    my $encryption = $vcVPN->returnValue("ipsec esp-group $esp_group proposal $esp_proposal encryption");
+		    my $hash = $vcVPN->returnValue("ipsec esp-group $esp_group proposal $esp_proposal hash");
 		
-		#
-		# Write separator if not first proposal
-		#
-		if ($first_esp_proposal) {
-		    $first_esp_proposal = 0;
-		} else {
-		    $genout .= ",";
-		}
+		    #
+		    # Write separator if not first proposal
+	            #
+		    if ($first_esp_proposal) {
+		        $first_esp_proposal = 0;
+		    } else {
+		        $genout .= ",";
+		    }
 		
-		#
-		# Write values
-		#
-		if (defined($encryption) && defined($hash)) {
-		    $genout .= "$encryption-$hash";
+		    #
+		    # Write values
+		    #
+		    if (defined($encryption) && defined($hash)) {
+		        $genout .= "$encryption-$hash";
+                    }
 		}
-	    }
-	    $genout .= "\n";
+	        $genout .= "\n";
 	    
-	    my $esplifetime = $vcVPN->returnValue("ipsec esp-group $esp_group lifetime");
-	    if (!defined($esplifetime) || $esplifetime eq '') {
-		$esplifetime = ESPLIFETIME_DEFAULT;
-	    }
-	    $genout .= "\tkeylife=$esplifetime" . "s\n";
+	        my $t_esplifetime = $vcVPN->returnValue("ipsec esp-group $esp_group lifetime");
+	        if (defined($t_esplifetime) && $t_esplifetime ne '') {
+		    $esplifetime = $t_esplifetime;
+	        }
+	        $genout .= "\tkeylife=$esplifetime" . "s\n";
 
-	    my $lower_lifetime = $ikelifetime;
-	    if ($esplifetime < $ikelifetime) {
-		$lower_lifetime = $esplifetime;
-	    }
+	        my $lower_lifetime = $ikelifetime;
+	        if ($esplifetime < $ikelifetime) {
+		    $lower_lifetime = $esplifetime;
+	        }
 	    
-	    #
-	    # The lifetime values need to be greater than:
-	    #   rekeymargin*(100+rekeyfuzz)/100
-	    #
-	    my $rekeymargin = REKEYMARGIN_DEFAULT;
-	    if ($lower_lifetime <= (2 * $rekeymargin)) {
-		$rekeymargin = int($lower_lifetime / 2) - 1;
-	    }
-	    $genout .= "\trekeymargin=$rekeymargin" . "s\n";
+	        #
+	        # The lifetime values need to be greater than:
+	        #   rekeymargin*(100+rekeyfuzz)/100
+	        #
+	        my $rekeymargin = REKEYMARGIN_DEFAULT;
+	        if ($lower_lifetime <= (2 * $rekeymargin)) {
+		    $rekeymargin = int($lower_lifetime / 2) - 1;
+	        }
+	        $genout .= "\trekeymargin=$rekeymargin" . "s\n";
 	    
-	    #
-	    # Mode (tunnel or transport)
-	    #
-	    my $espmode = $vcVPN->returnValue("ipsec esp-group $esp_group mode");
-	    if (!defined($espmode) || $espmode eq '') {
-		$espmode = "tunnel";
-	    }
-	    $genout .= "\ttype=$espmode\n";
+	        #
+	        # Mode (tunnel or transport)
+	        #
+	        my $espmode = $vcVPN->returnValue("ipsec esp-group $esp_group mode");
+	        if (!defined($espmode) || $espmode eq '') {
+		    $espmode = "tunnel";
+	        }
+	        $genout .= "\ttype=$espmode\n";
 	    
-	    #
-	    # Perfect Forward Secrecy
-	    #
-	    my $pfs = $vcVPN->returnValue("ipsec esp-group $esp_group pfs");
-	    if (defined($pfs)) {
-		if ($pfs eq 'enable') {
-		    $genout .= "\tpfs=yes\n";
-		} else {
-		    $genout .= "\tpfs=no\n";
-		}
-	    }
+	        #
+	        # Perfect Forward Secrecy
+	        #
+	        my $pfs = $vcVPN->returnValue("ipsec esp-group $esp_group pfs");
+	        if (defined($pfs)) {
+		    if ($pfs eq 'enable') {
+		        $genout .= "\tpfs=yes\n";
+		    } else {
+		        $genout .= "\tpfs=no\n";
+		    }
+                }
 
-	    #
-	    # Compression
-	    #
-	    my $compression = $vcVPN->returnValue("ipsec esp-group $esp_group compression");
-	    if (defined($compression)) {
-		if ($compression eq 'enable') {
-		    $genout .= "\tcompress=yes\n";
-		} else {
-		    $genout .= "\tcompress=no\n";
+	        #
+	        # Compression
+	        #
+	        my $compression = $vcVPN->returnValue("ipsec esp-group $esp_group compression");
+	        if (defined($compression)) {
+		    if ($compression eq 'enable') {
+		        $genout .= "\tcompress=yes\n";
+		    } else {
+		        $genout .= "\tcompress=no\n";
+                    }
 		}
 	    }
 
