@@ -317,6 +317,9 @@ if ($vcVPN->exists('ipsec')) {
 	$genout .= "\tplutodebug=\"$debugmode\"\n";
     }
 
+    $genout .= "\tnhelpers=5\n";
+    $genout .= "\tplutowait=yes\n";
+
     #
     # Disable implicit connections
     #
@@ -915,10 +918,14 @@ sub vpn_exec {
 	print LOG "Output:\n$cmd_out\n---\n";
 	print LOG "Return code: $?\n";
 	if ($?) {
-#			$error = 1;  ignore execution errors for now
-	    print LOG "VPN commit error.  Unable to $desc, received error code $?\n";
-	    print STDERR "VPN commit error.  Unable to $desc, received error code $?\n";
-	    print STDERR "$cmd_out\n";
+            if ($? == 26624 && ($command =~ /^ipsec auto --asynchronous --up/g)) {
+                print LOG "Return code 26624 OK when bringing up VPN connection.\n";
+	    } else {
+                $error = 1;
+                print LOG "VPN commit error.  Unable to $desc, received error code $?\n";
+                print STDERR "VPN commit error.  Unable to $desc, received error code $?\n";
+                print STDERR "$cmd_out\n";
+            }
 	}
     } else {
 	print LOG "Execution not performed due to previous error.\n";
