@@ -1,2 +1,2 @@
-help: "Set local interface address"
+help: Set local interface address
 type:  ipv4

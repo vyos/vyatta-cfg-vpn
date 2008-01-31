@@ -1,7 +1,7 @@
-help: "IKE aggressive-mode configuration"
+help: IKE aggressive-mode configuration
 type: txt 
 default: "disable"
-syntax: $(@) in "enable", "disable"; "enable or disable"
-#comp_help: possible completions
-# enable    	     Set aggressive-mode enable 
-# disable	     Set aggressive-mode disable (default)
+syntax:expression: $VAR(@) in "enable", "disable"; "enable or disable"
+comp_help: possible completions
+ enable    	     Set aggressive-mode enable 
+ disable	     Set aggressive-mode disable (default)

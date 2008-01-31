@@ -1,2 +1,2 @@
-help: "Set remote subnet"
+help: Set remote subnet
 type:  ipv4net

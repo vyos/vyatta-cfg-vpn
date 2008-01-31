@@ -1,6 +1,6 @@
-help: "IKE lifetime configuration"
+help: IKE lifetime configuration
 type: u32 
 default: 28800
-syntax: ($(@) >= 30 && $(@) <= 86400) ; "must between 30-86400 seconds"
-#comp_help: possible completions
-# <30-86400>	     Set IKE lifetime (default 28800)
+syntax:expression: ($VAR(@) >= 30 && $VAR(@) <= 86400) ; "must between 30-86400 seconds"
+comp_help: possible completions
+ <30-86400>	     Set IKE lifetime (default 28800)

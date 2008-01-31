@@ -1,6 +1,6 @@
-help: "NAT traversal configuration"
+help: NAT traversal configuration
 type: txt
-syntax: $(@) in "enable", "disable"; "must be enable or disable"
-#comp_help: possible completions:
-# enable             Set NAT-T enabled
-# disable            Set NAT-T disabled
+syntax:expression: $VAR(@) in "enable", "disable"; "must be enable or disable"
+comp_help: possible completions:
+ enable             Set NAT-T enabled
+ disable            Set NAT-T disabled

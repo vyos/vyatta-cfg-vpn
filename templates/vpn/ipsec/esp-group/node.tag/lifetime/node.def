@@ -1,6 +1,6 @@
-help: "ESP lifetime configuration"
+help: ESP lifetime configuration
 type: u32 
 default: 3600
-syntax: ($(@) >= 30 && $(@) <= 86400) ; "must be in the range 30 to 86400 seconds"
-#comp_help: possible completions
-# <30-86400>         Set ESP lifetime in seconds (default 3600)
+syntax:expression: ($VAR(@) >= 30 && $VAR(@) <= 86400) ; "must be in the range 30 to 86400 seconds"
+comp_help: possible completions
+ <30-86400>         Set ESP lifetime in seconds (default 3600)

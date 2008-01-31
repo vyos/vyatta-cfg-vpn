@@ -1,7 +1,7 @@
-help: "ESP PFS configuration"
+help: ESP PFS configuration
 type: txt 
 default: "enable"
-syntax: $(@) in "enable", "disable"; "must be enable or disable"
-#comp_help: possible completions
-# enable    	     Set Perfect Forward Secrecy enabled (default)
-# disable	     Set Perfect Forward Secrecy disabled
+syntax:expression: $VAR(@) in "enable", "disable"; "must be enable or disable"
+comp_help: possible completions
+ enable    	     Set Perfect Forward Secrecy enabled (default)
+ disable	     Set Perfect Forward Secrecy disabled

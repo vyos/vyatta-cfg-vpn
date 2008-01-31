@@ -1,12 +1,12 @@
-help: "Set logging level"
+help: Set logging level
 type: txt
-syntax: $(@) in "alert", "crit", "debug", "emerg", "err", "info", "notice", "warning" ; "must be one of the following: crit, debug, emerg, err, info, notice, warning"
-#comp_help: Logging levels in descending order of severity:
-# emerg		           Emergency messages
-# alert        		   Urgent messages
-# crit         		   Critical messages 
-# err          		   Error messages
-# warning      		   Warning messages
-# notice       		   Messages for further investigation
-# info         		   Informational messages
-# debug        		   Debug messages
+syntax:expression: $VAR(@) in "alert", "crit", "debug", "emerg", "err", "info", "notice", "warning" ; "must be one of the following: crit, debug, emerg, err, info, notice, warning"
+comp_help: Logging levels in descending order of severity:
+ emerg		           Emergency messages
+ alert        		   Urgent messages
+ crit         		   Critical messages 
+ err          		   Error messages
+ warning      		   Warning messages
+ notice       		   Messages for further investigation
+ info         		   Informational messages
+ debug        		   Debug messages

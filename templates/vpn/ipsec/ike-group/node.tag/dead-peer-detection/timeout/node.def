@@ -1,8 +1,8 @@
-help: "Set keep-alive timeout"
+help: Set keep-alive timeout
 type: u32 
 default: 120
-syntax: ($(@) >= 30 && $(@) <= 86400) ; "must be between 30-86400 seconds"
-#comp_help: possible completions
-# <30-86400>	     Set keep-alive timeout in seconds (default 120)
+syntax:expression: ($VAR(@) >= 30 && $VAR(@) <= 86400) ; "must be between 30-86400 seconds"
+comp_help: possible completions
+ <30-86400>	     Set keep-alive timeout in seconds (default 120)
 
 
