@@ -718,6 +718,12 @@ if ($vcVPN->exists('ipsec')) {
 	}
     }
 } else {
+    #
+    # remove any previous config lines, so that when "clear vpn ipsec-process"
+    # is called it won't find the vyatta keyword and therefore will not try
+    # to start the ipsec process.
+    #
+    $genout = '';
     $genout .=  "# No VPN configuration exists.\n";
     $genout_secrets .=  "# No VPN configuration exists.\n";
 }
