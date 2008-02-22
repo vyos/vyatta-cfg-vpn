@@ -652,8 +652,10 @@ if ($vcVPN->exists('ipsec')) {
 	    # Write shared secrets to ipsec.secrets
 	    #
 	    my $auth_mode = $vcVPN->returnValue("ipsec site-to-site peer $peer authentication mode");
-	    if (defined($auth_mode) && ($auth_mode eq 'pre-shared-secret')) {
-		
+	    if (!defined($auth_mode) || $auth_mode eq '') {
+		$error = 1;
+		print STDERR "VPN configuration error.  No authentication mode for peer \"$peer\" specified.\n";
+	    } elsif (defined($auth_mode) && ($auth_mode eq 'pre-shared-secret')) {
 		my $psk = $vcVPN->returnValue("ipsec site-to-site peer $peer authentication pre-shared-secret");
 		if (!defined($psk) || $psk eq '') {
 		    $error = 1;
