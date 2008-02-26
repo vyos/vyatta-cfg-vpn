@@ -1,3 +1,27 @@
+vyatta-cfg-vpn (0.2) unstable; urgency=low
+
+  vc4.0.0
+  [ Mark O'Brien ]
+
+
+  [ An-Cheng Huang ]
+  * convert templates to new syntax
+
+  [ Marat Nepomnyashy ]
+  * Treat ipsec return code 26624 as normal when bringing up a
+    connection, but treat all other error codes as errors.  Bug 2671
+    fix.  Also added settings 'nhelpers=5' to mitigate Openswan Bug 412
+    and 'plutowait=yes' to mitigate Openswan Bug 198.
+  * Check for the case when authentication mode is not specified to
+    prevent Perl uninitialized value error.  Bug 2772 fix.
+
+  [ Stig Thormodsrud ]
+  * Fix 2838 Clearing VPN process starts VPN, even if not configured
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Mon, 25 Feb 2008 17:38:42 -0800
+
 vyatta-cfg-vpn (0.1) unstable; urgency=low
 
   * Initial Release.
