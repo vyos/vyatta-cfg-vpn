@@ -1,6 +1,6 @@
 multi:
 type: txt
-help: ipsec interfaces
+help: Set IPsec interface
 allowed: local -a array ;
  array=( /sys/class/net/* ) ;
  echo -n ${array[@]##*/}

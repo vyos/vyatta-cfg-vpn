@@ -1,4 +1,4 @@
-help: Set Diffie-Hellman key exchange
+help: Set Diffie-Hellman (DH) key exchange
 type: u32
 syntax:expression: ($VAR(@) == 2 || $VAR(@) == 5); "must be 2 or 5"
 comp_help: possible completions

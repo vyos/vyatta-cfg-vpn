@@ -1,4 +1,4 @@
-help: ESP mode configuration
+help: Set ESP mode
 type: txt 
 default: "tunnel"
 syntax:expression: $VAR(@) in "tunnel", "transport"; "must be tunnel or transport"

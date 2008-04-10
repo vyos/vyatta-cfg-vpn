@@ -1,4 +1,4 @@
-help: ESP PFS configuration
+help: Set ESP PFS
 type: txt 
 default: "enable"
 syntax:expression: $VAR(@) in "enable", "disable"; "must be enable or disable"

@@ -1,4 +1,4 @@
-help: Configure VPN
+help: Configure Virtual Private Network (VPN)
 end:expression: "sudo /opt/vyatta/sbin/vpn-config.pl \
               --config_file='/etc/ipsec.conf' \
               --secrets_file='/etc/ipsec.secrets' \

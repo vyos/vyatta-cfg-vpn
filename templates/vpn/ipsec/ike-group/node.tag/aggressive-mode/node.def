@@ -1,4 +1,4 @@
-help: IKE aggressive-mode configuration
+help: Set IKE aggressive-mode
 type: txt 
 default: "disable"
 syntax:expression: $VAR(@) in "enable", "disable"; "enable or disable"
