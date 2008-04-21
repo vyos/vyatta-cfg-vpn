@@ -424,10 +424,6 @@ if ($vcVPN->exists('ipsec')) {
 	    # Write tunnel configuration
 	    #
 	    my $leftsubnet = $vcVPN->returnValue("ipsec site-to-site peer $peer tunnel $tunnel local-subnet");
-	    if (!defined($leftsubnet) || $leftsubnet eq "") {
-		$error = 1;
-		print STDERR "VPN configuration error.  No 'local-subnet' specified for peer \"$peer\" tunnel $tunnel.\n";
-	    }
 	    if (defined($leftsubnet) && $leftsubnet eq 'any') {
 		$leftsubnet = '0.0.0.0/0';
 	    }
@@ -462,10 +458,6 @@ if ($vcVPN->exists('ipsec')) {
 		    $rightsubnet .= ",%no";
 		}
 	    } else {
-		if (!defined($remotesubnet) || $remotesubnet eq '') {
-		    $error = 1;
-		    print STDERR "VPN configuration error.  The 'remote-subnet' has not been specified while 'allow-nat-networks' has not been enabled for peer \"$peer\" tunnel $tunnel.  Either one required.\n";
-		}
 		$rightsubnet = $remotesubnet;
 		if (defined($rightsubnet) && $rightsubnet eq 'any') {
 		    $rightsubnet = '0.0.0.0/0';
@@ -615,6 +607,12 @@ if ($vcVPN->exists('ipsec')) {
 	        if (!defined($espmode) || $espmode eq '') {
 		    $espmode = "tunnel";
 	        }
+                if ($espmode eq "transport") {
+		    if (defined $leftsubnet or defined $rightsubnet) {
+			$error = 1;
+			print STDERR "VPN configuration error.  Can not use local-subnet or remote-subnet when using transport mode\n";
+		    }
+		}
 	        $genout .= "\ttype=$espmode\n";
 	    
 	        #
