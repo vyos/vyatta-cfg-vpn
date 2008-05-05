@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.8) unstable; urgency=low
+
+  3.0.4
+
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Mon, 05 May 2008 16:40:37 -0700
+
 vyatta-cfg-vpn (0.7) unstable; urgency=low
 
   3.0.3
