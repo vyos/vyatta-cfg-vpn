@@ -4,9 +4,7 @@ libudevdir	 = /lib/udev
 etcudevdir	 = /etc/udev
 initddir	 = /etc/init.d
 
-bin_SCRIPTS =
 sbin_SCRIPTS =
-sysconf_DATA =
 
 sbin_SCRIPTS += scripts/vpn-config.pl
 
