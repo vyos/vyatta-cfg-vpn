@@ -1,3 +1,36 @@
+vyatta-cfg-vpn (0.10) unstable; urgency=low
+
+	  3.1.0
+  [ Mark O'Brien ]
+
+
+  [ Mohit Mehta ]
+  * - disallowing use of special characters ';' and '?' in pre-shared-
+    secret as they were not in glendale
+  * Bug 3194 VPN: xml error in "show vpn ike" command output
+  * Bug 3194 VPN: xml error in "show vpn ike" command output
+
+  [ Stig Thormodsrud ]
+  * Fix 2043: enhancement - add ability to use a hostname instead of IP
+    address fo VPN peer.
+
+  [ rbalocca ]
+  * Ignore derived files
+
+  [ Stig Thormodsrud ]
+  * Fix 3182: VPN should not be started at boot unless configured.
+
+  [ rbalocca ]
+  * Don't include empty dir in the debian package
+  * Convert to our method of changelog creation
+
+  [ Mohit Mehta ]
+  * Fix Bug 3069 Help strings should be standardized
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 17 Jun 2008 09:26:29 -0700
+
 vyatta-cfg-vpn (0.9) unstable; urgency=low
 
   3.0.5
