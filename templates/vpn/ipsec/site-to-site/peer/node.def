@@ -4,3 +4,4 @@ help: Set VPN peers
 comp_help: Allowed values:
   <x.x.x.x>        Set IP address of the peer
   <text>           Set the hostname of the peer
+  @<text>          Set the ID of the peer

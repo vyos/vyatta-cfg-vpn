@@ -227,6 +227,12 @@ if ($vcVPN->exists('ipsec')) {
 	    $genout .= "ipsec$counter=$interface";
 	    ++$counter;
 	}
+	if (hasLocalWildcard($vcVPN, 0)) {
+	    if ($counter > 0) {
+		$genout .= ' ';
+	    }
+	    $genout .= '%defaultroute';
+	}
 	$genout .= "\"\n";
     }
     
@@ -329,6 +335,7 @@ if ($vcVPN->exists('ipsec')) {
     #
     # Connection configurations
     #
+    my $wildcard_psk = undef;
     my @peers = $vcVPN->listNodes('ipsec site-to-site peer');
     if (@peers == 0) {
 	#$error = 1;
@@ -346,10 +353,14 @@ if ($vcVPN->exists('ipsec')) {
 	}
 
 	my $lip = $vcVPN->returnValue("ipsec site-to-site peer $peer local-ip");
+	my $authid = $vcVPN->returnValue(
+			    "ipsec site-to-site peer $peer authentication id");
 	if (!defined($lip) || $lip eq "") {
 	    $error = 1;
 	    print STDERR "VPN configuration error.  No local IP specified for peer \"$peer\"\n";
-	} else {
+	} elsif ($lip ne '0.0.0.0') {
+	    # not '0.0.0.0' special case.
+	    # check interface addresses.
 	    use VyattaMisc;
 	    if (!VyattaMisc::isIPinInterfaces($vc, $lip, @interfaces)) {
 		
@@ -396,26 +407,46 @@ if ($vcVPN->exists('ipsec')) {
 		$error = 1;
 		print STDERR "VPN configuration error.  The ESP group \"$peer_tunnel_esp_group\" specified for peer \"$peer\" tunnel $tunnel has not been configured.\n";
 	    }
-	    
-	    $genout .= "\nconn peer-$peer-tunnel-$tunnel\n";
+	   
+            my $conn_head = "\nconn peer-$peer-tunnel-$tunnel\n";
+            $conn_head =~ s/ peer-@/ peer-/;
+	    $genout .= $conn_head;
 	    
 	    #
 	    # Assign left and right to local and remote interfaces
 	    #
 	    if (defined($lip)) {
-		my $left = $lip;
-		$genout .= "\tleft=$left\n";
+		if ($lip eq '0.0.0.0') {
+		    if (!defined($authid)) {
+			print STDERR 'VPN configuration error.  '
+			             . 'The "authentication id" must be '
+				     . 'configured if local IP is 0.0.0.0.'
+				     . "\n";
+			$error = 1;
+		    }
+		    $genout .= "\tleft=%defaultroute\n";
+		    $genout .= "\tleftid=$authid\n";
+		} else {
+		    $genout .= "\tleft=$lip\n";
+		}
 	    }
 	    
 	    my $any_peer = 0;
 	    my $right;
-	    if (($peer eq 'any') or ($peer eq '0.0.0.0')) {
+	    my $rightid = undef;
+            if ($peer =~ /^\@/) {
+                # peer is an "ID"
+                $rightid = $peer;
+            }
+	    if (($peer eq 'any') or ($peer eq '0.0.0.0')
+                or defined($rightid)) {
 		$right = '%any';
 		$any_peer = 1;
 	    } else {
 		$right = $peer;
 	    }
 	    $genout .= "\tright=$right\n";
+	    $genout .= "\trightid=$rightid\n" if (defined($rightid));
 	    if ($any_peer) {
 		$genout .= "\trekey=no\n";
 	    }
@@ -658,12 +689,24 @@ if ($vcVPN->exists('ipsec')) {
 		}
 
 		my $right;
-		if (($peer eq 'any') or ($peer eq '0.0.0.0')) {
+		if (($peer eq 'any') or ($peer eq '0.0.0.0')
+                    or ($peer =~ /^\@/)) {
 		    $right = '%any';
+                    if (defined($wildcard_psk)) {
+                      if ($wildcard_psk ne $psk) {
+                        $error = 1;
+                        print STDERR 'VPN configuration error.  '
+                                     . 'All dynamic peers must have the same '
+                                     . "'pre-shared-secret'.\n";
+                      }
+                    } else {
+                      $wildcard_psk = $psk;
+                    }
 		} else {
 		    $right = $peer;
 		}
-		$genout_secrets .= "$lip $right : PSK \"$psk\"\n";
+		my $index1 = ($lip eq '0.0.0.0') ? "$authid" : $lip;
+		$genout_secrets .= "$index1 $right : PSK \"$psk\"\n";
 		$genout .= "\tauthby=secret\n";
 	    } elsif (defined($auth_mode) && $auth_mode eq 'rsa') {
 		
@@ -873,6 +916,7 @@ sub partial_restart {
 	    my %tunnels = $vcVPN->listNodeStatus("ipsec site-to-site peer $peer tunnel");
 	    while (my ($tunnel, $tunnel_status) = each %tunnels) {
 		my $conn = "peer-$peer-tunnel-$tunnel";
+                $conn =~ s/peer-@/peer-/;
 		if ($tunnel_status eq 'added') {
 		    addConnection($peer, $tunnel, $conn_add, $conn_up);
 		} elsif ($tunnel_status eq 'changed') {
@@ -889,6 +933,7 @@ sub partial_restart {
 	    my @tunnels = $vcVPN->listOrigNodes("ipsec site-to-site peer $peer tunnel");
 	    foreach my $tunnel (@tunnels) {
 		my $conn = "peer-$peer-tunnel-$tunnel";
+                $conn =~ s/peer-@/peer-/;
 		deleteConnection($conn, $conn_down, $conn_delete);
 	    }
 	} elsif ($peer_status eq 'static') {
@@ -918,11 +963,13 @@ sub vpn_exec {
 
     if ($error == 0) {
 	my $cmd_out = qx($command);
+        my $rval = ($? >> 8);
 	print LOG "Output:\n$cmd_out\n---\n";
-	print LOG "Return code: $?\n";
-	if ($?) {
-            if ($? == 26624 && ($command =~ /^ipsec auto --asynchronous --up/g)) {
-                print LOG "Return code 26624 OK when bringing up VPN connection.\n";
+	print LOG "Return code: $rval\n";
+	if ($rval) {
+            if ($command =~ /^ipsec auto --asynchronous --up/
+                && ($rval == 104 || $rval == 29)) {
+                print LOG "OK when bringing up VPN connection\n";
 	    } else {
                 $error = 1;
                 print LOG "VPN commit error.  Unable to $desc, received error code $?\n";
@@ -954,6 +1001,7 @@ sub vpn_log {
 sub addConnection {
     my ($peer, $tunnel, $conn_add, $conn_up) = @_;
     my $conn = "peer-$peer-tunnel-$tunnel";
+    $conn =~ s/peer-@/peer-/;
     push(@$conn_add, $conn);
     if ($peer ne '0.0.0.0') {
 	push(@$conn_up,  $conn);
@@ -963,6 +1011,7 @@ sub addConnection {
 sub replaceConnection {
     my ($peer, $tunnel, $conn_down, $conn_replace, $conn_up) = @_;
     my $conn = "peer-$peer-tunnel-$tunnel";
+    $conn =~ s/peer-@/peer-/;
     push(@$conn_down, $conn);
     push(@$conn_replace, $conn);
     if ($peer ne '0.0.0.0') {
@@ -1018,6 +1067,9 @@ sub isFullRestartRequired {
 	# FIXME: in reality this global doesn't affect every tunnel
 	
 	$restartf = 1;
+    } elsif (hasLocalWildcard($vcVPN, 0) != hasLocalWildcard($vcVPN, 1)) {
+	# local wild card has changed. this affects ipsec-interfaces.
+	$restartf = 1;
     }
     
     return $restartf;
@@ -1069,6 +1121,26 @@ sub printTreeOrig {
 	print $child . "\n";
 	printTreeOrig($vc, "$path $child", $depth + 1);
     }
+}
+
+sub hasLocalWildcard {
+    my $vc = shift;
+    my $orig = shift;
+    my @peers = $vc->listNodes('ipsec site-to-site peer');
+    if ($orig) {
+	@peers = $vc->listOrigNodes('ipsec site-to-site peer');
+    }
+    return 0 if (@peers == 0);
+    foreach my $peer (@peers) {
+	my $lip
+	    = $vcVPN->returnValue("ipsec site-to-site peer $peer local-ip");
+	if ($orig) {
+	    $lip = $vcVPN->returnOrigValue(
+				    "ipsec site-to-site peer $peer local-ip");
+	}
+	return 1 if ($lip eq '0.0.0.0');
+    }
+    return 0;
 }
 
 # end of file
