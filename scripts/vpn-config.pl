@@ -423,9 +423,10 @@ if ($vcVPN->exists('ipsec')) {
 				     . 'configured if local IP is 0.0.0.0.'
 				     . "\n";
 			$error = 1;
-		    }
-		    $genout .= "\tleft=%defaultroute\n";
-		    $genout .= "\tleftid=$authid\n";
+		    } else {
+                      $genout .= "\tleft=%defaultroute\n";
+                      $genout .= "\tleftid=$authid\n";
+                    }
 		} else {
 		    $genout .= "\tleft=$lip\n";
 		}
@@ -705,7 +706,8 @@ if ($vcVPN->exists('ipsec')) {
 		} else {
 		    $right = $peer;
 		}
-		my $index1 = ($lip eq '0.0.0.0') ? "$authid" : $lip;
+		my $index1 = ($lip eq '0.0.0.0' && defined($authid))
+                             ? "$authid" : $lip;
 		$genout_secrets .= "$index1 $right : PSK \"$psk\"\n";
 		$genout .= "\tauthby=secret\n";
 	    } elsif (defined($auth_mode) && $auth_mode eq 'rsa') {
