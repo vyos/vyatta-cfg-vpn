@@ -221,6 +221,9 @@ if ($vcVPN->exists('ipsec')) {
 	$genout .= "\tinterfaces=\"";
 	my $counter = 0;
 	foreach my $interface (@interfaces) {
+	    if (!(-d "/sys/class/net/$interface")) {
+		next;
+	    }
 	    if ($counter > 0) {
 		$genout .= ' ';
 	    }
@@ -973,10 +976,21 @@ sub vpn_exec {
                 && ($rval == 104 || $rval == 29)) {
                 print LOG "OK when bringing up VPN connection\n";
 	    } else {
-                $error = 1;
+		#
+		# We use to consider the commit failed if we got a error
+		# from the call to ipsec, but this causes the configuration
+		# to not get included in the running config.  Now that 
+		# we support dynamic interface/address (e.g. dhcp, pppoe)
+		# we want a valid config to get committed even if the
+		# interface doesn't exist yet.  That way we can use
+		# "clear vpn ipsec-process" to bring up the tunnel once 
+		# the interface is instantiated.  For pppoe we will add
+		# a script to /etc/ppp/ip-up.d to bring up the vpn 
+		# tunnel.
+		#
                 print LOG "VPN commit error.  Unable to $desc, received error code $?\n";
-                print STDERR "VPN commit error.  Unable to $desc, received error code $?\n";
-                print STDERR "$cmd_out\n";
+                print "Warning: unable to [$desc], received error code $?\n";
+                print "$cmd_out\n";
             }
 	}
     } else {

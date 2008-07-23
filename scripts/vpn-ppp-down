@@ -1,0 +1,35 @@
+#!/bin/sh
+#
+# Module: vpn-ppp-down
+# 
+# **** License ****
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License version 2 as
+# published by the Free Software Foundation.
+# 
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+# 
+# This code was originally developed by Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2006, 2007 Vyatta, Inc.
+# All Rights Reserved.
+# 
+# Authors: Stig Thormodsrud
+# Date: July 2008
+# Description: wrapper for vyatta-vpn-pppoe
+#
+# **** End License ****
+# 
+
+#    $1   Interface name                ppp0
+#    $2   The tty                       ttyS1
+#    $3   The link speed                38400
+#    $4   Local IP number               12.34.56.78
+#    $5   Peer  IP number               12.34.56.99
+#    $6   Optional ``ipparam'' value    foo
+
+source /etc/default/vyatta
+
+/opt/vyatta/sbin/vyatta-vpn-ppp-updown.pl $6 down
