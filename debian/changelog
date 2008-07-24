@@ -1,3 +1,21 @@
+vyatta-cfg-vpn (0.11) unstable; urgency=low
+
+	  3.1.2
+  [ Mark O'Brien ]
+
+
+  [ Stig Thormodsrud ]
+  * Fix 3300: VPN over PPPOE completely fails on reboot
+
+  [ An-Cheng Huang ]
+  * fix for bug 3044: hide perl error messages
+  * add config version file
+  * fix for bugs 3044, 3047, and 3048: support ipsec road warriors.
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Wed, 23 Jul 2008 21:35:55 -0700
+
 vyatta-cfg-vpn (0.10) unstable; urgency=low
 
 	  3.1.0
