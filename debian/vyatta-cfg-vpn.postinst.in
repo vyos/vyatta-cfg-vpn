@@ -11,6 +11,14 @@ for init in openswan ipsec setkey; do
   update-rc.d -f ${init} remove >/dev/null
 done
 
+# remove keys
+rm -f /etc/ipsec.secrets
+touch /etc/ipsec.secrets
+chown root:root /etc/ipsec.secrets
+chmod 600 /etc/ipsec.secrets
+rm -f /etc/ipsec.d/private/localhost.localdomainKey.pem
+rm -f /etc/ipsec.d/certs/localhost.localdomainCert.pem
+
 # Local Variables:
 # mode: shell-script
 # sh-indentation: 4
