@@ -1,10 +1,10 @@
 help: Set pre-shared secret key
 type: txt
-syntax:expression: pattern $VAR(@) "^[-\&\!\@\#\$\%\^\*\(\)\,\.\:_a-zA-Z0-9]+$" ; "invalid pre-shared secret key \"$VAR(@)\"
+syntax:expression: pattern $VAR(@) "^[-\+\&\!\@\#\$\%\^\*\(\)\,\.\:_a-zA-Z0-9]+$" ; "invalid pre-shared secret key \"$VAR(@)\"
 
 Only these characters are allowed to be used for setting pre-shared secret key :
  alphanumeric characters      a-z A-Z 0-9
- special characters           - & ! @ # $ % ^ * ( ) , . : _
+ special characters           - + & ! @ # $ % ^ * ( ) , . : _
 
 Use of single quotes to set pre-shared secret key is recommended.
 Example usage : 'aA1-&!@,.:_2Bb'
@@ -13,7 +13,7 @@ Example usage : 'aA1-&!@,.:_2Bb'
 comp_help:
 These characters are allowed to be used for setting pre-shared secret key :
  alphanumeric characters      a-z A-Z 0-9
- special characters           - & ! @ # $ %% ^ * ( ) , . : _
+ special characters           - + & ! @ # $ %% ^ * ( ) , . : _
 
 Use of single quotes to set pre-shared secret key is recommended.
 Example usage : 'aA1-&!@,.:_2Bb'
