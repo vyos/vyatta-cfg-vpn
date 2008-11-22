@@ -22,7 +22,7 @@
 # **** End License ****
 #
 
-package Vyatta::VPNUtil;
+package Vyatta::VPN::Util;
 our @EXPORT = qw(rsa_get_local_key_file LOCAL_KEY_FILE_DEFAULT rsa_get_local_pubkey
                  is_vpn_running vpn_debug enableICMP);
 use base qw(Exporter);
@@ -30,7 +30,7 @@ use base qw(Exporter);
 use strict;
 use warnings;
 
-use VyattaConfig;
+use Vyatta::Config;
 
 use constant LOCAL_KEY_FILE_DEFAULT 
     => '/opt/vyatta/etc/config/ipsec.d/rsa-keys/localhost.key';
@@ -45,7 +45,7 @@ sub rsa_get_local_key_file {
     #
     # Read configuration tree
     #
-    my $vc = new VyattaConfig();
+    my $vc = new Vyatta::Config();
     $vc->setLevel('vpn');
     my $key_file_override = $vc->returnOrigValue('rsa-keys local-key file');
     

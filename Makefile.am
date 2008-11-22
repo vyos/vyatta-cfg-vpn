@@ -1,5 +1,5 @@
 cfgdir		 = $(datadir)/vyatta-cfg/templates
-share_perl5dir	 = $(datarootdir)/perl5
+share_perl5dir	 = $(datarootdir)/perl5/Vyatta/VPN
 libudevdir	 = /lib/udev
 etcudevdir	 = /etc/udev
 initddir	 = /etc/init.d
@@ -10,7 +10,7 @@ sbin_SCRIPTS =
 sbin_SCRIPTS += scripts/vpn-config.pl
 sbin_SCRIPTS += scripts/vyatta-vpn-ppp-updown.pl
 
-share_perl5_DATA = scripts/VyattaVPNUtil.pm
+share_perl5_DATA = lib/Vyatta/VPN/Util.pm
 
 curver_DATA = cfg-version/ipsec@1
 

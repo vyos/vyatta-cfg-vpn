@@ -24,7 +24,7 @@
 # 
 
 use lib "/opt/vyatta/share/perl5/";
-use VyattaConfig;
+use Vyatta::Config;
 use POSIX;
 use strict;
 use warnings;
@@ -99,7 +99,7 @@ sub vpn_remove_intf {
 my $pppoe_intf  = $ARGV[0];
 my $mode        = $ARGV[1];
 
-my $config = new VyattaConfig;
+my $config = new Vyatta::Config;
 $config->setLevel("vpn ipsec ipsec-interfaces");
 my @ipsec_intfs = $config->returnOrigValues("interface");
 
