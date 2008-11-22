@@ -24,7 +24,7 @@
 # 
 
 use strict;
-use lib "/opt/vyatta/share/perl5/";
+use lib "/opt/vyatta/share/perl5";
 
 use constant IKELIFETIME_DEFAULT     => 28800;  # 8 hours
 use constant ESPLIFETIME_DEFAULT     => 3600;   # 1 hour
@@ -33,7 +33,7 @@ use constant REKEYFUZZ_DEFAULT       => 100;
 use constant INVALID_LOCAL_IP        => 254;
 use constant VPN_MAX_PROPOSALS       => 10;
 
-use VyattaVPNUtil;
+use Vyatta::VPNUtil;
 use Getopt::Long;
 
 my $changes_dir;
@@ -153,10 +153,10 @@ if ($vcVPN->exists('ipsec')) {
     # Check the local key file
     # Note: $local_key_file will be used later when reading the keys
     # 
-    my $running_local_key_file = VyattaVPNUtil::rsa_get_local_key_file();
+    my $running_local_key_file = rsa_get_local_key_file();
     my $local_key_file = $vcVPN->returnValue('rsa-keys local-key file');
     if (!defined($local_key_file)) {
-	$local_key_file = VyattaVPNUtil::LOCAL_KEY_FILE_DEFAULT;
+	$local_key_file = LOCAL_KEY_FILE_DEFAULT;
     }
     if ($local_key_file ne $running_local_key_file) {
 	    
@@ -186,7 +186,7 @@ if ($vcVPN->exists('ipsec')) {
 	
 	if ($error == 0) {
 	    if (-r $running_local_key_file && !(-e $local_key_file)) {
-		VyattaVPNUtil::vpn_debug "cp $running_local_key_file $local_key_file";
+		vpn_debug "cp $running_local_key_file $local_key_file";
 		my ($dirpath) = ($local_key_file =~ m#^(.*/)?.*#s);
 		my $rc = system("mkdir -p $dirpath");
 		if ($rc != 0) {
@@ -725,7 +725,7 @@ if ($vcVPN->exists('ipsec')) {
 		}
 
 		$genout .= "\tauthby=rsasig\n";
-		my $local_key = VyattaVPNUtil::rsa_get_local_pubkey($local_key_file);
+		my $local_key = rsa_get_local_pubkey($local_key_file);
 		if (!defined($local_key) || $local_key eq "") {
 		    $error = 1;
 		    print STDERR "VPN configuration error.  Unable to determine local public key from local key file \"$local_key_file\" for peer \"$peer\".\n";
@@ -783,16 +783,16 @@ if (!(defined($config_file) && ($config_file ne '') && defined($secrets_file) &&
 if ($error == 0) {
     if ($vcVPN->isDeleted('.') || !$vcVPN->exists('.')
         || $vcVPN->isDeleted('ipsec') || !$vcVPN->exists('ipsec')) {
-	if (VyattaVPNUtil::is_vpn_running()) {
+	if (is_vpn_running()) {
 	    vpn_exec('ipsec setup --stop', 'stop ipsec');
 	}
-	if (!VyattaVPNUtil::enableICMP('1')) {
+	if (!enableICMP('1')) {
 	    $error = 1;
 	    print STDERR "VPN commit error.  Unable to re-enable ICMP redirects.\n";
 	}
 	write_config($genout, $config_file, $genout_secrets, $secrets_file);
     } else {
-	if (!VyattaVPNUtil::enableICMP('0')) {
+	if (!enableICMP('0')) {
 	    $error = 1;
 	    print STDERR "VPN commit error.  Unable to disable ICMP redirects.\n";
 	}
@@ -807,7 +807,7 @@ if ($error == 0) {
 	    vpn_log("Wrote out configuration to files '$config_file' and '$secrets_file'.  VPN/ipsec daemons not started due to clustering.\n");
 	    
 	} else {
-	    if (VyattaVPNUtil::is_vpn_running()) {
+	    if (is_vpn_running()) {
 		if (isFullRestartRequired($vcVPN)) {
 		    #
 		    # Full restart required

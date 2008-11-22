@@ -1,5 +1,5 @@
 #
-# Module: VyattaVPNUtil.pm
+# Module: Vyatta::VPNUtil.pm
 #
 # **** License ****
 # This program is free software; you can redistribute it and/or modify
@@ -22,15 +22,18 @@
 # **** End License ****
 #
 
-package VyattaVPNUtil;
+package Vyatta::VPNUtil;
+our @EXPORT = qw(rsa_get_local_key_file LOCAL_KEY_FILE_DEFAULT rsa_get_local_pubkey
+                 is_vpn_running vpn_debug enableICMP);
+use base qw(Exporter);
 
 use strict;
 use warnings;
 
 use VyattaConfig;
 
-
-use constant LOCAL_KEY_FILE_DEFAULT  => '/opt/vyatta/etc/config/ipsec.d/rsa-keys/localhost.key';
+use constant LOCAL_KEY_FILE_DEFAULT 
+    => '/opt/vyatta/etc/config/ipsec.d/rsa-keys/localhost.key';
 
 sub is_vpn_running {
     return ( -e '/var/run/pluto/pluto.ctl');
@@ -126,4 +129,3 @@ sub enableICMP {
 }
 
 1;
-
