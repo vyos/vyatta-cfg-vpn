@@ -875,13 +875,15 @@ exit 0;
 sub write_config {
     my ($genout, $config_file, $genout_secrets, $secrets_file) = @_;
     
-    open OUTPUT_CONFIG, ">$config_file";
-    print OUTPUT_CONFIG $genout;
-    close OUTPUT_CONFIG;
+    open my $output_config, '>', $config_file
+	or die "Can't open $config_file: $!";
+    print ${output_config} $genout;
+    close $output_config;
     
-    open OUTPUT_SECRETS, ">$secrets_file";
-    print OUTPUT_SECRETS $genout_secrets;
-    close OUTPUT_SECRETS;
+    open my $output_secrets, '>', $secrets_file
+	or die "Can't open $secrets_file: $!";
+    print ${output_secrets} $genout_secrets;
+    close $output_secrets;
 }
 
 sub partial_restart {
@@ -964,22 +966,23 @@ sub vpn_exec {
 	return;
     }
 
-    open LOG, ">> /tmp/ipsec.log";
+    open my $lo, '>>', "/tmp/ipsec.log"
+	or die "Can't open /tmp/ipsec.log: $!";
     
     use POSIX;
     my $timestamp = strftime("%Y-%m-%d %H:%M.%S", localtime);
     
-    print LOG "$timestamp\nExecuting: $command\nDescription: $desc\n";
+    print ${log} "$timestamp\nExecuting: $command\nDescription: $desc\n";
 
     if ($error == 0) {
 	my $cmd_out = qx($command);
         my $rval = ($? >> 8);
-	print LOG "Output:\n$cmd_out\n---\n";
-	print LOG "Return code: $rval\n";
+	print ${log} "Output:\n$cmd_out\n---\n";
+	print ${log} "Return code: $rval\n";
 	if ($rval) {
             if ($command =~ /^ipsec auto --asynchronous --up/
                 && ($rval == 104 || $rval == 29)) {
-                print LOG "OK when bringing up VPN connection\n";
+                print ${log} "OK when bringing up VPN connection\n";
 	    } else {
 		#
 		# We use to consider the commit failed if we got a error
@@ -993,30 +996,31 @@ sub vpn_exec {
 		# a script to /etc/ppp/ip-up.d to bring up the vpn 
 		# tunnel.
 		#
-                print LOG "VPN commit error.  Unable to $desc, received error code $?\n";
+                print ${log} "VPN commit error.  Unable to $desc, received error code $?\n";
                 print "Warning: unable to [$desc], received error code $?\n";
                 print "$cmd_out\n";
             }
 	}
     } else {
-	print LOG "Execution not performed due to previous error.\n";
+	print ${log} "Execution not performed due to previous error.\n";
     }
     
-    print LOG "---\n\n";
-    close LOG;
+    print ${log} "---\n\n";
+    close $log;
 }
 
 sub vpn_log {
     my ($log) = @_;
     
-    open LOG, ">> /tmp/ipsec.log";
+    open my $logfile, '>>', "/tmp/ipsec.log"
+	or die "Can't open /tmp/ipsec.log: $!";
     
     use POSIX;
     my $timestamp = strftime("%Y-%m-%d %H:%M.%S", localtime);
     
-    print LOG "$timestamp\n$log\n";
-    print LOG "---\n\n";
-    close LOG;
+    print ${logfile} "$timestamp\n$log\n";
+    print ${logfile} "---\n\n";
+    close $logfile;
 }
 
 sub addConnection {
