@@ -1163,7 +1163,7 @@ sub hasLocalWildcard {
 	    $lip = $vcVPN->returnOrigValue(
 				    "ipsec site-to-site peer $peer local-ip");
 	}
-	return 1 if ($lip eq '0.0.0.0');
+	return 1 if ($lip && $lip eq '0.0.0.0');
     }
     return 0;
 }
