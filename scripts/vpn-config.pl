@@ -966,23 +966,23 @@ sub vpn_exec {
 	return;
     }
 
-    open my $lo, '>>', "/tmp/ipsec.log"
+    open my $logf, '>>', "/tmp/ipsec.log"
 	or die "Can't open /tmp/ipsec.log: $!";
     
     use POSIX;
     my $timestamp = strftime("%Y-%m-%d %H:%M.%S", localtime);
     
-    print ${log} "$timestamp\nExecuting: $command\nDescription: $desc\n";
+    print ${logf} "$timestamp\nExecuting: $command\nDescription: $desc\n";
 
     if ($error == 0) {
 	my $cmd_out = qx($command);
         my $rval = ($? >> 8);
-	print ${log} "Output:\n$cmd_out\n---\n";
-	print ${log} "Return code: $rval\n";
+	print ${logf} "Output:\n$cmd_out\n---\n";
+	print ${logf} "Return code: $rval\n";
 	if ($rval) {
             if ($command =~ /^ipsec auto --asynchronous --up/
                 && ($rval == 104 || $rval == 29)) {
-                print ${log} "OK when bringing up VPN connection\n";
+                print ${logf} "OK when bringing up VPN connection\n";
 	    } else {
 		#
 		# We use to consider the commit failed if we got a error
@@ -996,17 +996,17 @@ sub vpn_exec {
 		# a script to /etc/ppp/ip-up.d to bring up the vpn 
 		# tunnel.
 		#
-                print ${log} "VPN commit error.  Unable to $desc, received error code $?\n";
+                print ${logf} "VPN commit error.  Unable to $desc, received error code $?\n";
                 print "Warning: unable to [$desc], received error code $?\n";
                 print "$cmd_out\n";
             }
 	}
     } else {
-	print ${log} "Execution not performed due to previous error.\n";
+	print ${logf} "Execution not performed due to previous error.\n";
     }
     
-    print ${log} "---\n\n";
-    close $log;
+    print ${logf} "---\n\n";
+    close $logf;
 }
 
 sub vpn_log {
