@@ -1,3 +1,11 @@
+vyatta-cfg-vpn (0.12.3) unstable; urgency=low
+
+  * Fix 4219: IPsec VPN does not launch on boot, error "The local-ip
+    address X.X.X.X of peer "X.X.X.X" has not been configured in any of
+    the local.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Mon, 16 Mar 2009 20:57:23 -0700
+
 vyatta-cfg-vpn (0.12.2) unstable; urgency=low
 
   * Remove perlcritic warnings
