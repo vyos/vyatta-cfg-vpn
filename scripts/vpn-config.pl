@@ -35,6 +35,7 @@ use constant VPN_MAX_PROPOSALS       => 10;
 
 use Vyatta::VPN::Util;
 use Getopt::Long;
+use Vyatta::Misc;
 
 my $changes_dir;
 my $newconfig_dir;
@@ -365,35 +366,19 @@ if ($vcVPN->exists('ipsec')) {
 			    "ipsec site-to-site peer $peer authentication id");
 	if (!defined($lip) || $lip eq "") {
 	    $error = 1;
-	    print STDERR "VPN configuration error.  No local IP specified for peer \"$peer\"\n";
+	    print STDERR "VPN configuration error.  No local-ip specified for peer \"$peer\"\n";
 	} elsif ($lip ne '0.0.0.0') {
 	    # not '0.0.0.0' special case.
 	    # check interface addresses.
-	    use Vyatta::Misc;
 	    if (!Vyatta::Misc::isIPinInterfaces($vc, $lip, @interfaces)) {
-		
-		# Due to Bug 2411, the quick short-term fix
-		# as described in comment #4, is to assume
-		# that a peer local-ip not found in any of
-		# the interfaces on the system must then be
-		# a cluster IP.  The commit then proceeds
-		# without errors, but the ipsec daemons are
-		# not started either.  This will cause a
-		# silent failure if the IP mismatch is only
-		# due to a user error, but allows VPN/cluster
-		# interoperability.
-		
-		vpn_log("The local-ip address $lip of peer \"$peer\" has not been configured in any of the local interfaces.  Assuming it is configured in clustering.\n");
-		$clustering_ip = 1;
-		
-#				if (Vyatta::Misc::isClusterIP($vc, $lip)) {
-#					# Verified that dealing with a cluster IP.
-#					$clustering_ip = 1;
-#				} else {
-#					$error = 1;
-#					print STDERR "VPN configuration error.  Local IP $lip specified for peer \"$peer\" has not been configured in any of the ipsec interfaces or clustering.\n";
-#				}
-		
+		vpn_log("The local-ip address $lip of peer \"$peer\" has not been configured in any of the ipsec-interfaces.\n");
+		if (Vyatta::Misc::isClusterIP($vc, $lip)) {
+		    # Verified that dealing with a cluster IP.
+		    $clustering_ip = 1;
+		} else {
+		    $error = 1;
+		    print STDERR "VPN configuration error.  Local IP $lip specified for peer \"$peer\" has not been configured in any of the ipsec-interfaces or clustering.\n";
+		}
 	    }
 	}
 
@@ -714,9 +699,11 @@ if ($vcVPN->exists('ipsec')) {
 		} else {
 		    $right = $peer;
 		}
-		my $index1 = ($lip eq '0.0.0.0' && defined($authid))
-                             ? "$authid" : $lip;
-		$genout_secrets .= "$index1 $right : PSK \"$psk\"\n";
+		if (defined $lip) {
+		    my $index1 = ($lip eq '0.0.0.0' && defined($authid))
+			? "$authid" : $lip;
+		    $genout_secrets .= "$index1 $right : PSK \"$psk\"\n";
+		}
 		$genout .= "\tauthby=secret\n";
 	    } elsif (defined($auth_mode) && $auth_mode eq 'rsa') {
 		
@@ -810,7 +797,7 @@ if ($error == 0) {
 	    write_config($genout, $config_file, $genout_secrets, $secrets_file);
 	    
 	    vpn_log("Wrote out configuration to files '$config_file' and '$secrets_file'.  VPN/ipsec daemons not started due to clustering.\n");
-	    
+	    print "Clustering configured - not restarting ipsec\n";
 	} else {
 	    if (is_vpn_running()) {
 		if (isFullRestartRequired($vcVPN)) {
