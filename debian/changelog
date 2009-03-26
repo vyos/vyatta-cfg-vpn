@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.4) unstable; urgency=low
+
+  * Change "ipsec-interfaces" to use vyatta-interfaces.pl for allowed
+    tag.
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Thu, 26 Mar 2009 12:29:06 -0700
+
 vyatta-cfg-vpn (0.12.3) unstable; urgency=low
 
   * Fix 4219: IPsec VPN does not launch on boot, error "The local-ip
