@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.5) unstable; urgency=low
+
+  * Bugfix 2387: Don't list interfaces in ipsec config file.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Mon, 06 Apr 2009 16:43:15 -0700
+
 vyatta-cfg-vpn (0.12.4) unstable; urgency=low
 
   * Change "ipsec-interfaces" to use vyatta-interfaces.pl for allowed
