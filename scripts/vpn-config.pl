@@ -389,8 +389,11 @@ if ($vcVPN->exists('ipsec')) {
 		    # Verified that dealing with a cluster IP.
 		    $clustering_ip = 1;
 		} else {
-		    $error = 1;
-		    print STDERR "VPN configuration error.  Local IP $lip specified for peer \"$peer\" has not been configured in any of the ipsec-interfaces or clustering.\n";
+		    print "Warning: Local IPv4 address $lip specified for peer \"$peer\"\n";
+		    print "is not configured on any of the ipsec-interfaces and is not the\n";
+		    print "clustering address.  IPsec must be re-started after address\n";
+		    print "has been configured.\n";
+		    print "\n";
 		}
 	    }
 	}
