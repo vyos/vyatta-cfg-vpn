@@ -377,6 +377,8 @@ if ($vcVPN->exists('ipsec')) {
 	my $lip = $vcVPN->returnValue("ipsec site-to-site peer $peer local-ip");
 	my $authid = $vcVPN->returnValue(
 			    "ipsec site-to-site peer $peer authentication id");
+	my $authremoteid = $vcVPN->returnValue(
+			    "ipsec site-to-site peer $peer authentication remote-id");
 	if (!defined($lip) || $lip eq "") {
 	    $error = 1;
 	    print STDERR "VPN configuration error.  No local-ip specified for peer \"$peer\"\n";
@@ -447,11 +449,13 @@ if ($vcVPN->exists('ipsec')) {
             if ($peer =~ /^\@/) {
                 # peer is an "ID"
                 $rightid = $peer;
-            }
-	    if (($peer eq 'any') or ($peer eq '0.0.0.0')
-                or defined($rightid)) {
-		$right = '%any';
 		$any_peer = 1;
+            } elsif ($authremoteid) {
+		$rightid = $authremoteid;
+	    }
+	    if (($peer eq 'any') or ($peer eq '0.0.0.0')
+                or $any_peer == 1) {
+		$right = '%any';
 	    } else {
 		$right = $peer;
 	    }
@@ -719,6 +723,9 @@ if ($vcVPN->exists('ipsec')) {
 		    my $index1 = ($lip eq '0.0.0.0' && defined($authid))
 			? "$authid" : $lip;
 		    $genout_secrets .= "$index1 $right : PSK \"$psk\"\n";
+		}
+		if (defined($lip) and defined($authremoteid)) {
+		    $genout_secrets .= "$lip $authremoteid : PSK \"$psk\"\n";
 		}
 		$genout .= "\tauthby=secret\n";
 	    } elsif (defined($auth_mode) && $auth_mode eq 'rsa') {
