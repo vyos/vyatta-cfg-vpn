@@ -798,14 +798,20 @@ if (!(defined($config_file) && ($config_file ne '') && defined($secrets_file) &&
 if ($error == 0) {
     if ($vcVPN->isDeleted('.') || !$vcVPN->exists('.')
         || $vcVPN->isDeleted('ipsec') || !$vcVPN->exists('ipsec')) {
-	if (is_vpn_running()) {
-	    vpn_exec('ipsec setup --stop', 'stop ipsec');
-	}
-	if (!enableICMP('1')) {
+	if (Vyatta::Misc::isClusterIP($vc, 'ipsec')) { 
 	    $error = 1;
-	    print STDERR "VPN commit error.  Unable to re-enable ICMP redirects.\n";
+	    print STDERR "VPN commit error.  Cluster service is referencing ipsec config.\n";
+	} 
+	if ($error == 0) {
+	    if (is_vpn_running()) {
+		vpn_exec('ipsec setup --stop', 'stop ipsec');
+	    }
+	    if (!enableICMP('1')) {
+		$error = 1;
+		print STDERR "VPN commit error.  Unable to re-enable ICMP redirects.\n";
+	    }
+	    write_config($genout, $config_file, $genout_secrets, $secrets_file);
 	}
-	write_config($genout, $config_file, $genout_secrets, $secrets_file);
     } else {
 	if (!enableICMP('0')) {
 	    $error = 1;
