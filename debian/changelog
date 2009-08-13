@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.10) unstable; urgency=low
+
+  * added description field to site-to-site peer.
+
+ -- slioch <slioch@eng-140.vyatta.com>  Thu, 13 Aug 2009 09:24:10 -0700
+
 vyatta-cfg-vpn (0.12.9) unstable; urgency=low
 
   * Fix 4623: Removing IPSEC VPN config without removing cluster ipsec
