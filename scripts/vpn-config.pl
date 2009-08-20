@@ -934,7 +934,7 @@ sub partial_restart {
     #
     my %peers = $vcVPN->listNodeStatus('ipsec site-to-site peer');
     while (my ($peer, $peer_status) = each %peers) {
-	
+
 	if ($peer_status eq 'added') {
 	    my @tunnels = $vcVPN->listNodes("ipsec site-to-site peer $peer tunnel");
 	    foreach my $tunnel (@tunnels) {
@@ -951,12 +951,57 @@ sub partial_restart {
 	    }
 	    my %tunnels = $vcVPN->listNodeStatus("ipsec site-to-site peer $peer tunnel");
 	    while (my ($tunnel, $tunnel_status) = each %tunnels) {
+
+		#first identify state change in disable node
+		my $state;
+		my $cur_state_disable = $vcVPN->exists("ipsec site-to-site peer $peer tunnel $tunnel disable");
+		my $old_state_disable = $vcVPN->listOrigNodes("ipsec site-to-site peer $peer tunnel $tunnel disable");
+		if (defined $old_state_disable) {
+		    $old_state_disable = 1;
+		}
+		else {
+		    $old_state_disable = 0;
+		}
+		if ($cur_state_disable && $old_state_disable) {
+		    #no change, disabled
+		    #suppress any action
+		    $state = 0;
+		}
+		elsif ($cur_state_disable && !$old_state_disable) {
+		    #change, enabled->disabled
+		    #change replace to delete
+		    $state = 1;
+		}
+		elsif (!$cur_state_disable && $old_state_disable) {
+		    #change, disabled->enabled
+		    #change, change replace to add
+		    $state = 2;
+		}
+		elsif (!$cur_state_disable && !$old_state_disable) {
+		    #no change, enabled
+		    #change, noop
+		    $state = 3;
+		}
+
 		my $conn = "peer-$peer-tunnel-$tunnel";
                 $conn =~ s/peer-@/peer-/;
 		if ($tunnel_status eq 'added') {
-		    addConnection($peer, $tunnel, $conn_add, $conn_up);
+		    if ($state == 0 || $state == 1) {
+			#noop
+		    }
+		    else {
+			addConnection($peer, $tunnel, $conn_add, $conn_up);
+		    }
 		} elsif ($tunnel_status eq 'changed') {
-		    replaceConnection($peer, $tunnel, $conn_down, $conn_replace, $conn_up);
+		    if ($state == 1) {
+			deleteConnection($conn, $conn_down, $conn_delete);
+		    }
+		    elsif ($state == 2) {
+			addConnection($peer, $tunnel, $conn_add, $conn_up);
+		    }
+		    else {
+			replaceConnection($peer, $tunnel, $conn_down, $conn_replace, $conn_up);
+		    }
 		} elsif ($tunnel_status eq 'deleted') {
 		    deleteConnection($conn, $conn_down, $conn_delete);
 		} elsif ($tunnel_status eq 'static') {
