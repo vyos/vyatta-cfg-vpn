@@ -410,6 +410,14 @@ if ($vcVPN->exists('ipsec')) {
 	}
 	foreach my $tunnel (@tunnels) {
 
+	    #
+            # Add support for tunnel disable.
+            #
+	    if ($vcVPN->exists("ipsec site-to-site peer $peer tunnel $tunnel disable")) {
+		next;
+	    }
+            
+
 	    my $peer_tunnel_esp_group = $vcVPN->returnValue("ipsec site-to-site peer $peer tunnel $tunnel esp-group");
 	    if (!defined($peer_tunnel_esp_group) || $peer_tunnel_esp_group eq '') {
 		$error = 1;
