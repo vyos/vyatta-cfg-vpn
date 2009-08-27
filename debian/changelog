@@ -1,3 +1,14 @@
+vyatta-cfg-vpn (0.12.11) unstable; urgency=low
+
+  * add enable node below tunnel with default flag = true
+  * convert enable to disable node for vpn tunnel
+  * added support in configuration script to support tunnel disable
+    node.
+  * manage state of add|delete|restart on connections for vpn given
+    disable node.
+
+ -- slioch <slioch@eng-140.vyatta.com>  Thu, 27 Aug 2009 14:36:04 -0700
+
 vyatta-cfg-vpn (0.12.10) unstable; urgency=low
 
   * added description field to site-to-site peer.
