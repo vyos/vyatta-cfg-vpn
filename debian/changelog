@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.7+jenner3) unstable; urgency=low
+
+  * Fix 4902: setting ipsec site-to-site tunnel with authentication id
+    <> and local-ip 0.0.0.0 got "no connection named <>"
+
+ -- Stig Thormodsrud <stig@vyatta.com>  Sat, 05 Sep 2009 12:51:07 -0700
+
 vyatta-cfg-vpn (0.12.7+jenner2) unstable; urgency=low
 
   * Fix 4623: Removing IPSEC VPN config without removing cluster ipsec
