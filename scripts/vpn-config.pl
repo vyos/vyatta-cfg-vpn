@@ -254,7 +254,20 @@ if ($vcVPN->exists('ipsec')) {
 	    }
 	    $genout .= "\"\n";
 	} else {
-	    $genout .= "\tinterfaces=\"%none\"\n";
+	    my $counter = 0;
+	    $genout .= "\t";	    
+	    if (hasLocalWildcard($vcVPN, 0)) {
+		$genout .= 'interfaces="';
+		foreach my $interface (@interfaces) {
+		    next if ! -d "/sys/class/net/$interface";
+		    next if scalar(getIP($interface)) < 1;
+		    $genout .= "ipsec$counter=$interface ";
+		    ++$counter;		}
+		$genout .= '%defaultroute"';
+	    } else {
+		$genout .= 'interfaces="%none"';
+	    }
+	    $genout .= "\n";	    
 	}
     }
     
