@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.13) unstable; urgency=low
+
+  * Fix Bug 3011 Remote VPN configuration issues site-to-site warning
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 06 Oct 2009 16:27:25 -0700
+
 vyatta-cfg-vpn (0.12.12) unstable; urgency=low
 
   * Fix 4902: setting ipsec site-to-site tunnel with authentication id
