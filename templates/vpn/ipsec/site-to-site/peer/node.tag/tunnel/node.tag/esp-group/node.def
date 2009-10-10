@@ -1,2 +1,5 @@
 help: Set ESP group name
 type:  txt
+allowed: local -a esp_grps
+         esp_grps=( /opt/vyatta/config/active/vpn/ipsec/esp-group/* )
+         echo -n ${esp_grps[@]##*/}

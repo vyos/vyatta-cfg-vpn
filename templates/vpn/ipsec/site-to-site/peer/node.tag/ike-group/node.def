@@ -1,2 +1,5 @@
 help: Set Internet Key Exchange (IKE) group name
 type:  txt
+allowed: local -a ike_grps
+         ike_grps=( /opt/vyatta/config/active/vpn/ipsec/ike-group/* )
+         echo -n ${ike_grps[@]##*/}
