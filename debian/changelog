@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.15) unstable; urgency=low
+
+  * add priority to project node.
+
+ -- slioch <slioch@eng-140.vyatta.com>  Tue, 20 Oct 2009 16:21:00 -0700
+
 vyatta-cfg-vpn (0.12.14) unstable; urgency=low
 
   * add allowed values for ike, esp groups
