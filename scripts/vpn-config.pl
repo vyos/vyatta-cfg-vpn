@@ -358,6 +358,13 @@ if ($vcVPN->exists('ipsec')) {
     $genout .= "\tnhelpers=5\n";
     $genout .= "\tplutowait=yes\n";
 
+    # Set plutoopts:
+    # Disable uniqreqids?
+    #
+    if ($vcVPN->exists('ipsec disable-uniqreqids')) {
+        $genout .= "\tplutoopts=--disable-uniqreqids\n";
+    }
+
     #
     # Disable implicit connections
     #
