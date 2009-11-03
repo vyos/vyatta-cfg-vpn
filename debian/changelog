@@ -1,3 +1,15 @@
+vyatta-cfg-vpn (0.12.16) unstable; urgency=low
+
+  [ Robert Bays ]
+  * add support for same reqids to openswan cfg
+
+  [ Mohit Mehta ]
+  * indent and reformat script using perltidy in hope of making it
+    easier to read
+  * more formatting clean-up
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Mon, 02 Nov 2009 16:29:01 -0800
+
 vyatta-cfg-vpn (0.12.15) unstable; urgency=low
 
   * add priority to project node.
