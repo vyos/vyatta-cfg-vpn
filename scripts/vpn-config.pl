@@ -13,7 +13,7 @@
 # General Public License for more details.
 #
 # This code was originally developed by Vyatta, Inc.
-# Portions created by Vyatta are Copyright (C) 2006, 2007 Vyatta, Inc.
+# Portions created by Vyatta are Copyright (C) 2006, 2007, 2008, 2009 Vyatta, Inc.
 # All Rights Reserved.
 #
 # Authors: Justin Fletcher, Marat Nepomnyashy
@@ -50,6 +50,7 @@ GetOptions(
   "init_script=s"   => \$init_script
 );
 
+my $vpn_cfg_err   = "VPN configuration error:";
 my $clustering_ip = 0;
 my $error         = 0;
 my $genout;
@@ -98,9 +99,11 @@ if ( $vcVPN->exists('ipsec') ) {
   my @esp_groups = $vcVPN->listNodes('ipsec esp-group');
   if ( @esp_groups == 0 ) {
 
-#$error = 1;
-#print STDERR "VPN configuration error.  No ESP groups configured.  At least one ESP group required.\n";
-# XXX for now this will be checked below for site-to-site peer
+    #$error = 1;
+    #print STDERR "$vpn_cfg_err No ESP groups configured." . 
+    #             " At least one ESP group required.\n";
+    # XXX for now this will be checked below for site-to-site peer
+
   } else {
     foreach my $esp_group (@esp_groups) {
       my @esp_group_proposals =
@@ -108,12 +111,14 @@ if ( $vcVPN->exists('ipsec') ) {
       if ( @esp_group_proposals == 0 ) {
         $error = 1;
         print STDERR
-"VPN configuration error.  No proposals configured for ESP group \"$esp_group\".  At least one proposal required.\n";
+          "$vpn_cfg_err No proposals configured for ESP group \"$esp_group\"" .
+          ".  At least one proposal required.\n";
       } elsif ( @esp_group_proposals > VPN_MAX_PROPOSALS ) {
         $error = 1;
-        print STDERR 'VPN configuration error.  A total of '
+        print STDERR "$vpn_cfg_err A total of "
           . @esp_group_proposals
-          . " proposals have been configured for ESP group \"$esp_group\".  The maximum proposals allowed for an ESP group is "
+          . " proposals have been configured for ESP group \"$esp_group\"."
+          . " The maximum proposals allowed for an ESP group is "
           . VPN_MAX_PROPOSALS . "\n";
       } else {
         foreach my $esp_group_proposal (@esp_group_proposals) {
@@ -125,7 +130,8 @@ if ( $vcVPN->exists('ipsec') ) {
           {
             $error = 1;
             print STDERR
-"VPN configuration error.  No encryption specified for ESP group \"$esp_group\" proposal $esp_group_proposal.\n";
+              "$vpn_cfg_err No encryption specified for ESP group " . 
+              "\"$esp_group\" proposal $esp_group_proposal.\n";
           }
           my $esp_group_proposal_hash = $vcVPN->returnValue(
             "ipsec esp-group $esp_group proposal $esp_group_proposal hash");
@@ -134,7 +140,8 @@ if ( $vcVPN->exists('ipsec') ) {
           {
             $error = 1;
             print STDERR
-"VPN configuration error.  No hash specified for ESP group \"$esp_group\" proposal $esp_group_proposal.\n";
+              "$vpn_cfg_err No hash specified for ESP group \"$esp_group\"" . 
+              " proposal $esp_group_proposal.\n";
           }
         }
       }
@@ -147,9 +154,11 @@ if ( $vcVPN->exists('ipsec') ) {
   my @ike_groups = $vcVPN->listNodes('ipsec ike-group');
   if ( @ike_groups == 0 ) {
 
-#$error = 1;
-#print STDERR "VPN configuration error.  No IKE groups configured.  At least one IKE group required.\n";
-# XXX for now this will be checked below for site-to-site peer
+    #$error = 1;
+    #print STDERR "$vpn_cfg_err No IKE groups configured." . 
+    #             "  At least one IKE group required.\n";
+    # XXX for now this will be checked below for site-to-site peer
+
   } else {
     foreach my $ike_group (@ike_groups) {
       my @ike_group_proposals =
@@ -157,12 +166,14 @@ if ( $vcVPN->exists('ipsec') ) {
       if ( @ike_group_proposals == 0 ) {
         $error = 1;
         print STDERR
-"VPN configuration error.  No proposals configured for IKE group \"$ike_group\".  At least one proposal required.\n";
+          "$vpn_cfg_err No proposals configured for IKE group \"$ike_group\"" .
+          ".  At least one proposal required.\n";
       } elsif ( @ike_group_proposals > VPN_MAX_PROPOSALS ) {
         $error = 1;
-        print STDERR 'VPN configuration error.  A total of '
+        print STDERR "$vpn_cfg_err A total of "
           . @ike_group_proposals
-          . " proposals have been configured for IKE group \"$ike_group\".  The maximum proposals allowed for an IKE group is "
+          . " proposals have been configured for IKE group \"$ike_group\"."
+          . " The maximum proposals allowed for an IKE group is "
           . VPN_MAX_PROPOSALS . "\n";
       } else {
         foreach my $ike_group_proposal (@ike_group_proposals) {
@@ -174,7 +185,8 @@ if ( $vcVPN->exists('ipsec') ) {
           {
             $error = 1;
             print STDERR
-"VPN configuration error.  No encryption specified for IKE group \"$ike_group\" proposal $ike_group_proposal.\n";
+              "$vpn_cfg_err No encryption specified for IKE group " . 
+              "\"$ike_group\" proposal $ike_group_proposal.\n";
           }
           my $ike_group_proposal_hash = $vcVPN->returnValue(
             "ipsec ike-group $ike_group proposal $ike_group_proposal hash");
@@ -183,7 +195,8 @@ if ( $vcVPN->exists('ipsec') ) {
           {
             $error = 1;
             print STDERR
-"VPN configuration error.  No hash specified for IKE group \"$ike_group\" proposal $ike_group_proposal.\n";
+              "$vpn_cfg_err No hash specified for IKE group \"$ike_group\"" .
+              " proposal $ike_group_proposal.\n";
           }
         }
       }
@@ -211,22 +224,26 @@ if ( $vcVPN->exists('ipsec') ) {
     if ( $local_key_file !~ /^\// ) {
       $error = 1;
       print STDERR
-"VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Does not start with a '/'.\n";
+        "$vpn_cfg_err Invalid local RSA key file path \"$local_key_file\"." .
+        "  Does not start with a '/'.\n";
     }
     if ( $local_key_file =~ /[^a-zA-Z0-9\.\-\_\/]/g ) {
       $error = 1;
       print STDERR
-"VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Contains a character that is not alpha-numeric and not '.', '-', '_', '/'.\n";
+        "$vpn_cfg_err Invalid local RSA key file path \"$local_key_file\"." .
+        " Contains a character that is not alpha-numeric and not '.', '-', '_', '/'.\n";
     }
     if ( $local_key_file =~ /\/\//g ) {
       $error = 1;
       print STDERR
-"VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Contains string \"//\".\n";
+        "$vpn_cfg_err Invalid local RSA key file path \"$local_key_file\"." .
+        " Contains string \"//\".\n";
     }
     if ( -d $local_key_file ) {
       $error = 1;
       print STDERR
-"VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Path is a directory rather than a file.\n";
+        "$vpn_cfg_err Invalid local RSA key file path \"$local_key_file\"." .
+        " Path is a directory rather than a file.\n";
     }
 
     if ( $error == 0 ) {
@@ -237,13 +254,17 @@ if ( $vcVPN->exists('ipsec') ) {
         if ( $rc != 0 ) {
           $error = 1;
           print STDERR
-"VPN configuration error.  Could not copy previous local RSA key file \"$running_local_key_file\" to new local RSA key file \"$local_key_file\".  Could not mkdir [$dirpath] $!\n";
+            "$vpn_cfg_err Could not copy previous local RSA key file " .
+            "\"$running_local_key_file\" to new local RSA key file " .
+            "\"$local_key_file\".  Could not mkdir [$dirpath] $!\n";
         } else {
           $rc = system("cp $running_local_key_file $local_key_file");
           if ( $rc != 0 ) {
             $error = 1;
             print STDERR
-"VPN configuration error.  Could not copy previous local RSA key file \"$running_local_key_file\" to new local RSA key file \"$local_key_file\".  $!\n";
+              "$vpn_cfg_err Could not copy previous local RSA key file " .
+              "\"$running_local_key_file\" to new local RSA key file " .
+              "\"$local_key_file\".  $!\n";
           }
         }
       }
@@ -263,7 +284,7 @@ if ( $vcVPN->exists('ipsec') ) {
   my @interfaces = $vcVPN->returnValues('ipsec ipsec-interfaces interface');
   if ( @interfaces == 0 ) {
     $error = 1;
-    print STDERR "VPN configuration error.  No IPSEC interfaces specified.\n";
+    print STDERR "$vpn_cfg_err No IPSEC interfaces specified.\n";
   } else {
 
     # We need to generate an "interfaces=..." entry in the setup section
@@ -322,7 +343,8 @@ if ( $vcVPN->exists('ipsec') ) {
     } elsif ( $nat_traversal ne '' ) {
       $error = 1;
       print STDERR
-"VPN configuration error.  Invalid value \"$nat_traversal\" specified for 'nat-traversal'.  Only \"enable\" or \"disable\" accepted.\n";
+        "$vpn_cfg_err Invalid value \"$nat_traversal\" specified for " .
+        "'nat-traversal'.  Only \"enable\" or \"disable\" accepted.\n";
     }
   }
 
@@ -369,13 +391,15 @@ if ( $vcVPN->exists('ipsec') ) {
   {
     $error = 1;
     print STDERR
-"VPN configuration error.  VPN logging facility has been specified without the VPN logging level.  One may not be specified without the other.\n";
+      "$vpn_cfg_err VPN logging facility has been specified without the VPN" .
+      " logging level.  One may not be specified without the other.\n";
   } elsif ( ( !defined($facility) || $facility eq '' )
     && ( defined($level) && $level ne '' ) )
   {
     $error = 1;
     print STDERR
-"VPN configuration error.  VPN logging level has been specified without the VPN logging facility.  One may not be specified without the other.\n";
+      "$vpn_cfg_err VPN logging level has been specified without the VPN " .
+      "logging facility.  One may not be specified without the other.\n";
   }
 
   if ( defined($level) and ( $level eq "err" ) ) {
@@ -430,7 +454,8 @@ if ( $vcVPN->exists('ipsec') ) {
   my @peers        = $vcVPN->listNodes('ipsec site-to-site peer');
   if ( @peers == 0 && !( $vcVPN->exists('pptp') || $vcVPN->exists('l2tp') ) ) {
     print
-"VPN Warning: IPSec configured but no site-to-site peers or l2tp/pptp remote-users configured\n";
+      "VPN Warning: IPSec configured but no site-to-site peers or l2tp/pptp" .
+      " remote-users configured\n";
   }
   foreach my $peer (@peers) {
     my $peer_ike_group =
@@ -438,11 +463,12 @@ if ( $vcVPN->exists('ipsec') ) {
     if ( !defined($peer_ike_group) || $peer_ike_group eq '' ) {
       $error = 1;
       print STDERR
-"VPN configuration error.  No IKE group specified for peer \"$peer\".\n";
+        "$vpn_cfg_err No IKE group specified for peer \"$peer\".\n";
     } elsif ( !$vcVPN->exists("ipsec ike-group $peer_ike_group") ) {
       $error = 1;
       print STDERR
-"VPN configuration error.  The IKE group \"$peer_ike_group\" specified for peer \"$peer\" has not been configured.\n";
+        "$vpn_cfg_err The IKE group \"$peer_ike_group\" specified for peer " .
+        "\"$peer\" has not been configured.\n";
     }
 
     my $lip = $vcVPN->returnValue("ipsec site-to-site peer $peer local-ip");
@@ -453,7 +479,7 @@ if ( $vcVPN->exists('ipsec') ) {
     if ( !defined($lip) || $lip eq "" ) {
       $error = 1;
       print STDERR
-        "VPN configuration error.  No local-ip specified for peer \"$peer\"\n";
+        "$vpn_cfg_err No local-ip specified for peer \"$peer\"\n";
     } elsif ( $lip ne '0.0.0.0' ) {
 
       # not '0.0.0.0' special case.
@@ -485,7 +511,8 @@ if ( $vcVPN->exists('ipsec') ) {
     if ( @tunnels == 0 ) {
       $error = 1;
       print STDERR
-"VPN configuration error.  No tunnels configured for peer \"$peer\".  At least one tunnel required per peer.\n";
+        "$vpn_cfg_err No tunnels configured for peer \"$peer\".  At least" .
+        " one tunnel required per peer.\n";
     }
     foreach my $tunnel (@tunnels) {
 
@@ -503,11 +530,13 @@ if ( $vcVPN->exists('ipsec') ) {
       if ( !defined($peer_tunnel_esp_group) || $peer_tunnel_esp_group eq '' ) {
         $error = 1;
         print STDERR
-"VPN configuration error.  No ESP group specified for peer \"$peer\" tunnel $tunnel.\n";
+          "$vpn_cfg_err No ESP group specified for peer \"$peer\" " .
+          "tunnel $tunnel.\n";
       } elsif ( !$vcVPN->exists("ipsec esp-group $peer_tunnel_esp_group") ) {
         $error = 1;
         print STDERR
-"VPN configuration error.  The ESP group \"$peer_tunnel_esp_group\" specified for peer \"$peer\" tunnel $tunnel has not been configured.\n";
+          "$vpn_cfg_err The ESP group \"$peer_tunnel_esp_group\" specified " .
+          "for peer \"$peer\" tunnel $tunnel has not been configured.\n";
       }
 
       my $conn_head = "\nconn peer-$peer-tunnel-$tunnel\n";
@@ -520,7 +549,7 @@ if ( $vcVPN->exists('ipsec') ) {
       if ( defined($lip) ) {
         if ( $lip eq '0.0.0.0' ) {
           if ( !defined($authid) ) {
-            print STDERR 'VPN configuration error.  '
+            print STDERR "$vpn_cfg_err "
               . 'The "authentication id" must be '
               . 'configured if local IP is 0.0.0.0.' . "\n";
             $error = 1;
@@ -583,7 +612,9 @@ if ( $vcVPN->exists('ipsec') ) {
         if ( defined($remotesubnet) && $remotesubnet ne "" ) {
           $error = 1;
           print STDERR
-"VPN configuration error.  The 'remote-subnet' has been specified while 'allow-nat-networks' has been enabled for peer \"$peer\" tunnel $tunnel.  Both not allowed at once.\n";
+            "$vpn_cfg_err The 'remote-subnet' has been specified while " .
+            "'allow-nat-networks' has been enabled for peer \"$peer\" tunnel " .
+            "$tunnel.  Both not allowed at once.\n";
         }
 
         my @allowed_network =
@@ -591,7 +622,9 @@ if ( $vcVPN->exists('ipsec') ) {
         if ( @allowed_network == 0 ) {
           $error = 1;
           print STDERR
-"VPN configuration error.  While 'allow-nat-networks' has been enabled for peer \"$peer\" tunnel $tunnel, no global allowed NAT networks have been configured.\n";
+            "$vpn_cfg_err While 'allow-nat-networks' has been enabled for peer" .
+            " \"$peer\" tunnel $tunnel, no global allowed NAT networks have" .
+            " been configured.\n";
         }
 
         $rightsubnet = "%priv";
@@ -601,7 +634,9 @@ if ( $vcVPN->exists('ipsec') ) {
           if ( defined($remotesubnet) && $remotesubnet ne "" ) {
             $error = 1;
             print STDERR
-"VPN configuration error.  The 'remote-subnet' has been specified while 'allow-public-networks' has been enabled for peer \"$peer\" tunnel $tunnel.  Both not allowed at once.\n";
+              "$vpn_cfg_err The 'remote-subnet' has been specified while " .
+              "'allow-public-networks' has been enabled for peer \"$peer\" " .
+              "tunnel $tunnel.  Both not allowed at once.\n";
           }
           $rightsubnet .= ",%no";
         }
@@ -661,7 +696,8 @@ if ( $vcVPN->exists('ipsec') ) {
               } elsif ( $dh_group ne '' ) {
                 $error = 1;
                 print STDERR
-"VPN configuration error.  Invalid 'dh-group' $dh_group specified for peer \"$peer\" tunnel $tunnel.  Only 2 or 5 accepted.\n";
+                  "$vpn_cfg_err Invalid 'dh-group' $dh_group specified for " .
+                  "peer \"$peer\" tunnel $tunnel.  Only 2 or 5 accepted.\n";
               }
             }
           }
@@ -779,7 +815,8 @@ if ( $vcVPN->exists('ipsec') ) {
           if ( defined $leftsubnet or defined $rightsubnet ) {
             $error = 1;
             print STDERR
-"VPN configuration error.  Can not use local-subnet or remote-subnet when using transport mode\n";
+              "$vpn_cfg_err Can not use local-subnet or remote-subnet when " .
+              "using transport mode\n";
           }
         }
         $genout .= "\ttype=$espmode\n";
@@ -821,14 +858,15 @@ if ( $vcVPN->exists('ipsec') ) {
       if ( !defined($auth_mode) || $auth_mode eq '' ) {
         $error = 1;
         print STDERR
-"VPN configuration error.  No authentication mode for peer \"$peer\" specified.\n";
+          "$vpn_cfg_err No authentication mode for peer \"$peer\" specified.\n";
       } elsif ( defined($auth_mode) && ( $auth_mode eq 'pre-shared-secret' ) ) {
         my $psk = $vcVPN->returnValue(
           "ipsec site-to-site peer $peer authentication pre-shared-secret");
         if ( !defined($psk) || $psk eq '' ) {
           $error = 1;
           print STDERR
-"VPN configuration error.  No 'pre-shared-secret' specified for peer \"$peer\" while 'pre-shared-secret' authentication mode is specified.\n";
+            "$vpn_cfg_err No 'pre-shared-secret' specified for peer \"$peer\"" .
+            " while 'pre-shared-secret' authentication mode is specified.\n";
         }
 
         my $right;
@@ -840,7 +878,7 @@ if ( $vcVPN->exists('ipsec') ) {
           if ( defined($wildcard_psk) ) {
             if ( $wildcard_psk ne $psk ) {
               $error = 1;
-              print STDERR 'VPN configuration error.  '
+              print STDERR "$vpn_cfg_err  "
                 . 'All dynamic peers must have the same '
                 . "'pre-shared-secret'.\n";
             }
@@ -865,10 +903,12 @@ if ( $vcVPN->exists('ipsec') ) {
           $error = 1;
           if ( -e $local_key_file ) {
             print STDERR
-"VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  Filesystem read permission absent.\n";
+              "$vpn_cfg_err Invalid local RSA key file path " .
+              "\"$local_key_file\".  Filesystem read permission absent.\n";
           } else {
             print STDERR
-"VPN configuration error.  Invalid local RSA key file path \"$local_key_file\".  File absent.  Use the 'vpn rsa-key generate' command to create.\n";
+              "$vpn_cfg_err Invalid local RSA key file path \"$local_key_file\"." .
+              " File absent.  Use the 'vpn rsa-key generate' command to create.\n";
           }
         }
 
@@ -877,7 +917,8 @@ if ( $vcVPN->exists('ipsec') ) {
         if ( !defined($local_key) || $local_key eq "" ) {
           $error = 1;
           print STDERR
-"VPN configuration error.  Unable to determine local public key from local key file \"$local_key_file\" for peer \"$peer\".\n";
+            "$vpn_cfg_err Unable to determine local public key from local key" .
+            " file \"$local_key_file\" for peer \"$peer\".\n";
         } else {
           $genout .= "\tleftrsasigkey=$local_key\n";
         }
@@ -887,14 +928,16 @@ if ( $vcVPN->exists('ipsec') ) {
         if ( !defined($rsa_key_name) || $rsa_key_name eq "" ) {
           $error = 1;
           print STDERR
-"VPN configuration error.  No 'rsa-key-name' specified for peer \"$peer\" while 'rsa' authentication mode is specified.\n";
+            "$vpn_cfg_err No 'rsa-key-name' specified for peer \"$peer\"" .
+            " while 'rsa' authentication mode is specified.\n";
         } else {
           my $remote_key =
             $vcVPN->returnValue("rsa-keys rsa-key-name $rsa_key_name rsa-key");
           if ( !defined($remote_key) || $remote_key eq "" ) {
             $error = 1;
             print STDERR
-"VPN configuration error.  No remote key configured for rsa key name \"$rsa_key_name\" that is specified for peer \"$peer\".\n";
+              "$vpn_cfg_err No remote key configured for rsa key name " .
+              "\"$rsa_key_name\" that is specified for peer \"$peer\".\n";
           } else {
             $genout .= "\trightrsasigkey=$remote_key\n";
           }
@@ -903,7 +946,8 @@ if ( $vcVPN->exists('ipsec') ) {
       } else {
         $error = 1;
         print STDERR
-"VPN configuration error.  Unknown authentication mode \"$auth_mode\" for peer \"$peer\" specified.\n";
+          "$vpn_cfg_err Unknown authentication mode \"$auth_mode\" for peer " .
+          "\"$peer\" specified.\n";
       }
 
       #
