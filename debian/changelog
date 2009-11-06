@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.17) unstable; urgency=low
+
+  * use vyatta openswan
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Fri, 06 Nov 2009 15:05:37 -0800
+
 vyatta-cfg-vpn (0.12.16) unstable; urgency=low
 
   [ Robert Bays ]
