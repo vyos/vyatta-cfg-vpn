@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.18) unstable; urgency=low
+
+  * dependency update
+
+ -- Michael Larson <slioch@slioch.vyatta.com>  Fri, 13 Nov 2009 14:13:54 -0800
+
 vyatta-cfg-vpn (0.12.17) unstable; urgency=low
 
   * use vyatta openswan
