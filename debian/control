@@ -8,7 +8,7 @@ Standards-Version: 3.7.2
 Package: vyatta-cfg-vpn
 Architecture: all
 Depends: perl,
- vyatta-cfg,
+ vyatta-cfg (>= 0.15.33),
  vyatta-bash | bash (>= 3.1),
  vyatta-openswan
 Description: Vyatta VPN configuration templates/scripts
