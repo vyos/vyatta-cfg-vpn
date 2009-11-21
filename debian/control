@@ -10,6 +10,6 @@ Architecture: all
 Depends: perl,
  vyatta-cfg (>= 0.15.33),
  vyatta-bash | bash (>= 3.1),
- vyatta-openswan
+ vyatta-ipsec
 Description: Vyatta VPN configuration templates/scripts
  Vyatta VPN configuration templates and scripts.
