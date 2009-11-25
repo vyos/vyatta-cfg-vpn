@@ -381,34 +381,6 @@ if ( $vcVPN->exists('ipsec') ) {
     $genout .= "\thidetos=yes\n";
   }
 
-  #
-  # Logging
-  #
-  my $facility = $vcVPN->returnValue('ipsec logging facility');
-  my $level    = $vcVPN->returnValue('ipsec logging level');
-  if ( ( defined($facility) && $facility ne '' )
-    && ( !defined($level) || $level eq '' ) )
-  {
-    $error = 1;
-    print STDERR
-      "$vpn_cfg_err VPN logging facility has been specified without the VPN" .
-      " logging level.  One may not be specified without the other.\n";
-  } elsif ( ( !defined($facility) || $facility eq '' )
-    && ( defined($level) && $level ne '' ) )
-  {
-    $error = 1;
-    print STDERR
-      "$vpn_cfg_err VPN logging level has been specified without the VPN " .
-      "logging facility.  One may not be specified without the other.\n";
-  }
-
-  if ( defined($level) and ( $level eq "err" ) ) {
-    $level = "error";    # This allows the cli to be consistent with syslog.
-  }
-  if ( defined($facility) and defined($level) ) {
-    $genout .= "\tsyslog=$facility.$level\n";
-  }
-
   my @logmodes = $vcVPN->returnValues('ipsec logging log-modes');
   if ( @logmodes > 0 ) {
     my $debugmode = '';
@@ -424,16 +396,6 @@ if ( $vcVPN->exists('ipsec') ) {
       }
     }
     $genout .= "\tplutodebug=\"$debugmode\"\n";
-  }
-
-  $genout .= "\tnhelpers=5\n";
-  $genout .= "\tplutowait=yes\n";
-
-  # Set plutoopts:
-  # Disable uniqreqids?
-  #
-  if ( $vcVPN->exists('ipsec disable-uniqreqids') ) {
-    $genout .= "\tplutoopts=--disable-uniqreqids\n";
   }
 
   #
@@ -452,9 +414,9 @@ if ( $vcVPN->exists('ipsec') ) {
   #
   my $wildcard_psk = undef;
   my @peers        = $vcVPN->listNodes('ipsec site-to-site peer');
-  if ( @peers == 0 && !( $vcVPN->exists('pptp') || $vcVPN->exists('l2tp') ) ) {
+  if ( @peers == 0 && !($vcVPN->exists('l2tp')) ) {
     print
-      "VPN Warning: IPSec configured but no site-to-site peers or l2tp/pptp" .
+      "VPN Warning: IPSec configured but no site-to-site peers or l2tp" .
       " remote-users configured\n";
   }
   foreach my $peer (@peers) {
@@ -702,7 +664,7 @@ if ( $vcVPN->exists('ipsec') ) {
             }
           }
         }
-        $genout .= "\n";
+        $genout .= "!\n";
 
         my $t_ikelifetime =
           $vcVPN->returnValue("ipsec ike-group $ike_group lifetime");
@@ -710,19 +672,6 @@ if ( $vcVPN->exists('ipsec') ) {
           $ikelifetime = $t_ikelifetime;
         }
         $genout .= "\tikelifetime=$ikelifetime" . "s\n";
-
-        #
-        # Check for agressive-mode
-        #
-        my $aggressive_mode =
-          $vcVPN->returnValue("ipsec ike-group $ike_group aggressive-mode");
-        if ( defined($aggressive_mode) ) {
-          if ( $aggressive_mode eq 'enable' ) {
-            $genout .= "\taggrmode=yes\n";
-          } else {
-            $genout .= "\taggrmode=no\n";
-          }
-        }
 
         #
         # Check for Dead Peer Detection DPD
@@ -780,7 +729,7 @@ if ( $vcVPN->exists('ipsec') ) {
             $genout .= "$encryption-$hash";
           }
         }
-        $genout .= "\n";
+        $genout .= "!\n";
 
         my $t_esplifetime =
           $vcVPN->returnValue("ipsec esp-group $esp_group lifetime");
@@ -999,7 +948,7 @@ if ( $error == 0 ) {
     }
     if ( $error == 0 ) {
       if ( is_vpn_running() ) {
-        vpn_exec( 'ipsec setup --stop', 'stop ipsec' );
+        vpn_exec( 'ipsec stop', 'stop ipsec' );
       }
       if ( !enableICMP('1') ) {
         $error = 1;
@@ -1034,7 +983,7 @@ if ( $error == 0 ) {
           # Full restart required
           #
           write_config( $genout, $config_file, $genout_secrets, $secrets_file );
-          vpn_exec( 'ipsec setup --restart', 'restart ipsec' );
+          vpn_exec( 'ipsec restart', 'restart ipsec' );
         } else {
           my @conn_down;
           my @conn_delete;
@@ -1045,29 +994,37 @@ if ( $error == 0 ) {
             \@conn_add, \@conn_up );
 
           foreach my $conn (@conn_down) {
-            vpn_exec( "ipsec auto --down $conn",
+            vpn_exec( "ipsec down $conn",
               "bring down ipsec connection $conn" );
           }
           foreach my $conn (@conn_delete) {
-            vpn_exec( "ipsec auto --delete $conn",
+            vpn_exec( "ipsec whack --delete --name $conn",
               "delete ipsec connection $conn" );
           }
 
           write_config( $genout, $config_file, $genout_secrets, $secrets_file );
-          vpn_exec( 'ipsec auto --rereadall', 're-read ipsec configuration' );
+          vpn_exec( 'ipsec rereadall', 're-read ipsec configuration' );
 
           foreach my $conn (@conn_replace) {
             vpn_exec(
-              "ipsec auto --replace $conn",
-              "replace ipsec connection $conn"
+              "ipsec down $conn",
+              "down ipsec connection $conn"
+            );
+            vpn_exec(
+              "ipsec whack --delete --name $conn",
+              "delete ipsec connection $conn"
+            );
+            vpn_exec(
+              "ipsec route $conn",
+              "add ipsec policy for connection $conn"
             );
           }
           foreach my $conn (@conn_add) {
-            vpn_exec( "ipsec auto --add $conn", "add ipsec connection $conn" );
+            vpn_exec( "ipsec route $conn", "add ipsec policy for connection $conn" );
           }
           foreach my $conn (@conn_up) {
             vpn_exec(
-              "ipsec auto --asynchronous --up $conn",
+              "ipsec whack --initiate --name $conn --asynchronous",
               "bring up replaced ipsec connection $conn"
             );
           }
@@ -1075,7 +1032,7 @@ if ( $error == 0 ) {
         }
       } else {
         write_config( $genout, $config_file, $genout_secrets, $secrets_file );
-        vpn_exec( 'ipsec setup --start', 'start ipsec' );
+        vpn_exec( 'ipsec start', 'start ipsec' );
       }
     }
   }
@@ -1263,7 +1220,7 @@ sub vpn_exec {
     print ${logf} "Output:\n$cmd_out\n---\n";
     print ${logf} "Return code: $rval\n";
     if ($rval) {
-      if ( $command =~ /^ipsec auto --asynchronous --up/
+      if ( $command =~ /^ipsec.*--asynchronous$/
         && ( $rval == 104 || $rval == 29 ) )
       {
         print ${logf} "OK when bringing up VPN connection\n";
