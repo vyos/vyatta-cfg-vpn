@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.20) unstable; urgency=low
+
+  * First pass code changes to vyatta-cfg-vpn for migration to
+    strongswan :
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 24 Nov 2009 21:56:32 -0800
+
 vyatta-cfg-vpn (0.12.19) unstable; urgency=low
 
   * vyatta-cfg-vpn depends on vyatta-ipsec provided by vyatta-strongswan
