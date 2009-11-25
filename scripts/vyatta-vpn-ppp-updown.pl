@@ -161,10 +161,10 @@ my ($cmd, $rc);
 $cmd = "mv $tmp_conf $conf_file";
 $rc =system($cmd);
 logit("$cmd = $rc");
-$cmd = "/usr/sbin/ipsec setup --start 2> /dev/null";
+$cmd = "/usr/sbin/ipsec start 2> /dev/null";
 $rc =system($cmd);
 logit("$cmd = $rc");
-$cmd = "/usr/sbin/ipsec auto --rereadall 2> /dev/null";
+$cmd = "/usr/sbin/ipsec rereadall 2> /dev/null";
 $rc = system($cmd);
 logit("$cmd = $rc");
 
