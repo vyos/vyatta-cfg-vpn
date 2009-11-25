@@ -452,10 +452,9 @@ if ( $vcVPN->exists('ipsec') ) {
   #
   my $wildcard_psk = undef;
   my @peers        = $vcVPN->listNodes('ipsec site-to-site peer');
-  if ( @peers == 0 && !( $vcVPN->exists('pptp') || $vcVPN->exists('l2tp') ) ) {
-    print
-      "VPN Warning: IPSec configured but no site-to-site peers or l2tp/pptp" .
-      " remote-users configured\n";
+  if ( @peers == 0 && !($vcVPN->exists('l2tp')) ) {
+    print "VPN Warning: IPSec configured but no site-to-site peers or l2tp" .
+          " remote-users configured\n";
   }
   foreach my $peer (@peers) {
     my $peer_ike_group =
