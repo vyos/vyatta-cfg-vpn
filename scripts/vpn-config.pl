@@ -948,7 +948,7 @@ if ( $error == 0 ) {
     }
     if ( $error == 0 ) {
       if ( is_vpn_running() ) {
-        vpn_exec( 'ipsec stop', 'stop ipsec' );
+        vpn_exec( 'ipsec stop >&/dev/null', 'stop ipsec' );
       }
       if ( !enableICMP('1') ) {
         $error = 1;
@@ -961,7 +961,9 @@ if ( $error == 0 ) {
       $error = 1;
       print STDERR "VPN commit error.  Unable to disable ICMP redirects.\n";
     }
-
+    
+   write_config( $genout, $config_file, $genout_secrets, $secrets_file );
+   
    # Assumming that if there was a local IP missmatch and clustering is enabled,
    # then the clustering scripts will take care of starting the VPN daemon.
     if ($clustering_ip) {
@@ -969,70 +971,16 @@ if ( $error == 0 ) {
 # If the local-ip is provided by clustering, then just write out the configuration,
 # but do not start the VPN daemon
 
-      write_config( $genout, $config_file, $genout_secrets, $secrets_file );
-
       vpn_log(
 "Wrote out configuration to files '$config_file' and '$secrets_file'.  VPN/ipsec daemons not started due to clustering.\n"
       );
       print "Clustering configured - not restarting ipsec\n";
     } else {
       if ( is_vpn_running() ) {
-        if ( isFullRestartRequired($vcVPN) ) {
-
-          #
-          # Full restart required
-          #
-          write_config( $genout, $config_file, $genout_secrets, $secrets_file );
-          vpn_exec( 'ipsec restart', 'restart ipsec' );
-        } else {
-          my @conn_down;
-          my @conn_delete;
-          my @conn_replace;
-          my @conn_add;
-          my @conn_up;
-          partial_restart( $vcVPN, \@conn_down, \@conn_delete, \@conn_replace,
-            \@conn_add, \@conn_up );
-
-          foreach my $conn (@conn_down) {
-            vpn_exec( "ipsec down $conn",
-              "bring down ipsec connection $conn" );
-          }
-          foreach my $conn (@conn_delete) {
-            vpn_exec( "ipsec whack --delete --name $conn",
-              "delete ipsec connection $conn" );
-          }
-
-          write_config( $genout, $config_file, $genout_secrets, $secrets_file );
-          vpn_exec( 'ipsec rereadall', 're-read ipsec configuration' );
-
-          foreach my $conn (@conn_replace) {
-            vpn_exec(
-              "ipsec down $conn",
-              "down ipsec connection $conn"
-            );
-            vpn_exec(
-              "ipsec whack --delete --name $conn",
-              "delete ipsec connection $conn"
-            );
-            vpn_exec(
-              "ipsec route $conn",
-              "add ipsec policy for connection $conn"
-            );
-          }
-          foreach my $conn (@conn_add) {
-            vpn_exec( "ipsec route $conn", "add ipsec policy for connection $conn" );
-          }
-          foreach my $conn (@conn_up) {
-            vpn_exec(
-              "ipsec whack --initiate --name $conn --asynchronous",
-              "bring up replaced ipsec connection $conn"
-            );
-          }
-
-        }
+        vpn_exec( 'ipsec rereadall >&/dev/null', 're-read secrets and certs' );
+        vpn_exec( 'ipsec update >&/dev/null', 'update changes to ipsec.conf' );
       } else {
-        write_config( $genout, $config_file, $genout_secrets, $secrets_file );
-        vpn_exec( 'ipsec start', 'start ipsec' );
+        vpn_exec( 'ipsec start >&/dev/null', 'start ipsec' );
       }
     }
   }
