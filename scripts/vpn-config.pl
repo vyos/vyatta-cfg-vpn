@@ -907,6 +907,9 @@ if ( $vcVPN->exists('ipsec') ) {
       } else {
         $genout .= "\tauto=start\n";
       }
+      $conn_head =~ s/\n//;
+      $genout .= "#$conn_head"; # to identify end of connection definition
+                                # used by clear vpn op-mode command
     }
   }
 } else {
