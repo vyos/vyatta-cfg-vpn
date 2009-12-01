@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.22) unstable; urgency=low
+
+  * added required keyword to help text.
+
+ -- Michael Larson <slioch@slioch.vyatta.com>  Mon, 30 Nov 2009 16:45:35 -0800
+
 vyatta-cfg-vpn (0.12.21) unstable; urgency=low
 
   * pptp config check not needed when vpn ipsec is configured
