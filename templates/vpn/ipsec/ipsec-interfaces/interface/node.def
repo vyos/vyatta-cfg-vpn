@@ -1,4 +1,4 @@
 multi:
 type: txt
-help: Set IPsec interface
+help: Set IPsec interface [REQUIRED]
 allowed: ${vyatta_sbindir}/vyatta-interfaces.pl --show all
