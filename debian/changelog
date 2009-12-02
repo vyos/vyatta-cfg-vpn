@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.24) unstable; urgency=low
+
+  * skipping used tags
+  
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 02 Dec 2009 10:57:39 -0800
+
 vyatta-cfg-vpn (0.12.22) unstable; urgency=low
 
   * added required keyword to help text.
