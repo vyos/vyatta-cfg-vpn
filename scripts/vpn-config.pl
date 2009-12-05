@@ -412,7 +412,6 @@ if ( $vcVPN->exists('ipsec') ) {
   #
   # Connection configurations
   #
-  my $wildcard_psk = undef;
   my @peers        = $vcVPN->listNodes('ipsec site-to-site peer');
   if ( @peers == 0 && !($vcVPN->exists('l2tp')) ) {
     print
@@ -521,6 +520,7 @@ if ( $vcVPN->exists('ipsec') ) {
           }
         } else {
           $genout .= "\tleft=$lip\n";
+          $genout .= "\tleftid=$authid\n" if defined $authid;
         }
       }
 
@@ -824,27 +824,12 @@ if ( $vcVPN->exists('ipsec') ) {
           or ( $peer =~ /^\@/ ) )
         {
           $right = '%any';
-          if ( defined($wildcard_psk) ) {
-            if ( $wildcard_psk ne $psk ) {
-              $error = 1;
-              print STDERR "$vpn_cfg_err  "
-                . 'All dynamic peers must have the same '
-                . "'pre-shared-secret'.\n";
-            }
-          } else {
-            $wildcard_psk = $psk;
-          }
         } else {
           $right = $peer;
         }
-        if ( defined $lip ) {
-          my $index1 =
-            ( $lip eq '0.0.0.0' && defined($authid) ) ? "$authid" : $lip;
-          $genout_secrets .= "$index1 $right : PSK \"$psk\"\n";
-        }
-        if ( defined($lip) and defined($authremoteid) ) {
-          $genout_secrets .= "$lip $authremoteid : PSK \"$psk\"\n";
-        }
+        my $index1 = ( defined($authid) ) ? "$authid" : $lip;
+        my $index2 = ( defined($authremoteid) ) ? "$authremoteid" : $right;
+        $genout_secrets .= "$index1 $index2 : PSK \"$psk\"\n";
         $genout .= "\tauthby=secret\n";
       } elsif ( defined($auth_mode) && $auth_mode eq 'rsa' ) {
 
