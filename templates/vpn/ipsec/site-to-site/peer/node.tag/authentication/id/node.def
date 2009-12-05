@@ -1,6 +1,6 @@
 help: Set ID for peer authentication
 type: txt
-syntax:expression: pattern $VAR(@) "^@[a-zA-Z_][a-zA-Z0-9_-]*$"
+syntax:expression: pattern $VAR(@) "^@[[:alpha:]_]+(\.[[:alnum:]][-_[:alnum:]]*)*$"
                      ; "invalid ID \"$VAR(@)\""
 comp_help:Possible completions:
   @<text>       ID used for peer authentication
