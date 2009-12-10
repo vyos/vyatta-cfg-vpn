@@ -277,6 +277,7 @@ if ( $vcVPN->exists('ipsec') ) {
   $genout .= "version 2.0\n";
   $genout .= "\n";
   $genout .= "config setup\n";
+  $genout .= "\tcharonstart=no\n"; # no need for charon unless we have ikev2
 
   #
   # Interfaces
