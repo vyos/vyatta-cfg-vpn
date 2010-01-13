@@ -1,3 +1,17 @@
+vyatta-cfg-vpn (0.12.25) unstable; urgency=low
+
+  * vyatta-cfg-vpn depends on vyatta-ipsec provided by vyatta-strongswan
+  * First pass code changes to vyatta-cfg-vpn for migration to
+    strongswan :
+  * no need to maintain state of connections and take state-specific
+    actions for
+  * add comment to identify end of connection description
+  * * remove extraneous unused code
+  * Do not start IKEv2 daemon for now
+  * use leftsourceip to add route to remote subnet
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Tue, 12 Jan 2010 17:20:05 -0800
+
 vyatta-cfg-vpn (0.12.24) unstable; urgency=low
 
   * skipping used tags
