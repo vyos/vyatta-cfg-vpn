@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.26) unstable; urgency=low
+
+  * bump up ipsec version
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 14 Jan 2010 12:06:23 -0800
+
 vyatta-cfg-vpn (0.12.25) unstable; urgency=low
 
   * vyatta-cfg-vpn depends on vyatta-ipsec provided by vyatta-strongswan
