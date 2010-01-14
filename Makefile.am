@@ -12,7 +12,7 @@ sbin_SCRIPTS += scripts/vyatta-vpn-ppp-updown.pl
 
 share_perl5_DATA = lib/Vyatta/VPN/Util.pm
 
-curver_DATA = cfg-version/ipsec@1
+curver_DATA = cfg-version/ipsec@2
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
