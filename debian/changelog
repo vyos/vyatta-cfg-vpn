@@ -1,3 +1,11 @@
+vyatta-cfg-vpn (0.12.28) unstable; urgency=low
+
+  * remove dead code. we use 'ipsec update' to update changes to
+    connections now
+  * perltidy vpn-config.pl
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Thu, 28 Jan 2010 15:46:23 -0800
+
 vyatta-cfg-vpn (0.12.27) unstable; urgency=low
 
   * add back CLI node for disabling uniqreqid
