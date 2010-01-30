@@ -372,15 +372,8 @@ if ( $vcVPN->exists('ipsec') ) {
   }
 
   #
-  # copy-tos
+  # log-mode
   #
-  my $copy_tos = $vcVPN->returnValue('ipsec copy-tos');
-  if ( defined($copy_tos) && $copy_tos eq 'enable' ) {
-    $genout .= "\thidetos=no\n";
-  } else {
-    $genout .= "\thidetos=yes\n";
-  }
-
   my @logmodes = $vcVPN->returnValues('ipsec logging log-modes');
   if ( @logmodes > 0 ) {
     my $debugmode = '';
