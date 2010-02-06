@@ -617,7 +617,7 @@ if ( $vcVPN->exists('ipsec') ) {
             . " been configured.\n";
         }
 
-        $rightsubnet = "%priv";
+        $rightsubnet = "vhost:%priv";
         if ( defined($allow_public_networks)
           && $allow_public_networks eq "enable" )
         {
@@ -642,6 +642,10 @@ if ( $vcVPN->exists('ipsec') ) {
         # not adding vpn route if remote subnet is 0.0.0.0/0
         # user should add a route [default/static] manually
         $leftsourceip = undef if $rightsubnet eq '0.0.0.0/0';
+	if ($rightsubnet =~ /vhost:%priv/) {
+	  # can't add route when rightsubnet is not specific
+          $leftsourceip = undef;
+	}
       } else {
         $leftsourceip =
           undef;    # no need for vpn route if rightsubnet not defined
