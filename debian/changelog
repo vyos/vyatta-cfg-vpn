@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.31) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Wed, 17 Feb 2010 16:13:41 -0800
+
 vyatta-cfg-vpn (0.12.30) unstable; urgency=low
 
   * 1. use correct notation to represent private,public networks
