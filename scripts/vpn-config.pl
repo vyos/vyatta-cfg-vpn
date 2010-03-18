@@ -818,6 +818,12 @@ if ( $vcVPN->exists('ipsec') ) {
         if ( defined($pfs) ) {
           if ( $pfs eq 'enable' ) {
             $genout .= "\tpfs=yes\n";
+          } elsif ( $pfs eq 'dh-group2' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=modp1024\n";
+          } elsif ( $pfs eq 'dh-group5' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=modp1536\n";
           } else {
             $genout .= "\tpfs=no\n";
           }

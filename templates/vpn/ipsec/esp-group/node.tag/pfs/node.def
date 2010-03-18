@@ -1,7 +1,9 @@
-help: Set ESP PFS
-type: txt 
+help: Set ESP Perfect Forward Secrecy
+type: txt
 default: "enable"
-syntax:expression: $VAR(@) in "enable", "disable"; "must be enable or disable"
+syntax:expression: $VAR(@) in "enable", "disable", "dh-group2", "dh-group5"; "must be enable, disable, dh-group2 or dh-group5"
 comp_help: possible completions
- enable    	     Set Perfect Forward Secrecy enabled (default)
- disable	     Set Perfect Forward Secrecy disabled
+ enable              Enable PFS. Use ike-group's dh-group (default)
+ dh-group2           Enable PFS. Use Diffie-Hellman group 2
+ dh-group5           Enable PFS. Use Diffie-Hellman group 5
+ disable             Disable PFS
