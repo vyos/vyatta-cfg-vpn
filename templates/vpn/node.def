@@ -1,12 +1,8 @@
 priority: 900
 help: Configure Virtual Private Network (VPN)
-end:expression: "sudo /opt/vyatta/sbin/vpn-config.pl \
-              --config_file='/etc/ipsec.conf' \
+end:sudo /opt/vyatta/sbin/vpn-config.pl \
+	      --config_file='/etc/ipsec.conf' \
               --secrets_file='/etc/ipsec.secrets' \
-              --init_script='/etc/init.d/ipsec' && \
-      if [ -x /opt/vyatta/sbin/vyatta-update-l2tp.pl ]; then \
-        sudo /opt/vyatta/sbin/vyatta-update-l2tp.pl; \
-      fi && \
-      if [ -x /opt/vyatta/sbin/vyatta-update-pptp.pl ]; then \
-        sudo /opt/vyatta/sbin/vyatta-update-pptp.pl; \
-      fi"
+              --init_script='/etc/init.d/ipsec' || exit 1
+        sudo /opt/vyatta/sbin/vyatta-update-l2tp.pl || exit 1
+        sudo /opt/vyatta/sbin/vyatta-update-pptp.pl || exit 1
