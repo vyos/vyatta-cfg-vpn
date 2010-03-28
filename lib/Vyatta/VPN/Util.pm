@@ -23,14 +23,15 @@
 #
 
 package Vyatta::VPN::Util;
+use strict;
+use warnings;
+
 our @EXPORT = qw(rsa_get_local_key_file LOCAL_KEY_FILE_DEFAULT rsa_get_local_pubkey
                  is_vpn_running vpn_debug enableICMP);
 use base qw(Exporter);
 
-use strict;
-use warnings;
-
 use Vyatta::Config;
+use POSIX qw(strftime);
 
 use constant LOCAL_KEY_FILE_DEFAULT 
     => '/opt/vyatta/etc/config/ipsec.d/rsa-keys/localhost.key';
@@ -61,13 +62,10 @@ sub rsa_get_local_key_file {
 sub rsa_get_local_pubkey {
     my ($file) = @_;
     
-    unless ( -r $file) {
-	return 0;
-    }
-    
-    open(DAT, $file) || die("Could not open file $file!");
-    my @raw_data=<DAT>;
-    close(DAT);
+    open(my $dat, '<', $file) 
+	or return 0;
+    my @raw_data=<$dat>;
+    close($dat);
     
     foreach my $line (@raw_data) {
 	my $file_pubkey;
@@ -79,23 +77,24 @@ sub rsa_get_local_pubkey {
 }
 
 sub vpn_debug {
-    use POSIX;
     my $timestamp = strftime("%Y%m%d-%H:%M.%S", localtime);
-    open LOG, ">>", "/var/log/vpn-debug.log";
-    print LOG "$timestamp: ", @_ , "\n";
-    close LOG;
+
+    open my $log, '>>', "/var/log/vpn-debug.log"
+	or return;
+    print {$log} "$timestamp: ", @_ , "\n";
+    close $log;
 }
 
 sub vpn_log {
     my ($msg) = @_;
     
-    open LOG, ">> /tmp/ipsec.log";
+    open my $log, '>>', "/tmp/ipsec.log"
+	or return;
     
-    use POSIX;
     my $timestamp = strftime("%Y-%m-%d %H:%M.%S", localtime);
     
-    print LOG "$timestamp\nLog: $msg\n";
-    close LOG;
+    print {$log} "$timestamp\nLog: $msg\n";
+    close $log;
 }
 
 sub vpn_system {
@@ -112,18 +111,20 @@ sub vpn_system {
 sub enableICMP {
     my ($enable) = @_;
     
-    opendir DIR, '/proc/sys/net/ipv4/conf/' or return undef;
-    my @nodes = grep !/^\./, readdir DIR;
-    closedir DIR;
+    opendir my $dir, '/proc/sys/net/ipv4/conf/' 
+	or return;
+    my @nodes = grep !/^\./, readdir $dir;
+    closedir $dir;
     
     foreach my $node (@nodes) {
-	my $OUT;
-	open OUT, ">/proc/sys/net/ipv4/conf/$node/accept_redirects" or return undef;
-	print OUT $enable;
-	close OUT;
-	open OUT, ">/proc/sys/net/ipv4/conf/$node/send_redirects" or return undef;
-	print OUT $enable;
-	close OUT;
+	open my $out, '>', "/proc/sys/net/ipv4/conf/$node/accept_redirects"
+	    or return;
+	print {$out} $enable;
+	close $out;
+	open $out, '>', "/proc/sys/net/ipv4/conf/$node/send_redirects" 
+	    or return;
+	print {$out} $enable;
+	close $out;
     }
     return 1;
 }
