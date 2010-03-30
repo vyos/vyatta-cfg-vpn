@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.33) unstable; urgency=low
+
+  * Replace old form (expression) in end: tag
+  * Fix perl critic warnings
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Tue, 30 Mar 2010 08:33:14 -0700
+
 vyatta-cfg-vpn (0.12.32) unstable; urgency=low
 
   * Fix Bug 5087 add support to specify PFS group when PFS is enabled
