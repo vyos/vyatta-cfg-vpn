@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.34) unstable; urgency=low
+
+  * Fix Bug 5500  Unable to establish a VPN connection from a remote
+    peer with a
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 31 Mar 2010 15:36:41 -0700
+
 vyatta-cfg-vpn (0.12.33) unstable; urgency=low
 
   * Replace old form (expression) in end: tag
