@@ -515,21 +515,13 @@ if ( $vcVPN->exists('ipsec') ) {
       #
       if ( defined($lip) ) {
         if ( $lip eq '0.0.0.0' ) {
-          if ( !defined($authid) ) {
-            print STDERR "$vpn_cfg_err "
-              . 'The "authentication id" must be '
-              . 'configured if local IP is 0.0.0.0.' . "\n";
-            $error = 1;
-          } else {
-            $genout .= "\tleft=%defaultroute\n";
-            $genout .= "\tleftid=$authid\n";
-            $leftsourceip = "\tleftsourceip=%defaultroute\n";
-          }
+          $genout .= "\tleft=%defaultroute\n";
+          # no need for leftsourceip as a defaultroute is must for this to work
         } else {
           $genout .= "\tleft=$lip\n";
-          $genout .= "\tleftid=$authid\n" if defined $authid;
           $leftsourceip = "\tleftsourceip=$lip\n";
         }
+        $genout .= "\tleftid=$authid\n" if defined $authid;
       }
 
       my $any_peer = 0;
@@ -876,7 +868,24 @@ if ( $vcVPN->exists('ipsec') ) {
         }
         my $index1 = ( defined($authid) )       ? "$authid"       : $lip;
         my $index2 = ( defined($authremoteid) ) ? "$authremoteid" : $right;
-        $genout_secrets .= "$index1 $index2 : PSK \"$psk\"\n";
+        if ($lip eq '0.0.0.0') {
+          if ($index1 =~ m/^@/) {
+            # In main mode PSK, the responder needs to look up the secret 
+            # before the Peer's ID payload has been decoded, so the ID used 
+            # will be the IP address. Note that this'll work with aggressive 
+            # mode PSK but starting VC6, we use strongswan which doesn't 
+            # support aggressive mode. More info on reported bug :
+            # http://bugzilla.vyatta.com/show_bug.cgi?id=5500            
+            $error = 1;
+            print STDERR 
+              "$vpn_cfg_err cannot use authentication id with pre-shared-secret"
+              . " when local-ip is 0.0.0.0\n";
+          }
+          # when local-ip is dynamic then only the following generic form works
+          $genout_secrets .= ": PSK \"$psk\"\n";
+        } else {
+          $genout_secrets .= "$index1 $index2 : PSK \"$psk\"\n";
+        }
         $genout         .= "\tauthby=secret\n";
       } elsif ( defined($auth_mode) && $auth_mode eq 'rsa' ) {
 
