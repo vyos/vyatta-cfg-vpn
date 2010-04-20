@@ -284,6 +284,7 @@ if ( $vcVPN->exists('ipsec') ) {
   my @interfaces = $vcVPN->returnValues('ipsec ipsec-interfaces interface');
   if ( @interfaces == 0 ) {
     $error = 1;
+    #*THIS CHECK'S ALSO USED BY OP-MODE CMNDS TO CHECK IF IPSEC IS CONFIGURED*#
     print STDERR "$vpn_cfg_err No IPSEC interfaces specified.\n";
   } else {
 
