@@ -33,6 +33,7 @@ use constant REKEYFUZZ_DEFAULT   => 100;
 use constant INVALID_LOCAL_IP    => 254;
 use constant VPN_MAX_PROPOSALS   => 10;
 
+use Vyatta::TypeChecker;
 use Vyatta::VPN::Util;
 use Getopt::Long;
 use Vyatta::Misc;
@@ -475,6 +476,8 @@ if ( $vcVPN->exists('ipsec') ) {
     }
     foreach my $tunnel (@tunnels) {
 
+      my $needs_passthrough = 'false';
+
       #
       # Add support for tunnel disable.
       #
@@ -645,6 +648,29 @@ if ( $vcVPN->exists('ipsec') ) {
       }
 
       $genout .= $leftsourceip if defined $leftsourceip;
+
+      #
+      # check if passthrough connection is needed
+      # needed when remote-subnet encompasses local-subnet
+      #
+      if (defined $leftsubnet && defined $rightsubnet) {
+        # validate that these values are ipv4net
+        my $valid_leftsubnet = 'false';
+        my $valid_rightsubnet = 'false';
+
+        $valid_leftsubnet = 'true' if validateType( 'ipv4net', $leftsubnet, 'quiet' );
+        $valid_rightsubnet = 'true' if validateType( 'ipv4net', $rightsubnet, 'quiet' );
+
+        if ($valid_leftsubnet eq 'true' && $valid_rightsubnet eq 'true') {
+
+          my $localsubnet_object = new NetAddr::IP($leftsubnet);
+          my $remotesubnet_object = new NetAddr::IP($rightsubnet);
+
+          if ($remotesubnet_object->contains($localsubnet_object)) {
+            $needs_passthrough = 'true';
+          } 
+        }
+      }
 
       #
       # Write IKE configuration from group
@@ -951,6 +977,29 @@ if ( $vcVPN->exists('ipsec') ) {
       $conn_head =~ s/\n//;
       $genout .= "#$conn_head";    # to identify end of connection definition
                                    # used by clear vpn op-mode command
+
+      if ( $needs_passthrough eq 'true' ) {
+
+          # CREATE A PASSTHROUGH CONNECTION
+          my $passthrough_conn_head = "\nconn passthrough-peer-$peer-tunnel-$tunnel\n";
+          $passthrough_conn_head =~ s/ peer-@/ peer-/;
+          $genout .= $passthrough_conn_head;
+          if ( $lip eq '0.0.0.0' ) {
+            $genout .= "\tleft=%defaultroute\n";
+          } else {
+            $genout .= "\tleft=$lip\n";
+          }
+          $genout .= "\tright=$right\n";
+          $genout .= "\tleftsubnet=$leftsubnet\n";
+          $genout .= "\trightsubnet=$leftsubnet\n";
+          $genout .= "\ttype=passthrough\n";
+          $genout .= "\tauthby=never\n";
+          $genout .= "\tauto=route\n";
+          $passthrough_conn_head =~ s/\n//;
+          $genout .= "#$passthrough_conn_head";
+
+      }
+
     }
   }
 } else {
