@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.30+kenwood4) unstable; urgency=low
+
+  * add passthrough connection if remote-subnet contains local-subnet
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 26 May 2010 23:06:15 -0700
+
 vyatta-cfg-vpn (0.12.30+kenwood3) unstable; urgency=low
 
   * Fix Bug 5542
