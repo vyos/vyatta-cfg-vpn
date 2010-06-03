@@ -752,6 +752,9 @@ if ( $vcVPN->exists('ipsec') ) {
         }
       }
 
+      ## explicitly set keyingtries to forever ##
+      $genout .= "\tkeyingtries=%forever\n";      
+
       #
       # Write ESP configuration from group
       #
