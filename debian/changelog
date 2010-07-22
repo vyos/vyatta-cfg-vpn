@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.38) unstable; urgency=low
+
+  * remove verb usage from begining of help strings
+
+ -- Mohit Mehta <mohit.mehta@vyatta.com>  Wed, 21 Jul 2010 18:37:19 -0700
+
 vyatta-cfg-vpn (0.12.37) unstable; urgency=low
 
   * Fix Bug 5652 set ike/ipsec keying tries to forever
