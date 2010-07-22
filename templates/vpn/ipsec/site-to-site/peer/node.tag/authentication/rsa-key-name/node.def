@@ -1,3 +1,3 @@
-help: Set RSA key name
+help: RSA key name
 type:  txt
 syntax:expression: pattern $VAR(@) "^[-_a-zA-Z0-9.]+$" ; "invalid RSA key name \"$VAR(@)\""

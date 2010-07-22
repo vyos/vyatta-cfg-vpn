@@ -1,1 +1,1 @@
-help: Set VPN interface [REQUIRED]
+help: Interface to use for VPN [REQUIRED]

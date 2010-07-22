@@ -1,4 +1,4 @@
-help: Set ESP compression
+help: ESP compression
 type:  txt 
 default:  "disable"
 syntax:expression: $VAR(@) in "enable", "disable"; "must be enable or disable"

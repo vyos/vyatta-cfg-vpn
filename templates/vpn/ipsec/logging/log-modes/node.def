@@ -1,5 +1,5 @@
 multi:
-help: Set log mode
+help: Log mode
 type: txt
 syntax:expression: $VAR(@) in "raw", "crypt", "parsing", "emitting", "control", "all", "private" ; "must be one of the following: raw, crypt, parsing, emitting, control, all, private"
 comp_help: Additional pluto debug log options:

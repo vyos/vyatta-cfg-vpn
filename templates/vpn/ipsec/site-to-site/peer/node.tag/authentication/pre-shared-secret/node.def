@@ -1,4 +1,4 @@
-help: Set pre-shared secret key
+help: Pre-shared secret key
 type: txt
 syntax:expression: pattern $VAR(@) "^[-\+\&\!\@\#\$\%\^\*\(\)\,\.\:_a-zA-Z0-9]+$" ; "invalid pre-shared secret key \"$VAR(@)\"
 

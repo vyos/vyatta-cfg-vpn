@@ -1,3 +1,3 @@
 tag:
 type: ipv4net
-help: Set NAT networks
+help: NAT networks to allow

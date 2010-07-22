@@ -1,4 +1,4 @@
-help: Set keep-alive timeout
+help: Keep-alive timeout
 type: u32 
 default: 120
 syntax:expression: ($VAR(@) >= 30 && $VAR(@) <= 86400) ; "must be between 30-86400 seconds"

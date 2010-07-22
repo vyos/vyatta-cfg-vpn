@@ -1,4 +1,4 @@
-help: Set authentication mode
+help: Authentication mode
 type: txt 
 default: "pre-shared-secret"
 syntax:expression: $VAR(@) in "pre-shared-secret", "rsa"; "must be pre-shared-secret or rsa"

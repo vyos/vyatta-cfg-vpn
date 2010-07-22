@@ -1,4 +1,4 @@
-help: Set encryption
+help: Encryption algorithm
 type: txt
 default: "aes128"
 syntax:expression: $VAR(@) in "aes128", "aes256", "3des"; "must be aes128, or aes256, or 3des"

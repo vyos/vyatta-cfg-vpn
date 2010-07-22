@@ -1,4 +1,4 @@
-help: Set ESP Perfect Forward Secrecy
+help: ESP Perfect Forward Secrecy
 type: txt
 default: "enable"
 syntax:expression: $VAR(@) in "enable", "disable", "dh-group2", "dh-group5"; "must be enable, disable, dh-group2 or dh-group5"

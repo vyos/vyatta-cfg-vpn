@@ -1,6 +1,6 @@
 tag:
 type: txt
-help: Set VPN peers
+help: VPN peer
 comp_help: Allowed values:
   <x.x.x.x>        Set IP address of the peer
   <text>           Set the hostname of the peer

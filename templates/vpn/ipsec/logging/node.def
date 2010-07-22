@@ -1,2 +1,2 @@
-help: Set IPsec logging
+help: IPsec logging
 activate:expression: "echo activating logging"

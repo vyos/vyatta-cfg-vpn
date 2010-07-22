@@ -1,4 +1,4 @@
-help: Set keep-alive interval
+help: Keep-alive interval
 type: u32 
 default: 30
 syntax:expression: ($VAR(@) >= 15 && $VAR(@) <= 86400) ; "must be between 15-86400 seconds"

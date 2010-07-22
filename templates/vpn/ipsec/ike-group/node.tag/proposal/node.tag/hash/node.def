@@ -1,4 +1,4 @@
-help: Set hash algorithm
+help: Hash algorithm
 type: txt
 default: "sha1"
 syntax:expression: $VAR(@) in "md5", "sha1"; "must be md5 or sha1"

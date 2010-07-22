@@ -1,2 +1,2 @@
-help: Set local subnet
+help: Local subnet
 type:  ipv4net
