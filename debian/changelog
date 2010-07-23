@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.40) unstable; urgency=low
+
+  * UNRELEASED
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Thu, 22 Jul 2010 17:23:43 -0700
+
 vyatta-cfg-vpn (0.12.39) unstable; urgency=low
 
   * remove unused options
