@@ -1,6 +1,5 @@
 help: Diffie-Hellman (DH) key exchange group
 type: u32
 syntax:expression: ($VAR(@) == 2 || $VAR(@) == 5); "must be 2 or 5"
-comp_help: possible completions
- 2	    	     Set dh2
- 5		     Set dh5
+val_help: 2; DH group 2
+val_help: 5; DH group 5

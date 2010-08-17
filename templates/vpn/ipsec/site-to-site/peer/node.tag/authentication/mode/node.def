@@ -2,6 +2,5 @@ help: Authentication mode
 type: txt 
 default: "pre-shared-secret"
 syntax:expression: $VAR(@) in "pre-shared-secret", "rsa"; "must be pre-shared-secret or rsa"
-comp_help: possible completions:
- pre-shared-secret   Set authentication mode to use pre shared secret key
- rsa                 Set authentication mode to use RSA key
+val_help: pre-shared-secret; Use pre-shared secret key
+val_help: rsa; Use RSA key

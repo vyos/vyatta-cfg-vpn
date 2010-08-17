@@ -2,6 +2,5 @@ help: ESP mode
 type: txt 
 default: "tunnel"
 syntax:expression: $VAR(@) in "tunnel", "transport"; "must be tunnel or transport"
-comp_help: possible completions
- tunnel             Set tunnel mode (default)
- transport          Set transport mode
+val_help: tunnel; Tunnel mode (default)
+val_help: transport; Transport mode

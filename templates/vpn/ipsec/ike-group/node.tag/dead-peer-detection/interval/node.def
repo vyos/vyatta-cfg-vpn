@@ -2,5 +2,4 @@ help: Keep-alive interval
 type: u32 
 default: 30
 syntax:expression: ($VAR(@) >= 15 && $VAR(@) <= 86400) ; "must be between 15-86400 seconds"
-comp_help: possible completions
- <15-86400>	     Set keep-alive interval in seconds (default 30)
+val_help: u32:15-86400; Keep-alive interval in seconds (default 30)

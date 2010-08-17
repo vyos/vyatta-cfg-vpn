@@ -2,11 +2,10 @@ multi:
 help: Log mode
 type: txt
 syntax:expression: $VAR(@) in "raw", "crypt", "parsing", "emitting", "control", "all", "private" ; "must be one of the following: raw, crypt, parsing, emitting, control, all, private"
-comp_help: Additional pluto debug log options:
- raw
- crypt
- parsing
- emitting
- control
- all
- private
+val_help: raw; Debug log option for pluto
+val_help: crypt; Debug log option for pluto
+val_help: parsing; Debug log option for pluto
+val_help: emitting; Debug log option for pluto
+val_help: control; Debug log option for pluto
+val_help: all; Debug log option for pluto
+val_help: private; Debug log option for pluto

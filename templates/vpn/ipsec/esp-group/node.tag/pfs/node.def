@@ -2,8 +2,7 @@ help: ESP Perfect Forward Secrecy
 type: txt
 default: "enable"
 syntax:expression: $VAR(@) in "enable", "disable", "dh-group2", "dh-group5"; "must be enable, disable, dh-group2 or dh-group5"
-comp_help: possible completions
- enable              Enable PFS. Use ike-group's dh-group (default)
- dh-group2           Enable PFS. Use Diffie-Hellman group 2
- dh-group5           Enable PFS. Use Diffie-Hellman group 5
- disable             Disable PFS
+val_help: enable; Enable PFS. Use ike-group's dh-group (default)
+val_help: dh-group2; Enable PFS. Use Diffie-Hellman group 2
+val_help: dh-group5; Enable PFS. Use Diffie-Hellman group 5
+val_help: disable; Disable PFS

@@ -1,7 +1,6 @@
 tag:
 type: txt
 help: VPN peer
-comp_help: Allowed values:
-  <x.x.x.x>        Set IP address of the peer
-  <text>           Set the hostname of the peer
-  @<text>          Set the ID of the peer
+val_help: ipv4; IP address of the peer
+val_help: txt; Hostname of the peer
+val_help: @<text>; ID of the peer

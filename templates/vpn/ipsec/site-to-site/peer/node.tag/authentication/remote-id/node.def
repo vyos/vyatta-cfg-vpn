@@ -1,4 +1,2 @@
 help: ID for remote authentication
 type: txt
-comp_help:Possible completions:
-  <text>       ID used for remote authentication

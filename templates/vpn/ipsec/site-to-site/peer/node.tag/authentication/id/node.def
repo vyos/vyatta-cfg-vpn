@@ -2,5 +2,4 @@ help: ID for peer authentication
 type: txt
 syntax:expression: pattern $VAR(@) "^@[[:alpha:]_]+(\.[[:alnum:]][-_[:alnum:]]*)*$"
                      ; "invalid ID \"$VAR(@)\""
-comp_help:Possible completions:
-  @<text>       ID used for peer authentication
+val_help: @<text>; ID used for peer authentication

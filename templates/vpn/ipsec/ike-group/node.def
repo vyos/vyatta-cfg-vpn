@@ -1,6 +1,4 @@
 tag:
 type: txt
-help: Internet Key Exchange (IKE) configuration
+help: Name of Internet Key Exchange (IKE) group
 syntax:expression: pattern $VAR(@) "^[-_a-zA-Z0-9.]+$" ; "invalid IKE group name \"$VAR(@)\""
-comp_help: possible completions
- <text>    	     Set the name of an IKE group

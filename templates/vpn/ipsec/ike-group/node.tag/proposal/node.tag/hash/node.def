@@ -2,6 +2,5 @@ help: Hash algorithm
 type: txt
 default: "sha1"
 syntax:expression: $VAR(@) in "md5", "sha1"; "must be md5 or sha1"
-comp_help: possible completions
- md5	    	     Set md5 hash
- sha1		     Set sha1 hash (default)
+val_help: md5; MD5 hash
+val_help: sha1; SHA1 hash (default)
