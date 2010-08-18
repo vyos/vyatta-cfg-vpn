@@ -1,5 +1,3 @@
 help: Internet Key Exchange (IKE) group name [REQUIRED]
 type:  txt
-allowed: local -a ike_grps
-         ike_grps=( /opt/vyatta/config/active/vpn/ipsec/ike-group/* )
-         echo -n ${ike_grps[@]##*/}
+allowed: cli-shell-api listActiveNodes vpn ipsec ike-group
