@@ -268,7 +268,7 @@ vyatta-cfg-vpn (0.12.2) unstable; urgency=low
   * Fix use of unitialized value
   * Fix ambiguous use of $log
 
- -- Stephen Hemminger <shemminger@debian>  Thu, 12 Feb 2009 14:22:11 -0800
+ -- Stephen Hemminger <shemminger@vyatta.com>  Thu, 12 Feb 2009 14:22:11 -0800
 
 vyatta-cfg-vpn (0.12.1) unstable; urgency=low
 
