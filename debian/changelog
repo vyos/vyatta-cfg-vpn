@@ -1,3 +1,11 @@
+vyatta-cfg-vpn (0.12.44) unstable; urgency=low
+
+  * remove deprecated linda override
+  * Fix email address
+  * Update list of created files in .gitignore
+
+ -- Stephen Hemminger <stephen.hemminger@vyatta.com>  Fri, 26 Nov 2010 11:10:24 -0800
+
 vyatta-cfg-vpn (0.12.43) unstable; urgency=low
 
   * UNRELEASED
