@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.45) unstable; urgency=low
+
+  * new branch
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Tue, 28 Dec 2010 13:48:03 -0800
+
 vyatta-cfg-vpn (0.12.44) unstable; urgency=low
 
   * remove deprecated linda override
