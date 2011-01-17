@@ -415,7 +415,7 @@ if ( $vcVPN->exists('ipsec') ) {
       "ipsec site-to-site peer $peer authentication remote-id");
     if ( !defined($lip) || $lip eq "" ) {
       $error = 1;
-      print STDERR "$vpn_cfg_err No local-ip specified for peer \"$peer\"\n";
+      Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer,"local-ip"],"$vpn_cfg_err No local-ip specified for peer \"$peer\"\n");
     } elsif ( $lip ne '0.0.0.0' ) {
 
       # not '0.0.0.0' special case.
@@ -851,8 +851,7 @@ if ( $vcVPN->exists('ipsec') ) {
         "ipsec site-to-site peer $peer authentication mode");
       if ( !defined($auth_mode) || $auth_mode eq '' ) {
         $error = 1;
-        print STDERR
-          "$vpn_cfg_err No authentication mode for peer \"$peer\" specified.\n";
+        Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer,"authentication"],"$vpn_cfg_err No authentication mode for peer \"$peer\" specified.\n");
       } elsif ( defined($auth_mode) && ( $auth_mode eq 'pre-shared-secret' ) ) {
         my $psk = $vcVPN->returnValue(
           "ipsec site-to-site peer $peer authentication pre-shared-secret");
