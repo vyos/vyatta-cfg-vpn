@@ -890,7 +890,14 @@ if ( $vcVPN->exists('ipsec') ) {
           # when local-ip is dynamic then only the following generic form works
           $genout_secrets .= ": PSK \"$psk\"\n";
         } else {
-          $genout_secrets .= "$index1 $index2 : PSK \"$psk\"\n";
+          $genout_secrets .= "$lip $right ";
+          if ( defined ($authid) ){
+            $genout_secrets .= "$authid ";
+          }
+          if ( defined ($authremoteid) ) {
+            $genout_secrets .= "$authremoteid ";
+          }
+          $genout_secrets .= ": PSK \"$psk\"\n";
         }
         $genout         .= "\tauthby=secret\n";
       } elsif ( defined($auth_mode) && $auth_mode eq 'rsa' ) {
