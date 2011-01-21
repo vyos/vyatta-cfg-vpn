@@ -1,3 +1,11 @@
+vyatta-cfg-vpn (0.12.44+mendocino2) unstable; urgency=low
+
+  * Fix problem with vpn secrets file being generated
+  * make adjustment so that op mode can deal with new secrets file
+    format
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 20 Jan 2011 19:14:41 -0600
+
 vyatta-cfg-vpn (0.12.44+mendocino1) unstable; urgency=low
 
   * new branch
