@@ -897,7 +897,15 @@ if ( $vcVPN->exists('ipsec') ) {
           if ( defined ($authremoteid) ) {
             $genout_secrets .= "$authremoteid ";
           }
-          $genout_secrets .= ": PSK \"$psk\"\n";
+	  # tag the secrets lines with 3 entries so the op mode command can
+	  # deal with them properly. (LEFT means localid, RIGHT means remoteid)
+          if ((!defined($authid)) && (defined($authremoteid))) {
+            $genout_secrets .= ": PSK \"$psk\" #RIGHT#\n";
+          } elsif ((defined($authid)) && (!defined($authremoteid))) {
+            $genout_secrets .= ": PSK \"$psk\" #LEFT#\n";
+          } else {
+            $genout_secrets .= ": PSK \"$psk\"\n";
+          }
         }
         $genout         .= "\tauthby=secret\n";
       } elsif ( defined($auth_mode) && $auth_mode eq 'rsa' ) {
