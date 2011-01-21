@@ -1,3 +1,11 @@
+vyatta-cfg-vpn (0.12.47) unstable; urgency=low
+
+  * fix conflict while merging
+  * make adjustment so that op mode can deal with new secrets file
+    format
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 20 Jan 2011 19:41:18 -0600
+
 vyatta-cfg-vpn (0.12.46) unstable; urgency=low
 
   * error location support changes to vpn (local-ip and auth missing
