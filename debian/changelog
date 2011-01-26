@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.53) unstable; urgency=low
+
+  * Make VPN config die after the first error occurs instead of
+    continuing to process the rest of the config
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 26 Jan 2011 12:33:01 -0600
+
 vyatta-cfg-vpn (0.12.52) unstable; urgency=low
 
   * Fixed node.def to adhere to CLI conventions
