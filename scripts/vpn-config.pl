@@ -636,6 +636,7 @@ if ( $vcVPN->exists('ipsec') ) {
       #
       if (defined $leftsubnet && defined $rightsubnet) {
         # validate that these values are ipv4net
+        ### ADD fix for 6229 here ###
         my $valid_leftsubnet = 'false';
         my $valid_rightsubnet = 'false';
 
@@ -646,7 +647,9 @@ if ( $vcVPN->exists('ipsec') ) {
 
           my $localsubnet_object = new NetAddr::IP($leftsubnet);
           my $remotesubnet_object = new NetAddr::IP($rightsubnet);
-
+          if ($remotesubnet_object == $localsubnet_object) {
+            Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer],"$vpn_cfg_err local-subnet and remote-subnet cannot be the same.\n");
+          }
           if ($remotesubnet_object->contains($localsubnet_object)) {
             $needs_passthrough = 'true';
           } 
@@ -970,7 +973,17 @@ if ( $vcVPN->exists('ipsec') ) {
       if ($any_peer) {
         $genout .= "\tauto=add\n";
       } else {
-        $genout .= "\tauto=start\n";
+        my $conntype = $vcVPN->returnValue("ipsec site-to-site peer $peer tunnel $tunnel connection-type");
+        if (defined ($conntype)){
+          if ($conntype eq "initiate"){
+            $genout .= "\tauto=start\n";
+          } elsif ($conntype eq "respond"){
+            $genout .= "\tauto=add\n";
+          }
+        }
+        else{
+          $genout .= "\tauto=start\n";
+        }
       }
       $conn_head =~ s/\n//;
       $genout .= "#$conn_head";    # to identify end of connection definition
