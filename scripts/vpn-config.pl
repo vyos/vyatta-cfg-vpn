@@ -88,9 +88,9 @@ if ( $vcVPN->exists('ipsec') ) {
         $vcVPN->listNodes("ipsec esp-group $esp_group proposal");
       if ( @esp_group_proposals == 0 ) {
         $error = 1;
-	Vyatta::Config::outputError(["vpn","ipsec","esp-group",$esp_group,"proposal"],
-				    "$vpn_cfg_err No proposals configured for ESP group \"$esp_group\""
-				    . ".  At least one proposal required.\n");
+        vpn_die(["vpn","ipsec","esp-group",$esp_group,"proposal"],
+                "$vpn_cfg_err No proposals configured for ESP group \"$esp_group\""
+                . ".  At least one proposal required.\n");
       } elsif ( @esp_group_proposals > VPN_MAX_PROPOSALS ) {
         $error = 1;
         print STDERR "$vpn_cfg_err A total of "
@@ -107,7 +107,7 @@ if ( $vcVPN->exists('ipsec') ) {
             || $esp_group_proposal_encryption eq "" )
           {
             $error = 1;
-	    Vyatta::Config::outputError(["vpn","ipsec","esp-group",$esp_group,"proposal",$esp_group_proposal,"encryption"],
+	    vpn_die(["vpn","ipsec","esp-group",$esp_group,"proposal",$esp_group_proposal,"encryption"],
 					"$vpn_cfg_err No encryption specified for ESP group "
 					. "\"$esp_group\" proposal $esp_group_proposal.\n");
 	    
@@ -118,7 +118,7 @@ if ( $vcVPN->exists('ipsec') ) {
             || $esp_group_proposal_hash eq "" )
           {
 	      $error = 1;
-	      Vyatta::Config::outputError(["vpn","ipsec","esp-group",$esp_group,"proposal",$esp_group_proposal,"hash"],
+	      vpn_die(["vpn","ipsec","esp-group",$esp_group,"proposal",$esp_group_proposal,"hash"],
 					  "$vpn_cfg_err No hash specified for ESP group \"$esp_group\""
 					  . " proposal $esp_group_proposal.\n");
 	  }
@@ -144,7 +144,7 @@ if ( $vcVPN->exists('ipsec') ) {
         $vcVPN->listNodes("ipsec ike-group $ike_group proposal");
       if ( @ike_group_proposals == 0 ) {
         $error = 1;
-	Vyatta::Config::outputError(["vpn","ike-group",$ike_group,"proposal"],
+	vpn_die(["vpn","ike-group",$ike_group,"proposal"],
 				    "$vpn_cfg_err No proposals configured for IKE group \"$ike_group\""
 				    . ".  At least one proposal required.\n");
       } elsif ( @ike_group_proposals > VPN_MAX_PROPOSALS ) {
@@ -163,7 +163,7 @@ if ( $vcVPN->exists('ipsec') ) {
             || $ike_group_proposal_encryption eq "" )
           {
             $error = 1;
-	    Vyatta::Config::outputError(["vpn","ike-group",$ike_group,"proposal",$ike_group_proposal,"encryption"],
+	    vpn_die(["vpn","ike-group",$ike_group,"proposal",$ike_group_proposal,"encryption"],
 					"$vpn_cfg_err No encryption specified for IKE group "
 					. "\"$ike_group\" proposal $ike_group_proposal.\n");
           }
@@ -173,7 +173,7 @@ if ( $vcVPN->exists('ipsec') ) {
             || $ike_group_proposal_hash eq "" )
           {
             $error = 1;
-	    Vyatta::Config::outputError(["vpn","ike-group",$ike_group,"proposal",$ike_group_proposal,"hash"],
+	    vpn_die(["vpn","ike-group",$ike_group,"proposal",$ike_group_proposal,"hash"],
 					"$vpn_cfg_err No hash specified for IKE group \"$ike_group\""
 					. " proposal $ike_group_proposal.\n");
           }
@@ -403,11 +403,11 @@ if ( $vcVPN->exists('ipsec') ) {
       $vcVPN->returnValue("ipsec site-to-site peer $peer ike-group");
     if ( !defined($peer_ike_group) || $peer_ike_group eq '' ) {
       $error = 1;
-      Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer,"ike-group"],
+      vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"ike-group"],
 				  "$vpn_cfg_err No IKE group specified for peer \"$peer\".\n");
     } elsif ( !$vcVPN->exists("ipsec ike-group $peer_ike_group") ) {
       $error = 1;
-      Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer,"ike-group"],
+      vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"ike-group"],
 				  "$vpn_cfg_err The IKE group \"$peer_ike_group\" specified for peer "
 				  . "\"$peer\" has not been configured.\n");
     }
@@ -419,8 +419,7 @@ if ( $vcVPN->exists('ipsec') ) {
       "ipsec site-to-site peer $peer authentication remote-id");
     if ( !defined($lip) || $lip eq "" ) {
       $error = 1;
-      Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer,"local-ip"],"$vpn_cfg_err No local-ip specified for peer \"$peer\"\n");
-      exit(1); # this will fix the uninitilized $lip perl error but i think we need to do this after all error messages
+      vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"local-ip"],"$vpn_cfg_err No local-ip specified for peer \"$peer\"\n");
     } elsif ( $lip ne '0.0.0.0' ) {
 
       # not '0.0.0.0' special case.
@@ -472,12 +471,12 @@ if ( $vcVPN->exists('ipsec') ) {
         "ipsec site-to-site peer $peer tunnel $tunnel esp-group");
       if ( !defined($peer_tunnel_esp_group) || $peer_tunnel_esp_group eq '' ) {
         $error = 1;
-	Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer,"tunnel",$tunnel,"esp-group"],
+	vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"tunnel",$tunnel,"esp-group"],
 				    "$vpn_cfg_err No ESP group specified for peer \"$peer\" "
 				    . "tunnel $tunnel.\n");
       } elsif ( !$vcVPN->exists("ipsec esp-group $peer_tunnel_esp_group") ) {
         $error = 1;
-	Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer,"tunnel",$tunnel,"esp-group"],
+	vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"tunnel",$tunnel,"esp-group"],
 				    "$vpn_cfg_err The ESP group \"$peer_tunnel_esp_group\" specified "
 				    . "for peer \"$peer\" tunnel $tunnel has not been configured.\n");
       }
@@ -650,7 +649,7 @@ if ( $vcVPN->exists('ipsec') ) {
           my $remotesubnet_object = new NetAddr::IP($rightsubnet);
           if ($remotesubnet_object == $localsubnet_object) {
             $error = 1;
-            Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer],
+            vpn_die(["vpn","ipsec","site-to-site","peer",$peer],
                 "$vpn_cfg_err local-subnet and remote-subnet cannot be the same.\n");
           }
           if ($remotesubnet_object->contains($localsubnet_object)) {
@@ -862,7 +861,7 @@ if ( $vcVPN->exists('ipsec') ) {
         "ipsec site-to-site peer $peer authentication mode");
       if ( !defined($auth_mode) || $auth_mode eq '' ) {
         $error = 1;
-        Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer,"authentication"],
+        vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"authentication"],
                           "$vpn_cfg_err No authentication mode for peer \"$peer\" specified.\n");
       } elsif ( defined($auth_mode) && ( $auth_mode eq 'pre-shared-secret' ) ) {
         my $psk = $vcVPN->returnValue(
@@ -894,7 +893,7 @@ if ( $vcVPN->exists('ipsec') ) {
             # support aggressive mode. More info on reported bug :
             # http://bugzilla.vyatta.com/show_bug.cgi?id=5500            
             $error = 1;
-	    Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer","0.0.0.0","authentication"],
+	    vpn_die(["vpn","ipsec","site-to-site","peer","0.0.0.0","authentication"],
 					"$vpn_cfg_err cannot use authentication id with pre-shared-secret"
 					. " when local-ip is 0.0.0.0\n");
 		}
@@ -1107,7 +1106,9 @@ if ($error) {
 #
 exit 0;
 sub vpn_die {
-
+  my (@path,$msg) = @_;
+  Vyatta::Config::outputError(@path, $msg);
+  exit 1;
 }
 sub write_config {
   my ( $genout, $config_file, $genout_secrets, $secrets_file ) = @_;
