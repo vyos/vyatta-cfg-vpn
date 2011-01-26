@@ -1,8 +1,8 @@
-help: Connection Type
+help: Connection type
 type: txt
 default: "initiate"
 syntax:expression: $VAR(@) in "initiate", "respond";
                    "Invalid connection-type"
-val_help: initiate; Act as an initiator or a responder
-val_help: respond; Act as a responder only
+val_help: initiate; This endpoint can initiate or respond to a connection
+val_help: respond; This endpoint will only respond to a connection
 
