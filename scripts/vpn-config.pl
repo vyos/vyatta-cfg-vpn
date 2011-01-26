@@ -648,6 +648,7 @@ if ( $vcVPN->exists('ipsec') ) {
           my $localsubnet_object = new NetAddr::IP($leftsubnet);
           my $remotesubnet_object = new NetAddr::IP($rightsubnet);
           if ($remotesubnet_object == $localsubnet_object) {
+            $error = 1;
             Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer],"$vpn_cfg_err local-subnet and remote-subnet cannot be the same.\n");
           }
           if ($remotesubnet_object->contains($localsubnet_object)) {
