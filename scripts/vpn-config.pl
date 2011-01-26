@@ -420,6 +420,7 @@ if ( $vcVPN->exists('ipsec') ) {
     if ( !defined($lip) || $lip eq "" ) {
       $error = 1;
       Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer,"local-ip"],"$vpn_cfg_err No local-ip specified for peer \"$peer\"\n");
+      exit(1); # this will fix the uninitilized $lip perl error but i think we need to do this after all error messages
     } elsif ( $lip ne '0.0.0.0' ) {
 
       # not '0.0.0.0' special case.
