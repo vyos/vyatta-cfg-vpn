@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.48) unstable; urgency=low
+
+  * bugfix: 2506 added option to define initiatior or responder mode
+  * bugfix: 2506 added option to define initiatior or responder mode
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 25 Jan 2011 18:12:54 -0600
+
 vyatta-cfg-vpn (0.12.47) unstable; urgency=low
 
   * fix conflict while merging
