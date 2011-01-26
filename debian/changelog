@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.51) unstable; urgency=low
+
+  * Bug 2506: Moved the connection-type node to the peer level, as
+    discussed with support.
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 26 Jan 2011 11:02:54 -0600
+
 vyatta-cfg-vpn (0.12.50) unstable; urgency=low
 
   * Bugfix 6068. This fixes the given perl problem, however there may be
