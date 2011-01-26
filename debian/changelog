@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.49) unstable; urgency=low
+
+  * Bugfix 6229: don't allow local and remote subnets to be the same
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 25 Jan 2011 18:21:22 -0600
+
 vyatta-cfg-vpn (0.12.48) unstable; urgency=low
 
   * bugfix: 2506 added option to define initiatior or responder mode
