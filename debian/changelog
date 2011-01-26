@@ -1,3 +1,11 @@
+vyatta-cfg-vpn (0.12.50) unstable; urgency=low
+
+  * Bugfix 6068. This fixes the given perl problem, however there may be
+    more that appear. We should die when an error is found and stop
+    processing the file
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 25 Jan 2011 18:42:07 -0600
+
 vyatta-cfg-vpn (0.12.49) unstable; urgency=low
 
   * Bugfix 6229: don't allow local and remote subnets to be the same
