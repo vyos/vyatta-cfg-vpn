@@ -650,7 +650,8 @@ if ( $vcVPN->exists('ipsec') ) {
           my $remotesubnet_object = new NetAddr::IP($rightsubnet);
           if ($remotesubnet_object == $localsubnet_object) {
             $error = 1;
-            Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer],"$vpn_cfg_err local-subnet and remote-subnet cannot be the same.\n");
+            Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer],
+                "$vpn_cfg_err local-subnet and remote-subnet cannot be the same.\n");
           }
           if ($remotesubnet_object->contains($localsubnet_object)) {
             $needs_passthrough = 'true';
@@ -861,7 +862,8 @@ if ( $vcVPN->exists('ipsec') ) {
         "ipsec site-to-site peer $peer authentication mode");
       if ( !defined($auth_mode) || $auth_mode eq '' ) {
         $error = 1;
-        Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer,"authentication"],"$vpn_cfg_err No authentication mode for peer \"$peer\" specified.\n");
+        Vyatta::Config::outputError(["vpn","ipsec","site-to-site","peer",$peer,"authentication"],
+                          "$vpn_cfg_err No authentication mode for peer \"$peer\" specified.\n");
       } elsif ( defined($auth_mode) && ( $auth_mode eq 'pre-shared-secret' ) ) {
         my $psk = $vcVPN->returnValue(
           "ipsec site-to-site peer $peer authentication pre-shared-secret");
@@ -975,7 +977,7 @@ if ( $vcVPN->exists('ipsec') ) {
       if ($any_peer) {
         $genout .= "\tauto=add\n";
       } else {
-        my $conntype = $vcVPN->returnValue("ipsec site-to-site peer $peer tunnel $tunnel connection-type");
+        my $conntype = $vcVPN->returnValue("ipsec site-to-site peer $peer connection-type");
         if (defined ($conntype)){
           if ($conntype eq "initiate"){
             $genout .= "\tauto=start\n";
@@ -1104,7 +1106,9 @@ if ($error) {
 # Return success
 #
 exit 0;
+sub vpn_die {
 
+}
 sub write_config {
   my ( $genout, $config_file, $genout_secrets, $secrets_file ) = @_;
 

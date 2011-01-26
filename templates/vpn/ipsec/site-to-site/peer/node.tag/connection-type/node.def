@@ -3,6 +3,6 @@ type: txt
 default: "initiate"
 syntax:expression: $VAR(@) in "initiate", "respond";
                    "Invalid connection-type"
-val_help: initiate; Act as an initiator or responder [DEFAULT]
+val_help: initiate; Act as an initiator or a responder
 val_help: respond; Act as a responder only
 
