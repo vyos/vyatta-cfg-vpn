@@ -619,10 +619,10 @@ if ( $vcVPN->exists('ipsec') ) {
         # not adding vpn route if remote subnet is 0.0.0.0/0
         # user should add a route [default/static] manually
         $leftsourceip = undef if $rightsubnet eq '0.0.0.0/0';
-	if ($rightsubnet =~ /vhost:%priv/) {
-	  # can't add route when rightsubnet is not specific
+        if ($rightsubnet =~ /vhost:%priv/) {
+          # can't add route when rightsubnet is not specific
           $leftsourceip = undef;
-	}
+        }
       } else {
         $leftsourceip =
           undef;    # no need for vpn route if rightsubnet not defined
@@ -631,12 +631,25 @@ if ( $vcVPN->exists('ipsec') ) {
       $genout .= $leftsourceip if defined $leftsourceip;
 
       #
+      # Protocol 
+      #
+      my $protocol = $vcVPN->returnValue(
+          "ipsec site-to-site peer $peer tunnel $tunnel protocol");
+      if (defined($protocol)){
+        if ($protocol eq "GRE"){
+          $genout .= "\tleftprotoport=gre\n\trightprotoport=gre\n"
+        } else {
+          vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer, "tunnel", $tunnel, "protocol"], 
+                  "$vpn_cfg_err protocol, $protocol, is unsupported.");
+        }
+      }
+
+      #
       # check if passthrough connection is needed
       # needed when remote-subnet encompasses local-subnet
       #
       if (defined $leftsubnet && defined $rightsubnet) {
         # validate that these values are ipv4net
-        ### ADD fix for 6229 here ###
         my $valid_leftsubnet = 'false';
         my $valid_rightsubnet = 'false';
 

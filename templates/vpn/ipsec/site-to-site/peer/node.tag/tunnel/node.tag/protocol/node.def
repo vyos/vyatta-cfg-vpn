@@ -1,0 +1,3 @@
+help: Protocol that will be sent over tunnel.
+type: txt
+syntax:expression: $VAR(@) in "GRE"; "Only GRE is allowed"
