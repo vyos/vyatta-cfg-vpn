@@ -1,3 +1,11 @@
+vyatta-cfg-vpn (0.12.54) unstable; urgency=low
+
+  * Bugfix: 5677 add protoport option for simpler GRE tunnels, for now
+    this is specifically for GRE more protocols can be added in the
+    future if required.
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 26 Jan 2011 19:02:50 -0600
+
 vyatta-cfg-vpn (0.12.53) unstable; urgency=low
 
   * Make VPN config die after the first error occurs instead of
