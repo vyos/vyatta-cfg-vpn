@@ -953,7 +953,7 @@ if ( $vcVPN->exists('ipsec') ) {
             "$vpn_cfg_err Unable to determine local public key from local key"
             . " file \"$local_key_file\" for peer \"$peer\".\n";
         } else {
-          $genout .= "\tleftrsasigkey=$local_key\n";
+          $genout .= "\tleftrsasigkey=\"$local_key\"\n";
         }
 
         my $rsa_key_name = $vcVPN->returnValue(
@@ -972,7 +972,7 @@ if ( $vcVPN->exists('ipsec') ) {
               "$vpn_cfg_err No remote key configured for rsa key name "
               . "\"$rsa_key_name\" that is specified for peer \"$peer\".\n";
           } else {
-            $genout .= "\trightrsasigkey=$remote_key\n";
+            $genout .= "\trightrsasigkey=\"$remote_key\"\n";
           }
         }
         $genout_secrets .= "include $local_key_file\n";
