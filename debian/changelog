@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.55) unstable; urgency=low
+
+  * Bugfix: 5684, added quotes around rsa keys in ipsec.conf so that
+    strongswan doesn't fail on ==
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 28 Jan 2011 16:38:54 -0600
+
 vyatta-cfg-vpn (0.12.54) unstable; urgency=low
 
   * Bugfix: 5677 add protoport option for simpler GRE tunnels, for now
