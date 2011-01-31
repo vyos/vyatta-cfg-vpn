@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.56) unstable; urgency=low
+
+  * Fix problem with multiple psk being generated per peer
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 31 Jan 2011 13:28:52 -0600
+
 vyatta-cfg-vpn (0.12.55) unstable; urgency=low
 
   * Bugfix: 5684, added quotes around rsa keys in ipsec.conf so that
