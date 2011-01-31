@@ -398,6 +398,7 @@ if ( $vcVPN->exists('ipsec') ) {
     print "VPN Warning: IPSec configured but no site-to-site peers or l2tp"
       . " remote-users configured\n";
   }
+  my $prev_peer = "";
   foreach my $peer (@peers) {
     my $peer_ike_group =
       $vcVPN->returnValue("ipsec site-to-site peer $peer ike-group");
@@ -913,22 +914,25 @@ if ( $vcVPN->exists('ipsec') ) {
 	    # when local-ip is dynamic then only the following generic form works
 	    $genout_secrets .= ": PSK \"$psk\"\n";
         } else {
-          $genout_secrets .= "$lip $right ";
-          if ( defined ($authid) ){
-            $genout_secrets .= "$authid ";
+          if (not ($prev_peer eq $peer)){
+            $genout_secrets .= "$lip $right ";
+            if ( defined ($authid) ){
+              $genout_secrets .= "$authid ";
+            }
+            if ( defined ($authremoteid) ) {
+              $genout_secrets .= "$authremoteid ";
+            }
+	          # tag the secrets lines with 3 entries so the op mode command can
+	          # deal with them properly. (LEFT means localid, RIGHT means remoteid)
+            if ((!defined($authid)) && (defined($authremoteid))) {
+              $genout_secrets .= ": PSK \"$psk\" #RIGHT#\n";
+            } elsif ((defined($authid)) && (!defined($authremoteid))) {
+              $genout_secrets .= ": PSK \"$psk\" #LEFT#\n";
+            } else {
+              $genout_secrets .= ": PSK \"$psk\"\n";
+            }
           }
-          if ( defined ($authremoteid) ) {
-            $genout_secrets .= "$authremoteid ";
-          }
-	  # tag the secrets lines with 3 entries so the op mode command can
-	  # deal with them properly. (LEFT means localid, RIGHT means remoteid)
-          if ((!defined($authid)) && (defined($authremoteid))) {
-            $genout_secrets .= ": PSK \"$psk\" #RIGHT#\n";
-          } elsif ((defined($authid)) && (!defined($authremoteid))) {
-            $genout_secrets .= ": PSK \"$psk\" #LEFT#\n";
-          } else {
-            $genout_secrets .= ": PSK \"$psk\"\n";
-          }
+          $prev_peer = $peer;
         }
         $genout         .= "\tauthby=secret\n";
       } elsif ( defined($auth_mode) && $auth_mode eq 'rsa' ) {
