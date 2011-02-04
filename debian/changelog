@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.59) unstable; urgency=low
+
+  * Move protocol out of local and remote nodes as it has to be the same
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 04 Feb 2011 13:24:13 -0600
+
 vyatta-cfg-vpn (0.12.58) unstable; urgency=low
 
   * Initial additions to support local and remote protoport in general
