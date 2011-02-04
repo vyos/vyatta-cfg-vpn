@@ -423,6 +423,17 @@ if ( $vcVPN->exists('ipsec') ) {
         }
       }
     }
+    
+    #
+    # Default ESP group
+    #
+    my $def_esp_group = $vcVPN->returnValue("ipsec site-to-site peer $peer default-esp-group");
+    $def_esp_group = '' if !defined($def_esp_group);
+    if ( !$vcVPN->exists("ipsec esp-group $def_esp_group") ) {
+        vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"default-esp-group"],
+				    "$vpn_cfg_err The ESP group \"$def_esp_group\" specified "
+				    . "for peer \"$peer\" has not been configured.\n");
+    }
 
     #
     # Name connection by peer and tunnel
@@ -448,7 +459,9 @@ if ( $vcVPN->exists('ipsec') ) {
 
       my $peer_tunnel_esp_group = $vcVPN->returnValue(
         "ipsec site-to-site peer $peer tunnel $tunnel esp-group");
-      if ( !defined($peer_tunnel_esp_group) || $peer_tunnel_esp_group eq '' ) {
+      $peer_tunnel_esp_group = '' if (!defined($peer_tunnel_esp_group));
+      if ( (!defined($peer_tunnel_esp_group) || $peer_tunnel_esp_group eq '') && 
+           (!defined($def_esp_group) || $def_esp_group eq '')) {
         vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"tunnel",$tunnel,"esp-group"],
 				    "$vpn_cfg_err No ESP group specified for peer \"$peer\" "
 				    . "tunnel $tunnel.\n");
@@ -765,6 +778,10 @@ if ( $vcVPN->exists('ipsec') ) {
       $genout .= "\tesp=";
       my $esp_group = $vcVPN->returnValue(
         "ipsec site-to-site peer $peer tunnel $tunnel esp-group");
+      if (!defined($esp_group) || $esp_group eq ''){
+        $esp_group = $vcVPN->returnValue(
+          "ipsec site-to-site peer $peer default-esp-group");
+      }
       if ( defined($esp_group) && $esp_group ne '' ) {
         my @esp_proposals =
           $vcVPN->listNodes("ipsec esp-group $esp_group proposal");
