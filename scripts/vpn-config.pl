@@ -516,7 +516,7 @@ if ( $vcVPN->exists('ipsec') ) {
       # Write tunnel configuration
       #
       my $leftsubnet = $vcVPN->returnValue(
-        "ipsec site-to-site peer $peer tunnel $tunnel local-subnet");
+        "ipsec site-to-site peer $peer tunnel $tunnel local subnet");
       if ( defined($leftsubnet) && $leftsubnet eq 'any' ) {
         $leftsubnet = '0.0.0.0/0';
       }
@@ -544,7 +544,7 @@ if ( $vcVPN->exists('ipsec') ) {
       }
 
       my $remotesubnet = $vcVPN->returnValue(
-        "ipsec site-to-site peer $peer tunnel $tunnel remote-subnet");
+        "ipsec site-to-site peer $peer tunnel $tunnel remote subnet");
 
       my $rightsubnet;
       my $allow_nat_networks = $vcVPN->returnValue(
@@ -605,18 +605,52 @@ if ( $vcVPN->exists('ipsec') ) {
       $genout .= $leftsourceip if defined $leftsourceip;
 
       #
-      # Protocol 
+      # Protocol/port
       #
-      my $protocol = $vcVPN->returnValue(
-          "ipsec site-to-site peer $peer tunnel $tunnel protocol");
-      if (defined($protocol)){
-        if ($protocol eq "GRE"){
-          $genout .= "\tleftprotoport=gre\n\trightprotoport=gre\n"
-        } else {
-          vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer, "tunnel", $tunnel, "protocol"], 
-                  "$vpn_cfg_err protocol, $protocol, is unsupported.");
-        }
+      my $lprotocol = $vcVPN->returnValue(
+          "ipsec site-to-site peer $peer tunnel $tunnel local protocol");
+      my $lprotoport = '';
+      if (defined($lprotocol)){
+          $lprotoport .= $lprotocol; 
       }
+      my $lport = $vcVPN->returnValue(
+          "ipsec site-to-site peer $peer tunnel $tunnel local port");
+      if (defined($lport)){
+          if (!defined($lprotocol)){
+            $lprotoport .= "0/$lport";
+          } elsif (is_tcp_udp($lprotocol)){
+            $lprotoport .= "/$lport";
+          } else {
+            vpn_die(["vpn","ipsec","site-to-site","peer",$peer, "tunnel", $tunnel, "local", "port"],
+                "$vpn_cfg_err local port can only be defined when local protocol is tcp, udp, or undefined.\n");
+          }
+      }
+      if (not ($lprotoport eq '')){
+        $genout .= "\tleftprotoport=$lprotoport\n";
+      }
+
+      my $rprotocol = $vcVPN->returnValue(
+          "ipsec site-to-site peer $peer tunnel $tunnel remote protocol");
+      my $rprotoport = '';
+      if (defined($rprotocol)){
+          $rprotoport .= $rprotocol; 
+      }
+      my $rport = $vcVPN->returnValue(
+          "ipsec site-to-site peer $peer tunnel $tunnel remote port");
+      if (defined($rport)){
+          if (!defined($rprotocol)){
+            $rprotoport .= "0/$rport";
+          } elsif (is_tcp_udp($rprotocol)){
+            $rprotoport .= "/$rport";
+          } else {
+            vpn_die(["vpn","ipsec","site-to-site","peer",$peer, "tunnel", $tunnel, "remote", "port"],
+                "$vpn_cfg_err remote port can only be defined when remote protocol is tcp, udp, or undefined.\n");
+          }
+      }
+      if (not ($rprotoport eq '')){
+        $genout .= "\trightprotoport=$rprotoport\n";
+      }
+
 
       #
       # check if passthrough connection is needed
@@ -636,7 +670,7 @@ if ( $vcVPN->exists('ipsec') ) {
           my $remotesubnet_object = new NetAddr::IP($rightsubnet);
           if ($remotesubnet_object == $localsubnet_object) {
             vpn_die(["vpn","ipsec","site-to-site","peer",$peer],
-                "$vpn_cfg_err local-subnet and remote-subnet cannot be the same.\n");
+                "$vpn_cfg_err local subnet and remote subnet cannot be the same.\n");
           }
           if ($remotesubnet_object->contains($localsubnet_object)) {
             $needs_passthrough = 'true';

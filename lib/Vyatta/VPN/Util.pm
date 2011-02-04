@@ -27,7 +27,7 @@ use strict;
 use warnings;
 
 our @EXPORT = qw(rsa_get_local_key_file LOCAL_KEY_FILE_DEFAULT rsa_get_local_pubkey
-                 is_vpn_running vpn_debug enableICMP);
+                 is_vpn_running vpn_debug enableICMP is_tcp_udp get_protocols conv_protocol);
 use base qw(Exporter);
 
 use Vyatta::Config;
@@ -38,6 +38,49 @@ use constant LOCAL_KEY_FILE_DEFAULT
 
 sub is_vpn_running {
     return ( -e '/var/run/pluto.ctl');
+}
+
+sub get_protocols {
+  my $cmd = "sudo cat /etc/protocols |";
+  open(PROTOCOLS, $cmd);
+  my @protocols = [];
+  while(<PROTOCOLS>){
+    push (@protocols, $_);
+  }
+  my %protohash = ();
+  foreach my $line (@protocols) {
+    next if ($line =~ /^\#/);
+    if ($line =~ /(\S+)\s+(\d+)\s+(\S+)\s+\#(.*)/){
+      my ($name, $number, $desc) = ($1,$2,$4);
+      if (not exists $protohash{$number}){
+        $protohash{$number} = {
+          _name => $name,
+          _number => $number,
+          _desc => $desc
+        };
+      }
+    }
+  }
+  return %protohash;
+}
+ 
+sub conv_protocol {
+  my $proto = pop(@_);
+  my %protohash = get_protocols();
+  foreach my $key (keys %protohash){
+    if ("$key" == "$proto") {
+      return $protohash{$key}->{_name};
+    }
+  }
+  return $proto;
+}
+
+
+sub is_tcp_udp {
+  my $protocol = pop @_;
+  return 1 if (($protocol eq '6')  || ($protocol eq 'tcp') ||
+               ($protocol eq '17') || ($protocol eq 'udp'));
+  return 0;
 }
 
 sub rsa_get_local_key_file {

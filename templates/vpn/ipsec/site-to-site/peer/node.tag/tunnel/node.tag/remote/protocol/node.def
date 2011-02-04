@@ -1,0 +1,11 @@
+type:  txt
+
+help: Protocol to Encrypt
+
+val_help: txt ; IP protocol name from /etc/protocols (e.g. "gre" or "tcp")
+val_help: u32:0-255 ; IP protocol number
+
+syntax:expression: exec "if [ -n \"`/opt/vyatta/sbin/vyatta-validate-type.pl protocol '$VAR(@)'`\" ]; then \
+                            echo invalid protocol \"$VAR(@)\" ; \
+                            exit 1 ; \
+                        fi ; "
