@@ -607,44 +607,42 @@ if ( $vcVPN->exists('ipsec') ) {
       #
       # Protocol/port
       #
-      my $lprotocol = $vcVPN->returnValue(
-          "ipsec site-to-site peer $peer tunnel $tunnel local protocol");
+      my $protocol = $vcVPN->returnValue(
+          "ipsec site-to-site peer $peer tunnel $tunnel protocol");
       my $lprotoport = '';
-      if (defined($lprotocol)){
-          $lprotoport .= $lprotocol; 
+      if (defined($protocol)){
+          $lprotoport .= $protocol; 
       }
       my $lport = $vcVPN->returnValue(
           "ipsec site-to-site peer $peer tunnel $tunnel local port");
       if (defined($lport)){
-          if (!defined($lprotocol)){
+          if (!defined($protocol)){
             $lprotoport .= "0/$lport";
-          } elsif (is_tcp_udp($lprotocol)){
+          } elsif (is_tcp_udp($protocol)){
             $lprotoport .= "/$lport";
           } else {
             vpn_die(["vpn","ipsec","site-to-site","peer",$peer, "tunnel", $tunnel, "local", "port"],
-                "$vpn_cfg_err local port can only be defined when local protocol is tcp, udp, or undefined.\n");
+                "$vpn_cfg_err local port can only be defined when protocol is tcp, udp, or undefined.\n");
           }
       }
       if (not ($lprotoport eq '')){
         $genout .= "\tleftprotoport=$lprotoport\n";
       }
 
-      my $rprotocol = $vcVPN->returnValue(
-          "ipsec site-to-site peer $peer tunnel $tunnel remote protocol");
       my $rprotoport = '';
-      if (defined($rprotocol)){
-          $rprotoport .= $rprotocol; 
+      if (defined($protocol)){
+          $rprotoport .= $protocol; 
       }
       my $rport = $vcVPN->returnValue(
           "ipsec site-to-site peer $peer tunnel $tunnel remote port");
       if (defined($rport)){
-          if (!defined($rprotocol)){
+          if (!defined($protocol)){
             $rprotoport .= "0/$rport";
-          } elsif (is_tcp_udp($rprotocol)){
+          } elsif (is_tcp_udp($protocol)){
             $rprotoport .= "/$rport";
           } else {
             vpn_die(["vpn","ipsec","site-to-site","peer",$peer, "tunnel", $tunnel, "remote", "port"],
-                "$vpn_cfg_err remote port can only be defined when remote protocol is tcp, udp, or undefined.\n");
+                "$vpn_cfg_err remote port can only be defined when protocol is tcp, udp, or undefined.\n");
           }
       }
       if (not ($rprotoport eq '')){
