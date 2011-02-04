@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.58) unstable; urgency=low
+
+  * Initial additions to support local and remote protoport in general
+    instead of just for GRE
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 03 Feb 2011 19:21:54 -0600
+
 vyatta-cfg-vpn (0.12.57) unstable; urgency=low
 
   * Make vpn errors and exiting consistent
