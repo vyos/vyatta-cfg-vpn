@@ -1108,11 +1108,29 @@ if ( $vcVPN->isDeleted('.')
       );
       print "Clustering configured - not restarting ipsec\n";
   } else {
+    my $update_interval = $vcVPN->returnValue("ipsec auto-update");
+    my $update_interval_orig = $vcVPN->returnOrigValue("ipsec auto-update");
+    $update_interval_orig = 0 if !defined($update_interval_orig);
     if ( is_vpn_running() ) {
-      vpn_exec( 'ipsec rereadall >&/dev/null', 're-read secrets and certs' );
-      vpn_exec( 'ipsec update >&/dev/null', 'update changes to ipsec.conf' );
+      if (defined($update_interval) && ($update_interval != $update_interval_orig)){
+        print "Re-starting IPsec daemon to activate new auto-update interval...\n";
+        vpn_exec( 'ipsec restart --auto-update '.$update_interval.' >&/dev/null', 
+                  're-starting ipsec with updated auto-update interval $update_interval' );
+      } elsif (!defined($update_interval) && ($update_interval_orig != 0)){
+        print "Re-starting IPsec daemon to deactivate auto-update...\n";
+        vpn_exec( 'ipsec restart >&/dev/null', 're-starting ipsec' );
+      }
+      else {
+        vpn_exec( 'ipsec rereadall >&/dev/null', 're-read secrets and certs' );
+        vpn_exec( 'ipsec update >&/dev/null', 'update changes to ipsec.conf' );
+      }
     } else {
-      vpn_exec( 'ipsec start >&/dev/null', 'start ipsec' );
+      if (! defined($update_interval) ) {
+        vpn_exec( 'ipsec start >&/dev/null', 'start ipsec' );
+      } else {
+        vpn_exec( 'ipsec start --auto-update '.$update_interval.' >&/dev/null', 
+                 'start ipsec with auto-update $update_interval' );
+      }
     }
   }
 }
