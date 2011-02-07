@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.63) unstable; urgency=low
+
+  * Bugfix 5802: add auto-update feature, for Dynamic DNS peers
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 07 Feb 2011 15:59:29 -0600
+
 vyatta-cfg-vpn (0.12.62) unstable; urgency=low
 
   * change ipsec config version in Makefile as well
