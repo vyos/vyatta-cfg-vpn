@@ -1,0 +1,2 @@
+type: txt
+help: File containing the X.509 certificate for the remote access VPN server (this host)

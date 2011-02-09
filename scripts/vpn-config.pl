@@ -47,6 +47,10 @@ GetOptions(
   "secrets_file=s"  => \$secrets_file,
   "init_script=s"   => \$init_script
 );
+my $CA_CERT_PATH = '/etc/ipsec.d/cacerts';
+my $CRL_PATH = '/etc/ipsec.d/crls';
+my $SERVER_CERT_PATH = '/etc/ipsec.d/certs';
+my $SERVER_KEY_PATH = '/etc/ipsec.d/private';
 
 my $vpn_cfg_err   = "VPN configuration error:";
 my $clustering_ip = 0;
@@ -520,7 +524,7 @@ if ( $vcVPN->exists('ipsec') ) {
         $right = $peer;
       }
       $genout .= "\tright=$right\n";
-      $genout .= "\trightid=$rightid\n" if ( defined($rightid) );
+      $genout .= "\trightid=\"$rightid\"\n" if ( defined($rightid) );
       if ($any_peer) {
         $genout .= "\trekey=no\n";
       }
@@ -951,6 +955,9 @@ if ( $vcVPN->exists('ipsec') ) {
           $prev_peer = $peer;
         }
         $genout         .= "\tauthby=secret\n";
+      } elsif ( defined($auth_mode) && $auth_mode eq 'x509') {
+        $genout .= get_x509($peer);
+        $genout_secrets .= get_x509_secret($peer);
       } elsif ( defined($auth_mode) && $auth_mode eq 'rsa' ) {
 
         unless ( -r $local_key_file ) {
@@ -1276,5 +1283,70 @@ sub CheckIfAddressInsideNetwork {
 
   return 0;
 }
+
+sub get_x509 {
+  my $peer = pop(@_);
+  # Setup x509, based on the L2TP x509 code
+  #
+  ## check that proper nodes are defined.
+  my $path = "vpn ipsec site-to-site peer $peer authentication x509 ";
+  my $cacrt = $vcVPN->returnValue("ipsec site-to-site peer $peer authentication x509 ca-cert-file");
+  vpn_die([split(' ', ($path."ca-cert-file"))],
+          "$vpn_cfg_err No CA certificate for peer \"$peer\" specified.\n") if !defined($cacrt);
+  my $crl = $vcVPN->returnValue("ipsec site-to-site peer $peer authentication x509 crl-file");
+  my $crt = $vcVPN->returnValue("ipsec site-to-site peer $peer authentication x509 cert-file");
+  vpn_die([split(' ', ($path."cert-file"))],
+          "$vpn_cfg_err No Certificate for peer \"$peer\" specified.\n") if !defined($crt);
+  my $key = $vcVPN->returnValue("ipsec site-to-site peer $peer authentication x509 key file");
+  vpn_die([split(' ', ($path."key-file"))],
+          "$vpn_cfg_err No Key for peer \"$peer\" specified.\n") if !defined($key);
+
+  # Verify the files exist
+  vpn_die([split(' ', ($path."ca-cert-file"))] , "Invalid ca-cert-file \"$cacrt\"")
+    if (! -f $cacrt);
+  vpn_die([split(' ', ($path."cert-file"))] , "Invalid server-cert-file \"$crt\"")
+    if (! -f $crt);
+  vpn_die([split(' ', ($path."key-file"))] , "Invalid server-key-file \"$key\"" )
+    if (! -f $key);
+
+  
+  # Copy files to the ipsec directory
+  system("cp -f $cacrt $CA_CERT_PATH/");
+  vpn_die([split(' ', ($path."ca-cert-file"))] , "Cannot copy ca-cert-file \"$cacrt\"")
+    if ($? >> 8);
+  system("cp -f $crt $SERVER_CERT_PATH/");
+  vpn_die([split(' ', ($path."cert-file"))] , "Cannot copy cert-file \"$crt\"")
+    if ($? >> 8);
+  system("cp -f $key $SERVER_KEY_PATH/");
+  vpn_die([split(' ', ($path."key-file"))] , "Cannot copy key-file \"$key\"" )
+    if ($? >> 8);
+
+  # Handle CRL file if it is defined 
+  if (defined($crl)) {
+    vpn_die([split(' ', ($path."crl-file"))], "Invalid crl-file \"$crl\"")
+      if (! -f $crl);
+    system("cp -f $crl $CRL_PATH/");
+    vpn_die([split(' ', ($path."crl-file"))], "Cannot copy crl-file \"$crl\"") 
+      if ($? >> 8);
+  }
+  $crt =~ s/^.*(\/[^\/]+)$/${SERVER_CERT_PATH}$1/;
+  my $auth_str = "\tauthby=rsasig\n";
+  $auth_str .= "\tleftrsasigkey=%cert\n";
+  $auth_str .= "\trightrsasigkey=%cert\n";
+  $auth_str .= "\trightca=%same\n";
+  $auth_str .= "\tleftcert=$crt\n";
+  return $auth_str;
+}
+
+sub get_x509_secret {
+  my $peer = pop(@_);
+  my $key_file = $vcVPN->returnValue("ipsec site-to-site peer $peer authentication x509 key file");
+  my $key_pass = $vcVPN->returnValue("ipsec site-to-site peer $peer authentication x509 key password");
+  my $pstr = (defined($key_pass) ? " \"$key_pass\"" : '');
+  $key_file =~ s/^.*(\/[^\/]+)$/${SERVER_KEY_PATH}$1/;
+  my $str = ": RSA ${key_file}$pstr \n";
+  return $str;
+}
+
 
 # end of file

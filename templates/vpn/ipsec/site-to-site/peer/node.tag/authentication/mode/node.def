@@ -1,6 +1,7 @@
 help: Authentication mode
 type: txt 
 default: "pre-shared-secret"
-syntax:expression: $VAR(@) in "pre-shared-secret", "rsa"; "must be pre-shared-secret or rsa"
+syntax:expression: $VAR(@) in "pre-shared-secret", "x509", "rsa"; "must be pre-shared-secret, x509, or rsa"
 val_help: pre-shared-secret; Use pre-shared secret key
 val_help: rsa; Use RSA key
+val_help: x509; Use X.509 certificate

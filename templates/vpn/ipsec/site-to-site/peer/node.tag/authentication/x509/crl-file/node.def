@@ -1,0 +1,2 @@
+type: txt
+help: File containing the X.509 Certificate Revocation List (CRL)
