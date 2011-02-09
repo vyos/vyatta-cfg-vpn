@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.64) unstable; urgency=low
+
+  * Initial x509 for site-to-site ipsec vpn
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 08 Feb 2011 19:07:06 -0600
+
 vyatta-cfg-vpn (0.12.63) unstable; urgency=low
 
   * Bugfix 5802: add auto-update feature, for Dynamic DNS peers
