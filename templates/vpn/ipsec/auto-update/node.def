@@ -1,0 +1,4 @@
+type: u32
+help: Set auto-update interval for IPsec daemon.
+syntax:expression: $VAR(@) >= 30 && $VAR(@) <= 65535; "auto-update interval must be between 30 and 65535"
+val_help: u32:30-65535; Auto-update interval (s)
