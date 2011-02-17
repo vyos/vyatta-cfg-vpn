@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.66) unstable; urgency=low
+
+  * Initial support for configuring dhcp-interfaces for IPSEC, needs
+    testing
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 16 Feb 2011 19:16:41 -0600
+
 vyatta-cfg-vpn (0.12.65) unstable; urgency=low
 
   * Add template for auto-update cli
