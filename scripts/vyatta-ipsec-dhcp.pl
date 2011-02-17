@@ -81,9 +81,9 @@ open my $output_secrets, '>', $secrets_file
   or die "Can't open $secrets_file";
 foreach my $line (@lines){
   if (($line =~ /\#dhcp-interface=(.*)\#/) && ($1 eq $iface)){
-    $line =~ s/^$oip /$nip /;
+    $line =~ s/^$oip/$nip/;
     if (!($line =~ /^oip/)){
-      $line =~ s/^/$nip /;
+      $line =~ s/^/$nip/;
     }
   }
   print ${output_secrets} $line;

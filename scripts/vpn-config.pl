@@ -937,7 +937,7 @@ if ( $vcVPN->exists('ipsec') ) {
         }
         my $index1 = ( defined($authid) )       ? "$authid"       : $lip;
         my $index2 = ( defined($authremoteid) ) ? "$authremoteid" : $right;
-        if ($lip eq '0.0.0.0') {
+        if ($lip eq '0.0.0.0'&&!defined($dhcp_iface)) {
           if ($index1 =~ m/^@/) {
             # In main mode PSK, the responder needs to look up the secret 
             # before the Peer's ID payload has been decoded, so the ID used 
@@ -953,7 +953,11 @@ if ( $vcVPN->exists('ipsec') ) {
 	    $genout_secrets .= ": PSK \"$psk\"\n";
         } else {
           if (not ($prev_peer eq $peer)){
-            $genout_secrets .= "$lip $right ";
+            if (defined($dhcp_iface) && $lip eq '0.0.0.0'){
+              $genout_secrets .= " $right ";
+            } else {
+              $genout_secrets .= "$lip $right ";
+            }
             if ( defined ($authid) ){
               $genout_secrets .= "$authid ";
             }
