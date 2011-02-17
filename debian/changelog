@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.70) unstable; urgency=low
+
+  * Log the change when this script is run
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 17 Feb 2011 16:14:36 -0600
+
 vyatta-cfg-vpn (0.12.69) unstable; urgency=low
 
   * Reread secrets before an update
