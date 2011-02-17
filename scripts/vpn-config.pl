@@ -1382,7 +1382,6 @@ sub get_dhcp_addr {
   my $addr = pop(@dhcp_addr);
   @dhcp_addr = split(/\//, $addr); 
   $addr = $dhcp_addr[0];
-  $addr = '0.0.0.0' if ($addr eq '');
   return $addr;
 }
 
