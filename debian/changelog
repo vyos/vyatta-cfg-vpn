@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.67) unstable; urgency=low
+
+  * Added Placeholder for ipsec dhclient hook
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 17 Feb 2011 11:57:42 -0600
+
 vyatta-cfg-vpn (0.12.66) unstable; urgency=low
 
   * Initial support for configuring dhcp-interfaces for IPSEC, needs
