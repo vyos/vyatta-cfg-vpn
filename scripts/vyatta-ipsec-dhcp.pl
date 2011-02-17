@@ -4,6 +4,16 @@ use strict;
 
 my $config_file = "/etc/ipsec.conf";
 my $secrets_file = "/etc/ipsec.secrets";
+
+sub logger {
+  my $msg = pop(@_);
+  my $FACILITY = "daemon";
+  my $LEVEL = "notice";
+  my $TAG = "ipsec-dhclient-hook";
+  my $LOGCMD = "logger -t $TAG -p $FACILITY.$LEVEL";
+  system("$LOGCMD $msg");
+}
+
 my ($iface, $config_iface, $nip, $oip, $reason);
 GetOptions("interface=s"    => \$iface,
            "new_ip=s"       => \$nip,
@@ -12,6 +22,7 @@ GetOptions("interface=s"    => \$iface,
 
 # check if an update is needed
 exit(0) if (($oip eq $nip) && ($reason ne "BOUND"));
+logger("DHCP address updated to $nip from $oip: Updating ipsec configuration.");
 
 # open ipsec config
 open (my $FD, '<', $config_file);
