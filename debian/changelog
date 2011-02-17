@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.69) unstable; urgency=low
+
+  * Reread secrets before an update
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 17 Feb 2011 15:41:28 -0600
+
 vyatta-cfg-vpn (0.12.68) unstable; urgency=low
 
   * Fix initial boot problems for dhcp interfaces
