@@ -54,6 +54,7 @@ my $SERVER_KEY_PATH = '/etc/ipsec.d/private';
 
 my $vpn_cfg_err   = "VPN configuration error:";
 my $clustering_ip = 0;
+my $dhcp_if = 0;
 my $genout;
 my $genout_secrets;
 
@@ -398,12 +399,22 @@ if ( $vcVPN->exists('ipsec') ) {
     }
 
     my $lip = $vcVPN->returnValue("ipsec site-to-site peer $peer local-ip");
+    my $dhcp_iface = $vcVPN->returnValue("ipsec site-to-site peer $peer dhcp-interface");
+    if (defined($lip) && defined($dhcp_iface)){
+      vpn_die(["vpn","ipsec","site-to-site","peer",$peer],
+        "$vpn_cfg_err Only one of local-ip or dhcp-interface may be defined");
+    }
+    if (defined($dhcp_iface)){
+      $dhcp_if = $dhcp_if + 1;
+      $lip = get_dhcp_addr($dhcp_iface);
+    }
     my $authid =
       $vcVPN->returnValue("ipsec site-to-site peer $peer authentication id");
     my $authremoteid = $vcVPN->returnValue(
       "ipsec site-to-site peer $peer authentication remote-id");
-    if ( !defined($lip) || $lip eq "" ) {
-      vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"local-ip"],"$vpn_cfg_err No local-ip specified for peer \"$peer\"\n");
+    if ( (!defined($lip) || $lip eq "") && (!defined($dhcp_iface) || $dhcp_iface eq "") ) {
+      vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"local-ip"],
+        "$vpn_cfg_err No local-ip specified for peer \"$peer\"\n");
     } elsif ( $lip ne '0.0.0.0' ) {
 
       # not '0.0.0.0' special case.
@@ -478,6 +489,13 @@ if ( $vcVPN->exists('ipsec') ) {
       my $conn_head = "\nconn peer-$peer-tunnel-$tunnel\n";
       $conn_head =~ s/ peer-@/ peer-/;
       $genout .= $conn_head;
+      
+      # Support for dhcp-interfaces
+      # The comment dhcp-interface will be used by the dhclient hook to do connection updates.
+      if (defined($dhcp_iface)){
+        $genout .= "\t\#dhcp-interface=$dhcp_iface\n";
+        $lip = get_dhcp_addr($dhcp_iface);
+      }
 
       # -> leftsourceip is the internal source IP to use in a tunnel
       # -> we use leftsourceip to add a route to the rightsubnet
@@ -945,11 +963,16 @@ if ( $vcVPN->exists('ipsec') ) {
 	          # tag the secrets lines with 3 entries so the op mode command can
 	          # deal with them properly. (LEFT means localid, RIGHT means remoteid)
             if ((!defined($authid)) && (defined($authremoteid))) {
-              $genout_secrets .= ": PSK \"$psk\" #RIGHT#\n";
+              $genout_secrets .= ": PSK \"$psk\" #RIGHT# ";
             } elsif ((defined($authid)) && (!defined($authremoteid))) {
-              $genout_secrets .= ": PSK \"$psk\" #LEFT#\n";
+              $genout_secrets .= ": PSK \"$psk\" #LEFT# ";
             } else {
-              $genout_secrets .= ": PSK \"$psk\"\n";
+              $genout_secrets .= ": PSK \"$psk\" ";
+            }
+            if (defined($dhcp_iface)){
+              $genout_secrets .= "#dhcp-interface=$dhcp_iface#\n";
+            } else {
+              $genout_secrets .= "\n";
             }
           }
           $prev_peer = $peer;
@@ -1094,14 +1117,14 @@ if ( $vcVPN->isDeleted('.')
     vpn_die(["vpn","ipsec"],
     "VPN commit error.  Unable to re-enable ICMP redirects.\n");
   }
-  write_config( $genout, $config_file, $genout_secrets, $secrets_file );
+  write_config( $genout, $config_file, $genout_secrets, $secrets_file, $dhcp_if);
 } else {
   if ( !enableICMP('0') ) {
     vpn_die(["vpn","ipsec"],
     "VPN commit error.  Unable to disable ICMP redirects.\n");
   }
 
-  write_config( $genout, $config_file, $genout_secrets, $secrets_file );
+  write_config( $genout, $config_file, $genout_secrets, $secrets_file, $dhcp_if );
 
  # Assumming that if there was a local IP missmatch and clustering is enabled,
  # then the clustering scripts will take care of starting the VPN daemon.
@@ -1153,7 +1176,7 @@ sub vpn_die {
   exit 1;
 }
 sub write_config {
-  my ( $genout, $config_file, $genout_secrets, $secrets_file ) = @_;
+  my ( $genout, $config_file, $genout_secrets, $secrets_file, $dhcp_if ) = @_;
 
   open my $output_config, '>', $config_file
     or die "Can't open $config_file: $!";
@@ -1164,6 +1187,7 @@ sub write_config {
     or die "Can't open $secrets_file: $!";
   print ${output_secrets} $genout_secrets;
   close $output_secrets;
+  dhcp_hook($dhcp_if);
 }
 
 sub vpn_exec {
@@ -1346,6 +1370,32 @@ sub get_x509_secret {
   $key_file =~ s/^.*(\/[^\/]+)$/${SERVER_KEY_PATH}$1/;
   my $str = ": RSA ${key_file}$pstr \n";
   return $str;
+}
+
+sub get_dhcp_addr {
+  my $dhcp_iface = pop(@_);
+  my @dhcp_addr = Vyatta::Misc::getIP($dhcp_iface,4);
+  my $addr = pop(@dhcp_addr);
+  @dhcp_addr = split(/\//, $addr); 
+  $addr = $dhcp_addr[0];
+  $addr = '0.0.0.0' if ($addr eq '');
+  return $addr;
+}
+
+sub dhcp_hook {
+  my $dhcp_iface = pop(@_);
+  my $str = '';
+  if ($dhcp_iface > 0){
+    $str =<<EOS;
+#!/bin/sh
+/opt/vyatta/bin/sudo-users/vyatta-ipsec-dhcp.pl --interface=\"\$interface\" --new_ip=\"\$new_ip_address\" --reason=\"\$reason\" --old_ip=\"\$old_ip_address\"
+EOS
+  }
+  my $hook = "/etc/dhcp3/dhclient-exit-hooks.d/ipsecd";
+  open my $dhcp_hook, '>', $hook
+    or die "cannot open $hook";
+  print ${dhcp_hook} $str;
+  close $dhcp_hook;
 }
 
 

@@ -1,0 +1,7 @@
+type: txt
+help: DHCP interface to listen on
+allowed:
+         local -a array ;
+         array=( /var/lib/dhcp3/eth* /var/lib/dhcp3/br* ) ;
+         echo  -n ${array[@]##*/}
+

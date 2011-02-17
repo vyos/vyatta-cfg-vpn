@@ -4,12 +4,13 @@ libudevdir	 = /lib/udev
 etcudevdir	 = /etc/udev
 initddir	 = /etc/init.d
 curverdir = $(sysconfdir)/config-migrate/current
+bin_sudo_usersdir = $(bindir)/sudo-users
 
 sbin_SCRIPTS =
 
 sbin_SCRIPTS += scripts/vpn-config.pl
 sbin_SCRIPTS += scripts/vyatta-vpn-ppp-updown.pl
-
+bin_sudo_users_SCRIPTS = scripts/vyatta-ipsec-dhcp.pl
 share_perl5_DATA = lib/Vyatta/VPN/Util.pm
 
 curver_DATA = cfg-version/ipsec@3
