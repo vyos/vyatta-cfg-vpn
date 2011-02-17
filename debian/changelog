@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.68) unstable; urgency=low
+
+  * Fix initial boot problems for dhcp interfaces
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 17 Feb 2011 13:32:48 -0600
+
 vyatta-cfg-vpn (0.12.67) unstable; urgency=low
 
   * Added Placeholder for ipsec dhclient hook
