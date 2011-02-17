@@ -23,5 +23,7 @@ install-exec-hook:
 	cd templates; $(cpiop) $(DESTDIR)$(cfgdir)
 	mkdir -p $(DESTDIR)/etc/ppp/ip-up.d
 	mkdir -p $(DESTDIR)/etc/ppp/ip-down.d
+	mkdir -p $(DESTDIR)/etc/dhcp3/dhclient-exit-hooks.d/
 	cp scripts/vpn-ppp-up $(DESTDIR)/etc/ppp/ip-up.d/
 	cp scripts/vpn-ppp-down $(DESTDIR)/etc/ppp/ip-down.d/
+	cp scripts/ipsecd-dhclient-hook $(DESTDIR)/etc/dhcp3/dhclient-exit-hooks.d/ipsecd
