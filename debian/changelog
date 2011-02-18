@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.71) unstable; urgency=low
+
+  * Fix the no old ip given from dhclient problem
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 17 Feb 2011 18:28:49 -0600
+
 vyatta-cfg-vpn (0.12.70) unstable; urgency=low
 
   * Log the change when this script is run
