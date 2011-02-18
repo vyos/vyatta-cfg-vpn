@@ -91,11 +91,10 @@ close FD;
 open my $output_secrets, '>', $secrets_file
   or die "Can't open $secrets_file";
 foreach my $line (@lines){
-  if (($line =~ /\#dhcp-interface=(.*)\#/) && ($1 eq $iface)){
-    $line =~ s/^$oip/$nip/;
-    if (!($line =~ /^oip/)){
-      $line =~ s/^/$nip/;
-    }
+  if (($line =~ /(.*)\#dhcp-interface=(.*)\#/) && ($2 eq $iface)){
+    my $secretline = $1;
+    $secretline =~ /(.*?) (.*?) : PSK (.*)/;
+    $line = "$nip $2 : PSK $3\#dhcp-interface=$iface\#\n";
   }
   print ${output_secrets} $line;
 }
