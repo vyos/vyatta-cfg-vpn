@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.72) unstable; urgency=low
+
+  * Fix minor x509 configuration error message problem
+  * fix some node.def errors
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 22 Feb 2011 17:54:18 -0600
+
 vyatta-cfg-vpn (0.12.71) unstable; urgency=low
 
   * Fix the no old ip given from dhclient problem
