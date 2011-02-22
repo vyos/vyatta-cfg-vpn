@@ -1332,9 +1332,9 @@ sub get_x509 {
   # Verify the files exist
   vpn_die([split(' ', ($path."ca-cert-file"))] , "Invalid ca-cert-file \"$cacrt\"")
     if (! -f $cacrt);
-  vpn_die([split(' ', ($path."cert-file"))] , "Invalid server-cert-file \"$crt\"")
+  vpn_die([split(' ', ($path."cert-file"))] , "Invalid cert-file \"$crt\"")
     if (! -f $crt);
-  vpn_die([split(' ', ($path."key-file"))] , "Invalid server-key-file \"$key\"" )
+  vpn_die([split(' ', ($path."key-file"))] , "Invalid key-file \"$key\"" )
     if (! -f $key);
 
   
