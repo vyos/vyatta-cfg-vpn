@@ -427,7 +427,7 @@ if ( $vcVPN->exists('ipsec') ) {
 
           # Verified that dealing with a cluster IP.
           $clustering_ip = 1;
-        } else {
+        } elsif (!defined($dhcp_iface)) {
           print
             "Warning: Local IPv4 address $lip specified for peer \"$peer\"\n";
           print
@@ -953,7 +953,7 @@ if ( $vcVPN->exists('ipsec') ) {
 	    $genout_secrets .= ": PSK \"$psk\"\n";
         } else {
           if (not ($prev_peer eq $peer)){
-            if (defined($dhcp_iface) && $lip eq '0.0.0.0'){
+            if (defined($dhcp_iface) && $lip eq ''){
               $genout_secrets .= " $right ";
             } else {
               $genout_secrets .= "$lip $right ";
@@ -1230,8 +1230,18 @@ sub vpn_exec {
         #
       print ${logf}
         "VPN commit error.  Unable to $desc, received error code $?\n";
-      print "Warning: unable to [$desc], received error code $?\n";
-      print "$cmd_out\n";
+      #
+      # code 768 is for a syntax error in the secrets file
+      # this happens when a dhcp interface is configured
+      # but no address is assigned yet.
+      # only the line that has the syntax error is not loaded
+      # So we can safely ignore this error since our code generates
+      # secrets file.
+      #
+      if ($? ne '768'){
+        print "Warning: unable to [$desc], received error code $?\n"; 
+        print "$cmd_out\n";
+      }
     }
   }
   print ${logf} "---\n\n";
@@ -1380,9 +1390,13 @@ sub get_dhcp_addr {
   my ($dhcp_iface, $peer) = @_;
   vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"dhcp-interface"],
     "$vpn_cfg_err The specified interface is not configured for dhcp.")
-    if (!Vyatta::Misc::is_dhcp_enabled($dhcp_iface,0));
+    if (!(Vyatta::Misc::is_dhcp_enabled($dhcp_iface,0)));
   my @dhcp_addr = Vyatta::Misc::getIP($dhcp_iface,4);
   my $addr = pop(@dhcp_addr);
+  if (!defined($addr)){
+    $addr = '';
+    return $addr;
+  }
   @dhcp_addr = split(/\//, $addr); 
   $addr = $dhcp_addr[0];
   return $addr;
