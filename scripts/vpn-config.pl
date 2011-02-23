@@ -406,7 +406,7 @@ if ( $vcVPN->exists('ipsec') ) {
     }
     if (defined($dhcp_iface)){
       $dhcp_if = $dhcp_if + 1;
-      $lip = get_dhcp_addr($dhcp_iface);
+      $lip = get_dhcp_addr($dhcp_iface, $peer);
     }
     my $authid =
       $vcVPN->returnValue("ipsec site-to-site peer $peer authentication id");
@@ -1377,7 +1377,10 @@ sub get_x509_secret {
 }
 
 sub get_dhcp_addr {
-  my $dhcp_iface = pop(@_);
+  my ($dhcp_iface, $peer) = @_;
+  vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"dhcp-interface"],
+    "$vpn_cfg_err The specified interface is not configured for dhcp.")
+    if (!Vyatta::Misc::is_dhcp_enabled($dhcp_iface,0));
   my @dhcp_addr = Vyatta::Misc::getIP($dhcp_iface,4);
   my $addr = pop(@dhcp_addr);
   @dhcp_addr = split(/\//, $addr); 
