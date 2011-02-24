@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.75) unstable; urgency=low
+
+  * Much cleaner way to do the check to see if something has changed in
+    the ipsec or rsa-key config tree.
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 23 Feb 2011 18:36:02 -0600
+
 vyatta-cfg-vpn (0.12.74) unstable; urgency=low
 
   * Don't make vpn-config.pl run if there were no relevant changes,
