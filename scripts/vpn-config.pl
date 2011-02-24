@@ -73,6 +73,14 @@ my $vc    = new Vyatta::Config();
 my $vcVPN = new Vyatta::Config();
 $vcVPN->setLevel('vpn');
 
+# check to see if the config has changed.
+# if it has not then exit
+my $retval = getConfigStatus('ipsec', $vcVPN);
+my $retval2 = getConfigStatus('rsa-keys', $vcVPN);
+if (!$retval && !$retval2) {
+  exit 0;
+}
+
 if ( $vcVPN->exists('ipsec') ) {
 
   #
@@ -1417,6 +1425,26 @@ EOS
   print ${dhcp_hook} $str;
   close $dhcp_hook;
 }
+
+sub getConfigStatus {
+  my ($level, $vconfig) = @_;
+  my @nodes = $vconfig->listNodes($level);
+  foreach my $node (@nodes){
+    my $newlevel = "$level $node"; 
+    return 1 if ($vconfig->isChanged($newlevel));
+    getConfigStatus($newlevel, $vconfig);
+  }
+}
+
+sub logger {
+  my $msg = pop(@_);
+  my $FACILITY = "daemon";
+  my $LEVEL = "notice";
+  my $TAG = "vyatta-vpn-config";
+  my $LOGCMD = "logger -t $TAG -p $FACILITY.$LEVEL";
+  system("$LOGCMD $msg");
+}
+
 
 
 # end of file
