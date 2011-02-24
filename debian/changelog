@@ -1,3 +1,11 @@
+vyatta-cfg-vpn (0.12.74) unstable; urgency=low
+
+  * Don't make vpn-config.pl run if there were no relevant changes,
+    before it ran everytime there was a change in pptp or l2tp configs
+    as well.
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 23 Feb 2011 18:05:47 -0600
+
 vyatta-cfg-vpn (0.12.73) unstable; urgency=low
 
   * Add bond interfaces to available dhcp interfaces in tab completion
