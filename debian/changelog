@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.76) unstable; urgency=low
+
+  * Fix perlcritic errors
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 08 Mar 2011 16:53:29 -0600
+
 vyatta-cfg-vpn (0.12.75) unstable; urgency=low
 
   * Much cleaner way to do the check to see if something has changed in
