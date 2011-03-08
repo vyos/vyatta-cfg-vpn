@@ -41,10 +41,10 @@ sub is_vpn_running {
 }
 
 sub get_protocols {
-  my $cmd = "sudo cat /etc/protocols |";
-  open(PROTOCOLS, $cmd);
+  my $cmd = "sudo cat /etc/protocols";
+  open(my $PROTOCOLS, "-|", $cmd);
   my @protocols = [];
-  while(<PROTOCOLS>){
+  while(<$PROTOCOLS>){
     push (@protocols, $_);
   }
   my %protohash = ();
