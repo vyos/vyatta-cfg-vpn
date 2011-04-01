@@ -99,5 +99,5 @@ foreach my $line (@lines){
   print ${output_secrets} $line;
 }
 close $output_secrets;
-system ("/usr/sbin/ipsec rereadall");
-system ("/usr/sbin/ipsec update");
+system ("/usr/sbin/ipsec rereadall > /dev/null 2>&1");
+system ("/usr/sbin/ipsec update > /dev/null 2>&1");
