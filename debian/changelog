@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.77) unstable; urgency=low
+
+  * Bugfix 6972: Suppress messages from the ipsec dhcp script
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 01 Apr 2011 17:14:16 -0500
+
 vyatta-cfg-vpn (0.12.76) unstable; urgency=low
 
   * Fix perlcritic errors
