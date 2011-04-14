@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.78) unstable; urgency=low
+
+  * * Add help and checks for IPsec x509 nodes to push
+
+ -- Mohit Mehta <mohit@vyatta.com>  Wed, 13 Apr 2011 18:09:27 -0700
+
 vyatta-cfg-vpn (0.12.77) unstable; urgency=low
 
   * Bugfix 6972: Suppress messages from the ipsec dhcp script
