@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.79) unstable; urgency=low
+
+  * add help and check for missed auth node so users put it in /config
+
+ -- Mohit Mehta <mohit@vyatta.com>  Fri, 15 Apr 2011 14:08:55 -0700
+
 vyatta-cfg-vpn (0.12.78) unstable; urgency=low
 
   * * Add help and checks for IPsec x509 nodes to push
