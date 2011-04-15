@@ -1,3 +1,5 @@
 help: Local RSA key file location
 type:  txt 
 default:  "/opt/vyatta/etc/config/ipsec.d/rsa-keys/localhost.key"
+syntax:expression: exec "/opt/vyatta/sbin/check_file_in_config_dir $VAR(@) '/config/auth'"
+val_help: File in /config/auth or /config/ipsec.d/rsa-keys
