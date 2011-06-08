@@ -93,6 +93,7 @@ open my $output_secrets, '>', $secrets_file
 foreach my $line (@lines){
   if (($line =~ /(.*)\#dhcp-interface=(.*)\#/) && ($2 eq $iface)){
     my $secretline = $1;
+    $nip = "#" if ($nip eq '');
     $secretline =~ /(.*?) (.*?) : PSK (.*)/;
     $line = "$nip $2 : PSK $3\#dhcp-interface=$iface\#\n";
   }

@@ -961,7 +961,7 @@ if ( $vcVPN->exists('ipsec') ) {
         } else {
           if (not ($prev_peer eq $peer)){
             if (defined($dhcp_iface) && $lip eq ''){
-              $genout_secrets .= " $right ";
+              $genout_secrets .= "# $right ";
             } else {
               $genout_secrets .= "$lip $right ";
             }
