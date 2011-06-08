@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.80) unstable; urgency=low
+
+  * Bugfix 7145: same changes were needed for site-to-site as well
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 08 Jun 2011 17:44:40 -0500
+
 vyatta-cfg-vpn (0.12.79) unstable; urgency=low
 
   * add help and check for missed auth node so users put it in /config
