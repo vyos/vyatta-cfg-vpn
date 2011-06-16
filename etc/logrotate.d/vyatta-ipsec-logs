@@ -1,0 +1,7 @@
+
+/var/log/vyatta/ipsec.log {
+	nocompress
+	size 1M
+	rotate 2
+	create 664 root root
+}

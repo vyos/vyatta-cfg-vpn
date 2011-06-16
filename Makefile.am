@@ -3,6 +3,7 @@ share_perl5dir	 = $(datarootdir)/perl5/Vyatta/VPN
 libudevdir	 = /lib/udev
 etcudevdir	 = /etc/udev
 initddir	 = /etc/init.d
+logrotatedir     = /etc/logrotate.d
 curverdir = $(sysconfdir)/config-migrate/current
 bin_sudo_usersdir = $(bindir)/sudo-users
 
@@ -12,6 +13,8 @@ sbin_SCRIPTS += scripts/vpn-config.pl
 sbin_SCRIPTS += scripts/vyatta-vpn-ppp-updown.pl
 bin_sudo_users_SCRIPTS = scripts/vyatta-ipsec-dhcp.pl
 share_perl5_DATA = lib/Vyatta/VPN/Util.pm
+
+logrotate_DATA = etc/logrotate.d/vyatta-ipsec-logs
 
 curver_DATA = cfg-version/ipsec@3
 

@@ -51,6 +51,7 @@ my $CA_CERT_PATH = '/etc/ipsec.d/cacerts';
 my $CRL_PATH = '/etc/ipsec.d/crls';
 my $SERVER_CERT_PATH = '/etc/ipsec.d/certs';
 my $SERVER_KEY_PATH = '/etc/ipsec.d/private';
+my $LOGFILE = '/var/log/vyatta/ipsec.log';
 
 my $vpn_cfg_err   = "VPN configuration error:";
 my $clustering_ip = 0;
@@ -1204,8 +1205,8 @@ sub write_config {
 sub vpn_exec {
   my ( $command, $desc ) = @_;
 
-  open my $logf, '>>', "/tmp/ipsec.log"
-    or die "Can't open /tmp/ipsec.log: $!";
+  open my $logf, '>>', $LOGFILE
+    or die "Can't open $LOGFILE: $!";
 
   use POSIX;
   my $timestamp = strftime( "%Y-%m-%d %H:%M.%S", localtime );
@@ -1258,8 +1259,8 @@ sub vpn_exec {
 sub vpn_log {
   my ($log) = @_;
 
-  open my $logfile, '>>', "/tmp/ipsec.log"
-    or die "Can't open /tmp/ipsec.log: $!";
+  open my $logfile, '>>', $LOGFILE
+    or die "Can't open $LOGFILE: $!";
 
   use POSIX;
   my $timestamp = strftime( "%Y-%m-%d %H:%M.%S", localtime );

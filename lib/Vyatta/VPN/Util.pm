@@ -131,7 +131,7 @@ sub vpn_debug {
 sub vpn_log {
     my ($msg) = @_;
     
-    open my $log, '>>', "/tmp/ipsec.log"
+    open my $log, '>>', "/var/log/vyatta/ipsec.log"
 	or return;
     
     my $timestamp = strftime("%Y-%m-%d %H:%M.%S", localtime);
