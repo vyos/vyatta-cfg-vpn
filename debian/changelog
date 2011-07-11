@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.83) unstable; urgency=low
+
+  * Remove no longer mandatory nodes so that VPN will work smoothly with
+    webgui2
+
+ -- John Southworth <john.southworth@vyatta.com>  Mon, 11 Jul 2011 18:42:52 -0500
+
 vyatta-cfg-vpn (0.12.82) unstable; urgency=low
 
   * new branch
