@@ -1,2 +1,2 @@
-help: IP address of a local interface to use for VPN [REQUIRED]
+help: IP address of a local interface to use for VPN 
 type:  ipv4
