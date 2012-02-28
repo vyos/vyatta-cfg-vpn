@@ -928,6 +928,12 @@ if ( $vcVPN->exists('ipsec') ) {
       } elsif ( defined($auth_mode) && ( $auth_mode eq 'pre-shared-secret' ) ) {
         my $psk = $vcVPN->returnValue(
           "ipsec site-to-site peer $peer authentication pre-shared-secret");
+        my $orig_psk = $vcVPN->returnOrigValue(
+          "ipsec site-to-site peer $peer authentication pre-shared-secret");
+        if ($psk ne $orig_psk){
+          print "WARNING: The pre-shared-secret will not be updated until the next re-keying interval\n";
+          print "To force the key change use: 'reset vpn ipsec-peer'\n";
+        }
         if ( !defined($psk) || $psk eq '' ) {
           vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"authentication"],
             "$vpn_cfg_err No 'pre-shared-secret' specified for peer \"$peer\""
