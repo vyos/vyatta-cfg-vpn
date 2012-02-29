@@ -930,7 +930,8 @@ if ( $vcVPN->exists('ipsec') ) {
           "ipsec site-to-site peer $peer authentication pre-shared-secret");
         my $orig_psk = $vcVPN->returnOrigValue(
           "ipsec site-to-site peer $peer authentication pre-shared-secret");
-        if ($psk ne $orig_psk){
+        $orig_psk = "" if (!defined($orig_psk));
+        if ($psk ne $orig_psk && $orig_psk ne ""){
           print "WARNING: The pre-shared-secret will not be updated until the next re-keying interval\n";
           print "To force the key change use: 'reset vpn ipsec-peer'\n";
         }
