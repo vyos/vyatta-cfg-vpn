@@ -11,6 +11,7 @@ sbin_SCRIPTS =
 
 sbin_SCRIPTS += scripts/vpn-config.pl
 sbin_SCRIPTS += scripts/vyatta-vpn-ppp-updown.pl
+sbin_SCRIPTS += scripts/is_valid_address.pl
 bin_sudo_users_SCRIPTS = scripts/vyatta-ipsec-dhcp.pl
 share_perl5_DATA = lib/Vyatta/VPN/Util.pm
 
