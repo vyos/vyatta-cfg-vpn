@@ -423,9 +423,9 @@ if ( $vcVPN->exists('ipsec') ) {
     if ( (!defined($lip) || $lip eq "") && (!defined($dhcp_iface) || $dhcp_iface eq "") ) {
       vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"local-address"],
         "$vpn_cfg_err No local-address specified for peer \"$peer\"\n");
-    } elsif ( $lip ne '0.0.0.0' ) {
+    } elsif ( $lip ne 'any' ) {
 
-      # not '0.0.0.0' special case.
+      # not 'any' special case.
       # check interface addresses.
       if ( !Vyatta::Misc::isIPinInterfaces( $vc, $lip, @interfaces ) ) {
         vpn_log(
@@ -519,7 +519,7 @@ if ( $vcVPN->exists('ipsec') ) {
       # Assign left and right to local and remote interfaces
       #
       if ( defined($lip) ) {
-        if ( $lip eq '0.0.0.0' ) {
+        if ( $lip eq 'any' ) {
           $genout .= "\tleft=%defaultroute\n";
           # no need for leftsourceip as a defaultroute is must for this to work
         } else {
