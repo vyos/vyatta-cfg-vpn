@@ -1,6 +1,6 @@
 type:  txt
 
-help: Protocol to Encrypt
+help: Protocol to encrypt
 
 val_help: txt ; IP protocol name from /etc/protocols (e.g. "gre" or "tcp")
 val_help: u32:0-255 ; IP protocol number
