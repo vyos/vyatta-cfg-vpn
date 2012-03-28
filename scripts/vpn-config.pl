@@ -559,7 +559,7 @@ if ( $vcVPN->exists('ipsec') ) {
       # Write tunnel configuration
       #
       my $leftsubnet = $vcVPN->returnValue(
-        "ipsec site-to-site peer $peer tunnel $tunnel local subnet");
+        "ipsec site-to-site peer $peer tunnel $tunnel local prefix");
       if ( defined($leftsubnet) && $leftsubnet eq 'any' ) {
         $leftsubnet = '0.0.0.0/0';
       }
@@ -587,7 +587,7 @@ if ( $vcVPN->exists('ipsec') ) {
       }
 
       my $remotesubnet = $vcVPN->returnValue(
-        "ipsec site-to-site peer $peer tunnel $tunnel remote subnet");
+        "ipsec site-to-site peer $peer tunnel $tunnel remote prefix");
 
       my $rightsubnet;
       my $allow_nat_networks = $vcVPN->returnValue(
@@ -633,7 +633,7 @@ if ( $vcVPN->exists('ipsec') ) {
       if ( defined($rightsubnet) ) {
         $genout .= "\trightsubnet=$rightsubnet\n";
 
-        # not adding vpn route if remote subnet is 0.0.0.0/0
+        # not adding vpn route if remote prefix is 0.0.0.0/0
         # user should add a route [default/static] manually
         $leftsourceip = undef if $rightsubnet eq '0.0.0.0/0';
         if ($rightsubnet =~ /vhost:%priv/) {
@@ -711,7 +711,7 @@ if ( $vcVPN->exists('ipsec') ) {
           my $remotesubnet_object = new NetAddr::IP($rightsubnet);
           if ($remotesubnet_object == $localsubnet_object) {
             vpn_die(["vpn","ipsec","site-to-site","peer",$peer],
-                "$vpn_cfg_err local subnet and remote subnet cannot be the same.\n");
+                "$vpn_cfg_err local prefix and remote prefix cannot be the same.\n");
           }
           if ($remotesubnet_object->contains($localsubnet_object)) {
             $needs_passthrough = 'true';
