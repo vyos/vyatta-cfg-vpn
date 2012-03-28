@@ -1,6 +1,7 @@
 tag:
 type: txt
 help: VPN peer
-val_help: ipv4; IP address of the peer
+val_help: ipv4; IPv4 address of the peer
+val_help: ipv6; IPv6 address of the peer
 val_help: txt; Hostname of the peer
 val_help: @<text>; ID of the peer
