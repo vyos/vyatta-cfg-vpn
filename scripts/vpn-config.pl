@@ -407,6 +407,32 @@ if ( $vcVPN->exists('ipsec') ) {
     }
 
     my $lip = $vcVPN->returnValue("ipsec site-to-site peer $peer local-address");
+
+    my $peer_proto =  ((is_ip_v4_or_v6($peer) && (is_ip_v4_or_v6($peer) == 6))) ? 6 : 4;
+    my $conn_proto = 4;
+
+    # Check peer and local-address consistency
+    if ($peer_proto == 6) {
+         if (defined($lip)) {
+              if (is_ip_v4_or_v6($lip) && (is_ip_v4_or_v6($lip) == 6)) {
+                  $conn_proto = 6;
+              } else {
+                  # Protocols don't match
+                  if (isIpAddress($lip)) {
+                      vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer, "local-address"],
+	                       "$vpn_cfg_err The 'local-address' and peer protocols do not match");
+                  # %defaultroute for IPv6 IKEv1 is not supported by StrongS/WAN
+                  } elsif($lip eq 'any') {
+                      vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer, "local-address"],
+                               "$vpn_cfg_err 'any' local address is not supported for IPv6 peers");
+                  }
+              }
+         } else {
+             vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer],
+		      "$vpn_cfg_err 'local-address' is required for IPv6 peers");
+	 }
+    }
+
     my $dhcp_iface = $vcVPN->returnValue("ipsec site-to-site peer $peer dhcp-interface");
     if (defined($lip) && defined($dhcp_iface)){
       vpn_die(["vpn","ipsec","site-to-site","peer",$peer],
@@ -588,6 +614,25 @@ if ( $vcVPN->exists('ipsec') ) {
 
       my $remotesubnet = $vcVPN->returnValue(
         "ipsec site-to-site peer $peer tunnel $tunnel remote prefix");
+
+      # Check local and remote prefix protocol consistency
+      my $leftsubnet_proto = is_ip_v4_or_v6($leftsubnet);
+      my $remotesubnet_proto = is_ip_v4_or_v6($remotesubnet);
+      if ($leftsubnet_proto != $remotesubnet_proto) {
+          vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer, "tunnel", $tunnel],
+                   "$vpn_cfg_err The 'remote prefix' and 'local prefix' protocols ".
+                   "do not match");
+      }
+      # Check remote/local and peer protocol consistency
+      # IPv6 over IPv6 scenario is actually supported by StrongS/WAN,
+      # we do not allow it in this version because of design and QA issues.
+      if (($conn_proto != 6) && ($leftsubnet_proto == 6)) {
+          vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer, "tunnel", $tunnel],
+                   "$vpn_cfg_err IPv6 over IPv4 IPsec is not supported");
+     } elsif (($conn_proto == 6) && ($leftsubnet_proto != 6)) {
+	  vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer, "tunnel", $tunnel],
+                  "$vpn_cfg_err IPv4 over IPv6 IPsec is not supported");
+     }
 
       my $rightsubnet;
       my $allow_nat_networks = $vcVPN->returnValue(
