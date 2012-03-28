@@ -1,3 +1,16 @@
+vyatta-cfg-vpn (0.12.88) unstable; urgency=low
+
+  * Add a script for validating single IPv4 or IPv6 address with no
+    prefix
+  * Rename local-ip option to local-address.
+  * Add IPv6 address completion for peer.
+  * Fix protocol help string capitalization.
+  * Rename "local/remote subnet" to "local/remote prefix".
+  * Add any special case for local-address instead of 0.0.0.0.
+  * Add commit-time config validation.
+
+ -- Daniil Baturin <daniil.baturin@vyatta.com>  Thu, 29 Mar 2012 03:19:37 +0700
+
 vyatta-cfg-vpn (0.12.87) unstable; urgency=low
 
   * new branch
