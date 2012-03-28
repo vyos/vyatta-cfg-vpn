@@ -1,0 +1,5 @@
+help: IPv4 or IPv6 address of a local interface to use for VPN
+type: txt
+val_help: ipv4; IPv4 address of a local interface for VPN
+val_help: ipv6; IPv6 address of a local interface for VPN
+syntax:expression: exec "/opt/vyatta/sbin/is_valid_address.pl $VAR(@)" 

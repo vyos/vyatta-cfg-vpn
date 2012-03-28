@@ -406,11 +406,11 @@ if ( $vcVPN->exists('ipsec') ) {
 				  . "\"$peer\" has not been configured.\n");
     }
 
-    my $lip = $vcVPN->returnValue("ipsec site-to-site peer $peer local-ip");
+    my $lip = $vcVPN->returnValue("ipsec site-to-site peer $peer local-address");
     my $dhcp_iface = $vcVPN->returnValue("ipsec site-to-site peer $peer dhcp-interface");
     if (defined($lip) && defined($dhcp_iface)){
       vpn_die(["vpn","ipsec","site-to-site","peer",$peer],
-        "$vpn_cfg_err Only one of local-ip or dhcp-interface may be defined");
+        "$vpn_cfg_err Only one of local-address or dhcp-interface may be defined");
     }
     if (defined($dhcp_iface)){
       $dhcp_if = $dhcp_if + 1;
@@ -421,15 +421,15 @@ if ( $vcVPN->exists('ipsec') ) {
     my $authremoteid = $vcVPN->returnValue(
       "ipsec site-to-site peer $peer authentication remote-id");
     if ( (!defined($lip) || $lip eq "") && (!defined($dhcp_iface) || $dhcp_iface eq "") ) {
-      vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"local-ip"],
-        "$vpn_cfg_err No local-ip specified for peer \"$peer\"\n");
+      vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"local-address"],
+        "$vpn_cfg_err No local-address specified for peer \"$peer\"\n");
     } elsif ( $lip ne '0.0.0.0' ) {
 
       # not '0.0.0.0' special case.
       # check interface addresses.
       if ( !Vyatta::Misc::isIPinInterfaces( $vc, $lip, @interfaces ) ) {
         vpn_log(
-"The local-ip address $lip of peer \"$peer\" has not been configured in any of the ipsec-interfaces.\n"
+"The local-address $lip of peer \"$peer\" has not been configured in any of the ipsec-interfaces.\n"
         );
         if ( Vyatta::Misc::isClusterIP( $vc, $lip ) ) {
 
@@ -437,7 +437,7 @@ if ( $vcVPN->exists('ipsec') ) {
           $clustering_ip = 1;
         } elsif (!defined($dhcp_iface)) {
           print
-            "Warning: Local IPv4 address $lip specified for peer \"$peer\"\n";
+            "Warning: Local address $lip specified for peer \"$peer\"\n";
           print
             "is not configured on any of the ipsec-interfaces and is not the\n";
           print "clustering address.  IPsec must be re-started after address\n";
@@ -512,7 +512,7 @@ if ( $vcVPN->exists('ipsec') ) {
       # -> if leftsubnet is defined and is not 0.0.0.0/0; we try and find
       #    an interface on the system that has an IP address lying within
       #    the leftsubnet and use that as leftsourceip. if leftsubnet is not
-      #    defined or is 0.0.0.0/0 then we use local-ip as leftsourceip.
+      #    defined or is 0.0.0.0/0 then we use local-address as leftsourceip.
       my $leftsourceip = undef;
 
       #
@@ -962,9 +962,9 @@ if ( $vcVPN->exists('ipsec') ) {
             # http://bugzilla.vyatta.com/show_bug.cgi?id=5500            
 	          vpn_die(["vpn","ipsec","site-to-site","peer","0.0.0.0","authentication"],
 					  "$vpn_cfg_err cannot use authentication id with pre-shared-secret"
-					  . " when local-ip is 0.0.0.0\n");
+					  . " when local-address is 0.0.0.0\n");
 		}
-	    # when local-ip is dynamic then only the following generic form works
+	    # when local-address is dynamic then only the following generic form works
 	    $genout_secrets .= ": PSK \"$psk\"\n";
         } else {
           if (not ($prev_peer eq $peer)){
@@ -1149,7 +1149,7 @@ if ( $vcVPN->isDeleted('.')
  # then the clustering scripts will take care of starting the VPN daemon.
   if ($clustering_ip) {
 
-# If the local-ip is provided by clustering, then just write out the configuration,
+# If the local-address is provided by clustering, then just write out the configuration,
 # but do not start the VPN daemon
 
     vpn_log(
@@ -1308,9 +1308,9 @@ sub hasLocalWildcard {
   }
   return 0 if ( @peers == 0 );
   foreach my $peer (@peers) {
-    my $lip = $vcVPN->returnValue("ipsec site-to-site peer $peer local-ip");
+    my $lip = $vcVPN->returnValue("ipsec site-to-site peer $peer local-address");
     if ($orig) {
-      $lip = $vcVPN->returnOrigValue("ipsec site-to-site peer $peer local-ip");
+      $lip = $vcVPN->returnOrigValue("ipsec site-to-site peer $peer local-address");
     }
     return 1 if ( $lip && $lip eq '0.0.0.0' );
   }
