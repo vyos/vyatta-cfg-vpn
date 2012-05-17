@@ -394,6 +394,7 @@ if ( $vcVPN->exists('ipsec') ) {
       . " remote-users configured\n";
   }
   my $prev_peer = "";
+  my %marks = ();
   foreach my $peer (@peers) {
     my $peer_ike_group =
       $vcVPN->returnValue("ipsec site-to-site peer $peer ike-group");
@@ -487,37 +488,53 @@ if ( $vcVPN->exists('ipsec') ) {
     #
     # Name connection by peer and tunnel
     #
+    my $isVti = 0;
     my @tunnels = $vcVPN->listNodes("ipsec site-to-site peer $peer tunnel");
     if ( @tunnels == 0 ) {
-      vpn_die(["vpn", "ipsec", "site-to-site","peer",$peer,"tunnel"],
-        "$vpn_cfg_err No tunnels configured for peer \"$peer\".  At least"
-        . " one tunnel required per peer.\n");
+      #
+      # Check if this is VTI
+      #
+      if ($vcVPN->exists("ipsec site-to-site peer $peer vti") ) {
+            $isVti = 1;
+            @tunnels = (@tunnels, "vti");
+      }
+      if (@tunnels == 0) {
+            vpn_die(["vpn", "ipsec", "site-to-site","peer",$peer,"tunnel"],
+                    "$vpn_cfg_err No tunnels configured for peer \"$peer\".  At least"
+                    . " one tunnel required per peer.\n");
+      }
     }
     foreach my $tunnel (@tunnels) {
 
       my $needs_passthrough = 'false';
+      my $tunKeyword;
+      if ($isVti == 1) {
+        $tunKeyword = 'vti';
+      } else {
+        $tunKeyword = 'tunnel '."$tunnel";
+      }
 
       #
       # Add support for tunnel disable.
       #
       if (
-        $vcVPN->exists("ipsec site-to-site peer $peer tunnel $tunnel disable") )
+        $vcVPN->exists("ipsec site-to-site peer $peer $tunKeyword disable") )
       {
         next;
       }
 
       my $peer_tunnel_esp_group = $vcVPN->returnValue(
-        "ipsec site-to-site peer $peer tunnel $tunnel esp-group");
+        "ipsec site-to-site peer $peer $tunKeyword esp-group");
       $peer_tunnel_esp_group = '' if (!defined($peer_tunnel_esp_group));
       if ( (!defined($peer_tunnel_esp_group) || $peer_tunnel_esp_group eq '') && 
            (!defined($def_esp_group) || $def_esp_group eq '')) {
-        vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"tunnel",$tunnel,"esp-group"],
+        vpn_die(["vpn","ipsec","site-to-site","peer",$peer,$tunKeyword,"esp-group"],
 				    "$vpn_cfg_err No ESP group specified for peer \"$peer\" "
-				    . "tunnel $tunnel.\n");
+				    . "$tunKeyword.\n");
       } elsif ( !$vcVPN->exists("ipsec esp-group $peer_tunnel_esp_group") ) {
-        vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"tunnel",$tunnel,"esp-group"],
+        vpn_die(["vpn","ipsec","site-to-site","peer",$peer,$tunKeyword,"esp-group"],
 				    "$vpn_cfg_err The ESP group \"$peer_tunnel_esp_group\" specified "
-				    . "for peer \"$peer\" tunnel $tunnel has not been configured.\n");
+				    . "for peer \"$peer\" $tunKeyword has not been configured.\n");
       }
 
       my $conn_head = "\nconn peer-$peer-tunnel-$tunnel\n";
@@ -546,6 +563,11 @@ if ( $vcVPN->exists('ipsec') ) {
       #
       if ( defined($lip) ) {
         if ( $lip eq 'any' ) {
+          if ($isVti) {
+            vpn_die(["vpn","ipsec","site-to-site","peer",$peer,$tunKeyword,"local-address"],
+                    "$vpn_cfg_err The local interface must be specified "
+                    . "for peer \"$peer\" $tunKeyword.\n");
+          }
           $genout .= "\tleft=%defaultroute\n";
           # no need for leftsourceip as a defaultroute is must for this to work
         } else {
@@ -555,6 +577,7 @@ if ( $vcVPN->exists('ipsec') ) {
         $genout .= "\tleftid=$authid\n" if defined $authid;
       }
 
+      # @SM Todo: must have explicit settings for VTI.
       my $any_peer = 0;
       my $right;
       my $rightid = undef;
@@ -570,6 +593,11 @@ if ( $vcVPN->exists('ipsec') ) {
         or ( $peer eq '0.0.0.0' )
         or $any_peer == 1 )
       {
+        if ($isVti) {
+           vpn_die(["vpn","ipsec","site-to-site","peer",$peer],
+             "$vpn_cfg_err The \"$peer\" is invalid "
+             . "ip address must be specified for $tunKeyword.\n");
+        }
         $right    = '%any';
         $any_peer = 1;
       } else {
@@ -585,8 +613,8 @@ if ( $vcVPN->exists('ipsec') ) {
       # Write tunnel configuration
       #
       my $leftsubnet = $vcVPN->returnValue(
-        "ipsec site-to-site peer $peer tunnel $tunnel local prefix");
-      if ( defined($leftsubnet) && $leftsubnet eq 'any' ) {
+        "ipsec site-to-site peer $peer $tunKeyword local prefix");
+      if ( (defined($leftsubnet) && $leftsubnet eq 'any') || $isVti == 1 ) {
         $leftsubnet = '0.0.0.0/0';
       }
 
@@ -613,12 +641,15 @@ if ( $vcVPN->exists('ipsec') ) {
       }
 
       my $remotesubnet = $vcVPN->returnValue(
-        "ipsec site-to-site peer $peer tunnel $tunnel remote prefix");
+        "ipsec site-to-site peer $peer $tunKeyword remote prefix");
+      if ($isVti) {
+        $remotesubnet = 'any';
+      }
 
       # Check local and remote prefix protocol consistency
       my $leftsubnet_proto = is_ip_v4_or_v6($leftsubnet);
       my $remotesubnet_proto = is_ip_v4_or_v6($remotesubnet);
-      if ($leftsubnet_proto != $remotesubnet_proto) {
+      if ( !$isVti && ($leftsubnet_proto != $remotesubnet_proto) ) {
           vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer, "tunnel", $tunnel],
                    "$vpn_cfg_err The 'remote prefix' and 'local prefix' protocols ".
                    "do not match");
@@ -636,9 +667,9 @@ if ( $vcVPN->exists('ipsec') ) {
 
       my $rightsubnet;
       my $allow_nat_networks = $vcVPN->returnValue(
-        "ipsec site-to-site peer $peer tunnel $tunnel allow-nat-networks");
+        "ipsec site-to-site peer $peer $tunKeyword allow-nat-networks");
       my $allow_public_networks = $vcVPN->returnValue(
-        "ipsec site-to-site peer $peer tunnel $tunnel allow-public-networks");
+        "ipsec site-to-site peer $peer $tunKeyword allow-public-networks");
 
       if ( defined($allow_nat_networks) && $allow_nat_networks eq 'enable' ) {
         if ( defined($remotesubnet) && $remotesubnet ne "" ) {
@@ -653,7 +684,7 @@ if ( $vcVPN->exists('ipsec') ) {
         if ( @allowed_network == 0 ) {
           vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"tunnel", $tunnel],
             "$vpn_cfg_err While 'allow-nat-networks' has been enabled for peer"
-            . " \"$peer\" tunnel $tunnel, no global allowed NAT networks have"
+            . " \"$peer\" $tunKeyword, no global allowed NAT networks have"
             . " been configured.\n");
         }
 
@@ -665,7 +696,7 @@ if ( $vcVPN->exists('ipsec') ) {
             vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"tunnel", $tunnel],
               "$vpn_cfg_err The 'remote-subnet' has been specified while "
               . "'allow-public-networks' has been enabled for peer \"$peer\" "
-              . "tunnel $tunnel.  Both not allowed at once.\n");
+              . "$tunKeyword.  Both not allowed at once.\n");
           }
           $rightsubnet .= ",%no";
         }
@@ -696,13 +727,13 @@ if ( $vcVPN->exists('ipsec') ) {
       # Protocol/port
       #
       my $protocol = $vcVPN->returnValue(
-          "ipsec site-to-site peer $peer tunnel $tunnel protocol");
+          "ipsec site-to-site peer $peer $tunKeyword protocol");
       my $lprotoport = '';
       if (defined($protocol)){
           $lprotoport .= $protocol; 
       }
       my $lport = $vcVPN->returnValue(
-          "ipsec site-to-site peer $peer tunnel $tunnel local port");
+          "ipsec site-to-site peer $peer $tunKeyword local port");
       if (defined($lport)){
           if (!defined($protocol)){
             $lprotoport .= "0/$lport";
@@ -722,7 +753,7 @@ if ( $vcVPN->exists('ipsec') ) {
           $rprotoport .= $protocol; 
       }
       my $rport = $vcVPN->returnValue(
-          "ipsec site-to-site peer $peer tunnel $tunnel remote port");
+          "ipsec site-to-site peer $peer $tunKeyword remote port");
       if (defined($rport)){
           if (!defined($protocol)){
             $rprotoport .= "0/$rport";
@@ -742,7 +773,7 @@ if ( $vcVPN->exists('ipsec') ) {
       # check if passthrough connection is needed
       # needed when remote-subnet encompasses local-subnet
       #
-      if (defined $leftsubnet && defined $rightsubnet) {
+      if (!$isVti && defined $leftsubnet && defined $rightsubnet) {
         # validate that these values are ipv4net
         my $valid_leftsubnet = 'false';
         my $valid_rightsubnet = 'false';
@@ -810,7 +841,7 @@ if ( $vcVPN->exists('ipsec') ) {
               } elsif ( $dh_group ne '' ) {
                 vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"tunnel", $tunnel],
                   "$vpn_cfg_err Invalid 'dh-group' $dh_group specified for "
-                  . "peer \"$peer\" tunnel $tunnel.  Only 2 or 5 accepted.\n");
+                  . "peer \"$peer\" $tunKeyword.  Only 2 or 5 accepted.\n");
               }
             }
           }
@@ -852,7 +883,7 @@ if ( $vcVPN->exists('ipsec') ) {
       my $esplifetime = ESPLIFETIME_DEFAULT;
       $genout .= "\tesp=";
       my $esp_group = $vcVPN->returnValue(
-        "ipsec site-to-site peer $peer tunnel $tunnel esp-group");
+        "ipsec site-to-site peer $peer $tunKeyword esp-group");
       if (!defined($esp_group) || $esp_group eq ''){
         $esp_group = $vcVPN->returnValue(
           "ipsec site-to-site peer $peer default-esp-group");
@@ -920,9 +951,13 @@ if ( $vcVPN->exists('ipsec') ) {
         }
         if ( $espmode eq "transport" ) {
           if ( defined $leftsubnet or defined $rightsubnet ) {
-            vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"tunnel", $tunnel],
+            vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"$tunKeyword"],
               "$vpn_cfg_err Can not use local-subnet or remote-subnet when "
               . "using transport mode\n");
+          }
+          if ( $isVti == 1) {
+            vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"$tunKeyword"],
+              "$vpn_cfg_err Can not use transport mode for \"$peer\" with vti\n");
           }
         }
         $genout .= "\ttype=$espmode\n";
@@ -1094,6 +1129,25 @@ if ( $vcVPN->exists('ipsec') ) {
       }
 
       #
+      # Mark setting for vti.
+      #
+      if ($isVti) {
+          my $mark = $vcVPN->returnValue("ipsec site-to-site peer $peer vti mark");
+          if (!defined($mark) || $mark eq '' || $mark eq "0") {
+            vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","mark"],
+                "$vpn_cfg_err No mark specified for peer \"$peer\" vti\n");
+          } else {
+              if (defined($marks{ $mark })) {
+                vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","mark"],
+                    "$vpn_cfg_err vti mark $mark already used.\n");
+              } else {
+                  $marks{ $mark } = 1;
+                  $genout .= "\tmark=$mark\n";
+              }
+          }
+      }
+
+      #
       # Start automatically
       #
       if ($any_peer) {
@@ -1136,7 +1190,6 @@ if ( $vcVPN->exists('ipsec') ) {
           $genout .= "#$passthrough_conn_head";
 
       }
-
     }
   }
 } else {

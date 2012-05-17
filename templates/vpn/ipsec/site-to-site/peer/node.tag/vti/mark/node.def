@@ -1,0 +1,2 @@
+type: u32
+help: Mark associated with the secure tunnel interface [REQUIRED]
