@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.89) unstable; urgency=low
+
+  * Vti config support.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Wed, 16 May 2012 17:46:40 -0700
+
 vyatta-cfg-vpn (0.12.88) unstable; urgency=low
 
   * Add a script for validating single IPv4 or IPv6 address with no

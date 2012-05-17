@@ -1,0 +1,3 @@
+type: txt
+help: VTI tunnel interface associated with this configuration [REQUIRED]
+allowed: cli-shell-api listActiveNodes interfaces vti

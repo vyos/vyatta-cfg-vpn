@@ -6,3 +6,4 @@ end:sudo /opt/vyatta/sbin/vpn-config.pl \
               --init_script='/etc/init.d/ipsec' || exit 1
         sudo /opt/vyatta/sbin/vyatta-update-l2tp.pl || exit 1
         sudo /opt/vyatta/sbin/vyatta-update-pptp.pl || exit 1
+        sudo /opt/vyatta/sbin/vyatta-vti-config.pl || exit 1
