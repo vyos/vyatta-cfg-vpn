@@ -386,6 +386,13 @@ if ( $vcVPN->exists('ipsec') ) {
   }
 
   #
+  # Default keyengine is ikev1
+  #
+  $genout .= "\n";
+  $genout .= "conn %default\n";
+  $genout .= "\tkeyexchange=ikev1\n\n";
+
+  #
   # Connection configurations
   #
   my @peers = $vcVPN->listNodes('ipsec site-to-site peer');
