@@ -87,7 +87,11 @@ if (@peers == 0) {
             exit -1;
         }
         # Check mark is valid.
-        if (!defined($mark) || $mark eq "" || $mark eq "0") {
+        if (!defined($mark)) {
+            print STDERR "$vti_cfg_err mark not defined.\n";
+            exit -1;
+        }
+        if ($mark eq "" || $mark eq "0") {
             print STDERR "$vti_cfg_err Invalid mark \"$mark\".\n";
             exit -1;
         }
@@ -130,17 +134,19 @@ if (@peers == 0) {
             # @SM TODO: Add the static routes over this tunnel...
         }
         if (defined($description)) {
-            $gencmds .= "sudo /sbin/ip tunnel show $tunName || sudo echo \"$description\" > /sys/class/net/$tunName/ifalias\n";
+            $gencmds .= "if [ -d /sys/class/net/$tunName ] ; then\n\tsudo echo \"$description\" > /sys/class/net/$tunName/ifalias\nfi\n";
         }
     }
 
 if ($gencmds ne "") {
     open my $output_config, '>', '/tmp/vti_config' or die "Can't open /tmp/vti_config $!";
     print ${output_config} "#!/bin/sh\n";
+    print ${output_config} "sudo modprobe ip_vti\n";
     print ${output_config} $gencmds;
     close $output_config;
     `chmod 755 /tmp/vti_config`;
-    #$result=`/tmp/vti_config`;
+    system("/tmp/vti_config");
+    $result = $? >> 8;
     #@SM TODO: remove /tmp/vti_config;
 }
 exit $result;
