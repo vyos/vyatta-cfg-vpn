@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.90) unstable; urgency=low
+
+  * Default keyexchange ikev1.
+  * VTI: cfg mark/bind change handlers.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Fri, 18 May 2012 14:51:58 -0700
+
 vyatta-cfg-vpn (0.12.89) unstable; urgency=low
 
   * Vti config support.
