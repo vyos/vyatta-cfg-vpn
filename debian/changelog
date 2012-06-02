@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.86+oxnard2) unstable; urgency=low
+
+  * Bugfix 8100: Be flexible in char accepted in id field.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Fri, 01 Jun 2012 17:20:53 -0700
+
 vyatta-cfg-vpn (0.12.86+oxnard1) unstable; urgency=low
 
   * new branch
