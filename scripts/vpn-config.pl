@@ -1137,6 +1137,7 @@ if ( $vcVPN->exists('ipsec') ) {
 
       #
       # Mark setting for vti.
+      # and up/down script hook.
       #
       if ($isVti) {
           my $mark = $vcVPN->returnValue("ipsec site-to-site peer $peer vti mark");
@@ -1152,6 +1153,13 @@ if ( $vcVPN->exists('ipsec') ) {
                   $genout .= "\tmark=$mark\n";
               }
           }
+          # up/down script hook.
+          my $tunName = $vcVPN->returnValue("ipsec site-to-site peer $peer vti bind");
+          if (!defined($tunName)) {
+            vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],
+                "$vpn_cfg_err No interface bind specified for peer \"$peer\" vti\n");
+          }
+          $genout .= "\tleftupdown=\"/usr/lib/ipsec/vti-up-down.sh $tunName\"\n";
       }
 
       #

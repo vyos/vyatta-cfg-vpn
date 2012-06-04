@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-# Module: vpn-config.pl
+# Module: vyatta-vti-config.pl
 #
 # **** License ****
 # This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 # Portions created by Vyatta are Copyright (C) 2006, 2007, 2008, 2009 Vyatta, Inc.
 # All Rights Reserved.
 #
-# Authors: Justin Fletcher, Marat Nepomnyashy
+# Authors: Saurabh Mohan
 # Date: 2012
 # Description: setup the vti tunnel
 #
@@ -34,16 +34,38 @@
 use strict;
 use lib "/opt/vyatta/share/perl5";
 
-use Vyatta::TypeChecker;
-use Vyatta::VPN::Util;
 use Getopt::Long;
-use Vyatta::Misc;
-use NetAddr::IP;
 
 
 my $vti_cfg_err = "VPN VTI configuration error:";
 my $gencmds = "";
 my $result = 0;
+my $updown="";
+my $intfName="";
+my $action="";
+
+GetOptions(
+    "updown" => \$updown,
+    "intf=s"   => \$intfName,
+    "action=s" => \$action,
+);
+
+
+#
+# --updown intfName --action=[up|down]
+#
+if ($updown ne '') {
+    if (!(defined $intfName) || $intfName eq '' ) {
+        # invalid
+        exit -1;
+    }
+    if (!(defined $action) || $action eq '' ) {
+        # invalid
+        exit -1;
+    }
+    vti_handle_updown($intfName, $action);
+    exit 0;
+}
 
 #
 # Prepare Vyatta::Config object
@@ -110,8 +132,6 @@ if (@peers == 0) {
         if (!defined($mtu) || $mtu eq "") {
             $mtu = 1500;
         }
-        # disabled or not.
-        my $disabled = $vcIntf->exists("vti $tunName disabled");
         #my $exists = `ls -l /sys/class/net/$tunName &> /dev/null`;
 
         # description.
@@ -121,18 +141,13 @@ if (@peers == 0) {
         # Set the configuration into the output string.
         #
         # By default we delete the tunnel...
-        $gencmds .= "sudo /sbin/ip tunnel del $tunName &> /dev/null\n";
-        $gencmds .= "sudo /sbin/ip tunnel add $tunName mode esp remote $peer local $lip ikey $mark\n";
+        $gencmds .= "sudo /sbin/ip link delete $tunName type vti &> /dev/null\n";
+        $gencmds .= "sudo /sbin/ip link add $tunName type vti key $mark remote $peer local $lip\n";
         foreach my $tunIP (@tunIPs) {
             $gencmds .= "sudo /sbin/ip addr add $tunIP dev $tunName\n";
         }
         $gencmds .= "sudo /sbin/ip link set $tunName mtu $mtu\n";
 
-        if (! $disabled) {
-            # @SM TODO: Don not bring the tunnel link-state up till strongswan does it.
-            $gencmds .= "sudo /sbin/ip link set $tunName up\n";
-            # @SM TODO: Add the static routes over this tunnel...
-        }
         if (defined($description)) {
             $gencmds .= "if [ -d /sys/class/net/$tunName ] ; then\n\tsudo echo \"$description\" > /sys/class/net/$tunName/ifalias\nfi\n";
         }
@@ -141,7 +156,6 @@ if (@peers == 0) {
 if ($gencmds ne "") {
     open my $output_config, '>', '/tmp/vti_config' or die "Can't open /tmp/vti_config $!";
     print ${output_config} "#!/bin/sh\n";
-    print ${output_config} "sudo modprobe ip_vti\n";
     print ${output_config} $gencmds;
     close $output_config;
     `chmod 755 /tmp/vti_config`;
@@ -150,3 +164,18 @@ if ($gencmds ne "") {
     #@SM TODO: remove /tmp/vti_config;
 }
 exit $result;
+
+
+#
+# Handle VTI tunnel state based on input from strongswan and configuration.
+#
+sub vti_handle_updown {
+    my ($intfName, $action) = @_;
+    use Vyatta::Config;
+    my $vcIntf = new Vyatta::Config();
+    $vcIntf->setLevel('interfaces');
+    my $disabled = $vcIntf->exists("vti $intfName disabled");
+    if (!defined($disabled) || ! $disabled) {
+        system("sudo /sbin/ip link set $intfName $action\n");
+    }
+}
