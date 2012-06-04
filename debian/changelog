@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.92) unstable; urgency=low
+
+  * VTI bring tunnel based on ipsec-sa state.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Mon, 04 Jun 2012 16:41:12 -0700
+
 vyatta-cfg-vpn (0.12.91) unstable; urgency=low
 
   * Bugfix 8100: Be flexible in char accepted in id field.
