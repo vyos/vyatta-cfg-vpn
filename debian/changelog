@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.93) unstable; urgency=low
+
+  * VTI: Add support call for checking for vti interface name.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Mon, 11 Jun 2012 17:50:57 -0700
+
 vyatta-cfg-vpn (0.12.92) unstable; urgency=low
 
   * VTI bring tunnel based on ipsec-sa state.
