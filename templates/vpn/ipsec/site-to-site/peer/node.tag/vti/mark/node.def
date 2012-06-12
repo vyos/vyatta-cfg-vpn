@@ -13,3 +13,5 @@ update:
 delete:
     sudo iptables -t mangle -D PREROUTING -s $VAR(../../@) -p esp -j MARK --set-mark $VAR(@)
     sudo iptables -t mangle -D PREROUTING -s $VAR(../../@) -p udp --dport 4500 -j MARK --set-mark $VAR(@)
+    # need a exit 0 because if there is no iptables entry then we want to keep the commit going.
+    exit 0

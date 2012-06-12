@@ -14,4 +14,4 @@ down-client)
 *)
     ;;
 esac
-
+exit 0

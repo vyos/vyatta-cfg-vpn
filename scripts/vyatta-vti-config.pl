@@ -43,11 +43,13 @@ my $result = 0;
 my $updown="";
 my $intfName="";
 my $action="";
+my $checkref="";
 
 GetOptions(
     "updown" => \$updown,
     "intf=s"   => \$intfName,
     "action=s" => \$action,
+    "checkref" => \$checkref,
 );
 
 
@@ -65,6 +67,19 @@ if ($updown ne '') {
     }
     vti_handle_updown($intfName, $action);
     exit 0;
+}
+
+#
+# --checkref --intf=<intfName>
+# Return 1 if the interface reference exits.
+#
+if ($checkref ne '' ) {
+    if (!(defined $intfName) || $intfName eq '' ) {
+        # invalid
+        exit -1;
+    }
+    my $rval = vti_check_reference($intfName);
+    exit $rval;
 }
 
 #
@@ -174,8 +189,28 @@ sub vti_handle_updown {
     use Vyatta::Config;
     my $vcIntf = new Vyatta::Config();
     $vcIntf->setLevel('interfaces');
-    my $disabled = $vcIntf->exists("vti $intfName disabled");
+    my $disabled = $vcIntf->existsOrig("vti $intfName disabled");
     if (!defined($disabled) || ! $disabled) {
         system("sudo /sbin/ip link set $intfName $action\n");
     }
+}
+
+sub vti_check_reference {
+    my ($intfName) = @_;
+    use Vyatta::Config;
+    my $vcVPN = new Vyatta::Config();
+    $vcVPN->setLevel('vpn ipsec site-to-site');
+    my @peers = $vcVPN->listNodes('peer');
+    if (@peers == 0) {
+        return 0;
+    }
+    foreach my $peer (@peers) {
+        if (! $vcVPN->exists("peer $peer vti")) {
+            next;
+        }
+        if ( $vcVPN->exists("peer $peer vti bind $intfName")) {
+            return 1;
+        }
+    }
+    return 0;
 }
