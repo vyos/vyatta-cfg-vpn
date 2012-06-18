@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.94) unstable; urgency=low
+
+  * Bugfix: 8015: supress perl warnings.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Mon, 18 Jun 2012 10:45:52 -0700
+
 vyatta-cfg-vpn (0.12.93) unstable; urgency=low
 
   * VTI: Add support call for checking for vti interface name.
