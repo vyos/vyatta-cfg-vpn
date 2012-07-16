@@ -25,6 +25,9 @@ AC_CONFIG_FILES(
   [debian/vyatta-cfg-vpn.postinst])
 
 AC_SUBST(NOSTRIP)
-
+AC_PROG_CC
+AC_PROG_CXX
+AM_PROG_AS
+AM_PROG_CC_C_O
 AC_OUTPUT
 

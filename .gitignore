@@ -24,4 +24,5 @@ debian/*.substvars
 INSTALL
 Makefile.in
 Makefile
+src/cfgvti
 

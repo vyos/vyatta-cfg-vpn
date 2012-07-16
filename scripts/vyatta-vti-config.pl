@@ -123,6 +123,11 @@ if (@peers == 0) {
             print STDERR "$vti_cfg_err Invalid local-address \"$lip\".\n";
             exit -1;
         }
+        # Check tunName is valid.
+        if (!defined($tunName) || $tunName eq ""  || ! $vcIntf->exists("vti $tunName") ) {
+            print STDERR "$vti_cfg_err Invalid tunnel name vti \"$tunName\".\n";
+            exit -1;
+        }
         # Check mark is valid.
         if (!defined($mark)) {
             print STDERR "$vti_cfg_err mark not defined.\n";
@@ -130,11 +135,6 @@ if (@peers == 0) {
         }
         if ($mark eq "" || $mark eq "0") {
             print STDERR "$vti_cfg_err Invalid mark \"$mark\".\n";
-            exit -1;
-        }
-        # Check tunName is valid.
-        if (!defined($tunName) || $tunName eq ""  || ! $vcIntf->exists("vti $tunName") ) {
-            print STDERR "$vti_cfg_err Invalid tunnel name vti \"$tunName\".\n";
             exit -1;
         }
         #
@@ -156,8 +156,8 @@ if (@peers == 0) {
         # Set the configuration into the output string.
         #
         # By default we delete the tunnel...
-        $gencmds .= "sudo /sbin/ip link delete $tunName type vti &> /dev/null\n";
-        $gencmds .= "sudo /sbin/ip link add $tunName type vti key $mark remote $peer local $lip\n";
+        $gencmds .= "sudo /sbin/ip link delete $tunName &> /dev/null\n";
+        $gencmds .= "sudo /opt/vyatta/sbin/cfgvti add name $tunName key $mark remote $peer local $lip\n";
         foreach my $tunIP (@tunIPs) {
             $gencmds .= "sudo /sbin/ip addr add $tunIP dev $tunName\n";
         }
