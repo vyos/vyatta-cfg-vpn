@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.95) unstable; urgency=low
+
+  * Workaround to setup vti ko and cleaner error message.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Mon, 16 Jul 2012 14:27:23 -0700
+
 vyatta-cfg-vpn (0.12.94) unstable; urgency=low
 
   * Bugfix: 8015: supress perl warnings.
