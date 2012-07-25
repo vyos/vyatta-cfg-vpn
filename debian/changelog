@@ -1,3 +1,11 @@
+vyatta-cfg-vpn (0.12.96) unstable; urgency=low
+
+  * Bugfix 8222: deletion and adding bind parameter under vti deletes
+    vti interface in show interfaces output though vti configuration
+    exists
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Wed, 25 Jul 2012 14:54:38 -0700
+
 vyatta-cfg-vpn (0.12.95) unstable; urgency=low
 
   * Workaround to setup vti ko and cleaner error message.
