@@ -1,17 +1,2 @@
 type: u32
 help: Mark associated with the secure tunnel interface [REQUIRED]
-
-update:
-    old_mark=`cli-shell-api returnActiveValue vpn ipsec site-to-site peer $VAR(../../@) vti mark`
-    if [ ! -z "$old_mark" ] ; then
-        sudo iptables -t mangle -D PREROUTING -s $VAR(../../@) -p esp -j MARK --set-mark $old_mark
-        sudo iptables -t mangle -D PREROUTING -s $VAR(../../@) -p udp --dport 4500 -j MARK --set-mark $old_mark
-    fi
-    sudo iptables -t mangle -A PREROUTING -s $VAR(../../@) -p esp -j MARK --set-mark $VAR(@)
-    sudo iptables -t mangle -A PREROUTING -s $VAR(../../@) -p udp --dport 4500 -j MARK --set-mark $VAR(@)
-
-delete:
-    sudo iptables -t mangle -D PREROUTING -s $VAR(../../@) -p esp -j MARK --set-mark $VAR(@)
-    sudo iptables -t mangle -D PREROUTING -s $VAR(../../@) -p udp --dport 4500 -j MARK --set-mark $VAR(@)
-    # need a exit 0 because if there is no iptables entry then we want to keep the commit going.
-    exit 0
