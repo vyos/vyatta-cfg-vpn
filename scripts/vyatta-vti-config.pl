@@ -89,6 +89,7 @@ if ($checkref ne '' ) {
 # Collect set of existing Vti's.
 my %existingVtiName = ();
 my %existingVtiMark = ();
+my $vtiMarkBase = 0x90000000;
 
 my @currentVtis = `/sbin/ip tunnel | grep "^vti"`;
 if (@currentVtis != 0) {
@@ -98,7 +99,7 @@ if (@currentVtis != 0) {
 		($remote, $local, $name, $mark) = parseVtiTun($curVti);
 		$key = "remote $remote local $local";
 		$existingVtiName{$key} = $name;
-		$existingVtiMark{$key} = $mark;
+		$existingVtiMark{$key} = $mark-$vtiMarkBase;
 	}
 }
 
@@ -124,6 +125,7 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
 
     my %marks = ();
     my %binds = ();
+    my %vtiVpns = ();
     my @peers = $vcVPN->listNodes('ipsec site-to-site peer');
     foreach my $peer (@peers) {
         if (! $vcVPN->exists("ipsec site-to-site peer $peer vti")) {
@@ -137,6 +139,7 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
         my $tunName = $vcVPN->returnValue("ipsec site-to-site peer $peer vti bind");
         my $change = 0;
 
+        $vtiVpns{ $tunName } = 1;
         # Check local address is valid.
         if (!defined($lip)) {
             print STDERR "$vti_cfg_err local-address not defined.\n";
@@ -149,8 +152,13 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
         }
         # Check tunName is valid.
         if (!defined($tunName) || $tunName eq ""  || ! $vcIntf->exists("vti $tunName") ) {
-            print STDERR "$vti_cfg_err Invalid tunnel name vti \"$tunName\".\n";
-            exit -1;
+	    if (defined($tunName)) {
+	            vti_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],
+			    "Invalid tunnel name vti \"$tunName\".\n");
+	    } else {
+	            vti_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],
+			    "tunnel name is empty.\n");
+	    }
         }
         if (exists $binds{ $tunName }) {
                 vti_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],
@@ -164,7 +172,7 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
             print STDERR "$vti_cfg_err mark not defined.\n";
             exit -1;
         }
-        if ($mark eq "" || $mark eq "0") {
+        if ($mark eq "") {
             print STDERR "$vti_cfg_err Invalid mark \"$mark\".\n";
             exit -1;
         }
@@ -212,10 +220,8 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
             $change = 1;
         }
 
+        deleteVtinamepresent($peer, $lip);
         if ($change eq 0) {
-            # now remove it from the exisiting tunnel list as
-            # we've already configured it.
-            deleteVtinamepresent($peer, $lip);
             next;
         }
 
@@ -223,8 +229,9 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
         # Set the configuration into the output string.
         #
         # By default we delete the tunnel...
+        my $genmark = $mark + $vtiMarkBase;
         $gencmds .= "sudo /sbin/ip link delete $tunName &> /dev/null\n";
-        $gencmds .= "sudo /opt/vyatta/sbin/cfgvti add name $tunName key $mark remote $peer local $lip\n";
+        $gencmds .= "sudo /opt/vyatta/sbin/cfgvti add name $tunName key $genmark remote $peer local $lip\n";
         foreach my $tunIP (@tunIPs) {
             $gencmds .= "sudo /sbin/ip addr add $tunIP dev $tunName\n";
         }
@@ -239,6 +246,7 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
     }
 
     cleanupVtiNotConfigured();
+    checkUnrefIntfVti($vcIntf, %vtiVpns);
     $result = execGenCmds();
     exit $result;
 
@@ -346,6 +354,8 @@ sub iptableDelMark {
 	my ($remote, $local, $mark) = @_;
 	my $opcmd="";
 
+	$mark += $vtiMarkBase;
+
 	$opcmd .= "sudo iptables -t mangle -D PREROUTING -s $remote -d $local -p esp -j MARK --set-mark $mark\n";
 	$opcmd .= "sudo iptables -t mangle -D PREROUTING -s $remote -d $local -p udp --dport 4500 -j MARK --set-mark $mark\n";
 	return $opcmd;
@@ -354,6 +364,8 @@ sub iptableDelMark {
 sub iptableAddMark {
 	my ($remote, $local, $mark) = @_;
 	my $opcmd="";
+
+	$mark += $vtiMarkBase;
 
 	$opcmd .= "sudo iptables -t mangle -A PREROUTING -s $remote -d $local -p esp -j MARK --set-mark $mark\n";
 	$opcmd .= "sudo iptables -t mangle -A PREROUTING -s $remote -d $local -p udp --dport 4500 -j MARK --set-mark $mark\n";
@@ -391,4 +403,21 @@ sub vti_die {
   my (@path,$msg) = @_;
   Vyatta::Config::outputError(@path, $msg);
   exit 1;
+}
+
+#
+# Check if there are any VTI's defined under 'interface vti'
+# but not specified under VPN configuration
+# For now just print a warning.
+#
+sub checkUnrefIntfVti {
+    my $vcIntf = shift;
+    my (%vtiVpns) = @_;
+
+    my @vtiIntfs = $vcIntf->listNodes("vti");
+    foreach my $tunName (@vtiIntfs) {
+        if ( ! exists($vtiVpns{ $tunName }) ) {
+            print STDOUT "Warning: [interface vti $tunName] defined but not used under VPN configuration\n";
+        }
+    }
 }

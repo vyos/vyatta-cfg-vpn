@@ -1141,7 +1141,7 @@ if ( $vcVPN->exists('ipsec') ) {
       #
       if ($isVti) {
           my $mark = $vcVPN->returnValue("ipsec site-to-site peer $peer vti mark");
-          if (!defined($mark) || $mark eq '' || $mark eq "0") {
+          if (!defined($mark) || $mark eq '') {
             vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","mark"],
                 "$vpn_cfg_err No mark specified for peer \"$peer\" vti\n");
           } else {
@@ -1150,6 +1150,7 @@ if ( $vcVPN->exists('ipsec') ) {
                     "$vpn_cfg_err vti mark $mark already used.\n");
               } else {
                   $marks{ $mark } = 1;
+		  $mark += 0x90000000;
                   $genout .= "\tmark=$mark\n";
               }
           }
