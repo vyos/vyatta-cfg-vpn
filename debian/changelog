@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.97) unstable; urgency=low
+
+  * Bugfix 8264: Check if the intf name is defined before using it in
+    the script.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Thu, 09 Aug 2012 14:08:40 -0700
+
 vyatta-cfg-vpn (0.12.96) unstable; urgency=low
 
   * Bugfix 8222: deletion and adding bind parameter under vti deletes
