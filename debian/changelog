@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.98) unstable; urgency=low
+
+  * Bugfix 8276: Vti not working on a 32-bit machine due to sign bit
+    overload.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Mon, 13 Aug 2012 14:43:29 -0700
+
 vyatta-cfg-vpn (0.12.97) unstable; urgency=low
 
   * Bugfix 8264: Check if the intf name is defined before using it in
