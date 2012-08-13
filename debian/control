@@ -6,10 +6,11 @@ Build-Depends: debhelper (>= 5), autotools-dev
 Standards-Version: 3.7.2
 
 Package: vyatta-cfg-vpn
-Architecture: all
+Architecture: any
 Depends: perl,
  vyatta-cfg (>= 0.15.33),
  vyatta-bash | bash (>= 3.1),
- vyatta-ipsec
+ vyatta-ipsec,
+ libc6 (>= 2.7-6)
 Description: Vyatta VPN configuration templates/scripts
  Vyatta VPN configuration templates and scripts.

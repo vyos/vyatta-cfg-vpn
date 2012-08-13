@@ -74,8 +74,8 @@ install: build
 
 	install -D --mode=0644 debian/lintian $(PKGDIR)/usr/share/lintian/overrides/$(PACKAGE)
 
-# Build architecture-independent files here.
-binary-indep: build install
+# Build architecture-dependent files here.
+binary-arch: build install
 	rm -f debian/files
 	dh_testdir
 	dh_testroot
@@ -96,9 +96,9 @@ binary-indep: build install
 	dh_md5sums
 	dh_builddeb
 
-# Build architecture-dependent files here.
-binary-arch: build install
-# This is an architecture independent package
+# Build architecture-independent files here.
+binary-indep: build install
+# This is an architecture dependent package
 # so; we have nothing to do by default.
 
 binary: binary-indep binary-arch

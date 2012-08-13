@@ -267,7 +267,13 @@ int main (int argc, char *argv[])
 				}
 				uval = htonl(tmp.s_addr);
 			} else {
-				uval = htonl(atol(*argv));
+				errno = 0;
+				uval = htonl(strtoul(*argv, 0, 0));
+				if (errno) {
+					fprintf(stderr,
+						"Invalid \"mark\" %s\n", *argv);
+					exit(-1);
+				}
 			}
 			mark = uval;
 		} else if (strcmp(*argv, "remote") == 0) {
