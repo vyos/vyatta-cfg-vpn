@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.99) unstable; urgency=low
+
+  * Bugfix: 8276: Change htonl after parsing the input.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Mon, 13 Aug 2012 18:59:25 -0700
+
 vyatta-cfg-vpn (0.12.98) unstable; urgency=low
 
   * Bugfix 8276: Vti not working on a 32-bit machine due to sign bit
