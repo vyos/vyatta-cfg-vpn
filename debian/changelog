@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.100) unstable; urgency=low
+
+  * Update config version from 3 to 4.
+
+ -- Daniil Baturin <daniil.baturin@vyatta.com>  Thu, 23 Aug 2012 21:56:18 +0700
+
 vyatta-cfg-vpn (0.12.99) unstable; urgency=low
 
   * Bugfix: 8276: Change htonl after parsing the input.
