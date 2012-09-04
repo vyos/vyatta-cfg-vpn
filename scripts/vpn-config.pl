@@ -881,9 +881,6 @@ if ( $vcVPN->exists('ipsec') ) {
         }
       }
 
-      ## explicitly set keyingtries to forever ##
-      $genout .= "\tkeyingtries=%forever\n";      
-
       #
       # Write ESP configuration from group
       #
@@ -1168,13 +1165,19 @@ if ( $vcVPN->exists('ipsec') ) {
       #
       if ($any_peer) {
         $genout .= "\tauto=add\n";
+        $genout .= "\tkeyingtries=%forever\n";      
       } else {
         my $conntype = $vcVPN->returnValue("ipsec site-to-site peer $peer connection-type");
         if (defined ($conntype)){
           if ($conntype eq "initiate"){
             $genout .= "\tauto=start\n";
+            $genout .= "\tkeyingtries=%forever\n";      
           } elsif ($conntype eq "respond"){
             $genout .= "\tauto=add\n";
+            ##  We want to act as a responder. Ideally we do not want to ever
+            ##  be a initiator. The best we can do is to not try to attempt 
+            ##  keying forever.
+            $genout .= "\tkeyingtries=1\n";      
           }
         }
         else{
