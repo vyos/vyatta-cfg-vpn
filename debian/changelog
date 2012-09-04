@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.101) unstable; urgency=low
+
+  * Bugfix 8277: For connection type respond do not attempt keying
+    forever
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 04 Sep 2012 10:35:12 -0700
+
 vyatta-cfg-vpn (0.12.100) unstable; urgency=low
 
   * Update config version from 3 to 4.
