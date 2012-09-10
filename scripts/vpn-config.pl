@@ -38,6 +38,7 @@ use Vyatta::VPN::Util;
 use Getopt::Long;
 use Vyatta::Misc;
 use NetAddr::IP;
+use Vyatta::VPN::vtiIntf;
 
 my $config_file;
 my $secrets_file;
@@ -401,7 +402,7 @@ if ( $vcVPN->exists('ipsec') ) {
       . " remote-users configured\n";
   }
   my $prev_peer = "";
-  my %marks = ();
+  vtiIntf::discoverVtiIntfs();
   foreach my $peer (@peers) {
     my $peer_ike_group =
       $vcVPN->returnValue("ipsec site-to-site peer $peer ike-group");
@@ -510,7 +511,16 @@ if ( $vcVPN->exists('ipsec') ) {
                     "$vpn_cfg_err No tunnels configured for peer \"$peer\".  At least"
                     . " one tunnel required per peer.\n");
       }
+    } else {
+      #
+      # Check if this is VTI
+      #
+      if ($vcVPN->exists("ipsec site-to-site peer $peer vti") ) {
+            vpn_die(["vpn", "ipsec", "site-to-site","peer",$peer,"vti"],
+                    "$vpn_cfg_err Both Vti and tunnel(s) configured for peer \"$peer\n");
+      }
     }
+
     foreach my $tunnel (@tunnels) {
 
       my $needs_passthrough = 'false';
@@ -1137,19 +1147,12 @@ if ( $vcVPN->exists('ipsec') ) {
       # and up/down script hook.
       #
       if ($isVti) {
-          my $mark = $vcVPN->returnValue("ipsec site-to-site peer $peer vti mark");
+          my $mark = vtiIntf::isVtimarkpresent($peer, $lip);
           if (!defined($mark) || $mark eq '') {
-            vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","mark"],
+            vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"vti"],
                 "$vpn_cfg_err No mark specified for peer \"$peer\" vti\n");
           } else {
-              if (defined($marks{ $mark })) {
-                vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","mark"],
-                    "$vpn_cfg_err vti mark $mark already used.\n");
-              } else {
-                  $marks{ $mark } = 1;
-		  $mark += 0x90000000;
                   $genout .= "\tmark=$mark\n";
-              }
           }
           # up/down script hook.
           my $tunName = $vcVPN->returnValue("ipsec site-to-site peer $peer vti bind");
@@ -1549,6 +1552,5 @@ EOS
   print ${dhcp_hook} $str;
   close $dhcp_hook;
 }
-
 
 # end of file

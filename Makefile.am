@@ -21,6 +21,7 @@ sbin_cfgvti = src/cfgvti.c
 
 bin_sudo_users_SCRIPTS = scripts/vyatta-ipsec-dhcp.pl
 share_perl5_DATA = lib/Vyatta/VPN/Util.pm
+share_perl5_DATA += scripts/vtiIntf.pm
 
 logrotate_DATA = etc/logrotate.d/vyatta-ipsec-logs
 

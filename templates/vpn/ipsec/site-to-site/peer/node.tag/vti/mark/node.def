@@ -1,4 +1,0 @@
-type: u32
-syntax:expression: $VAR(@) >= 0 && $VAR(@) <= 2047
-help: Mark associated with the secure tunnel interface [REQUIRED]
-val_help: u32:0-2047;
