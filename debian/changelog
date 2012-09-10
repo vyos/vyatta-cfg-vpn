@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.102) unstable; urgency=low
+
+  * Bugfix 8289: Vti mark values should be implicit
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Mon, 10 Sep 2012 14:21:31 -0700
+
 vyatta-cfg-vpn (0.12.101) unstable; urgency=low
 
   * Bugfix 8277: For connection type respond do not attempt keying
