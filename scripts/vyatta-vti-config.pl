@@ -124,7 +124,6 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
         my $tunName = $vcVPN->returnValue("ipsec site-to-site peer $peer vti bind");
         my $change = 0;
 
-        $vtiVpns{ $tunName } = 1;
         # Check local address is valid.
         if (!defined($lip)) {
             print STDERR "$vti_cfg_err local-address not defined.\n";
@@ -145,6 +144,8 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
 			    "tunnel name is empty.\n");
 	    }
         }
+        $vtiVpns{ $tunName } = 1;
+
         if (exists $binds{ $tunName }) {
                 vti_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],
                     "vti bind $tunName already used.\n");
@@ -152,7 +153,7 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
             $binds{ $tunName } = 1;
         }
 
-        $gencmds .= "# For peer $peer local $lip.\n";
+        $gencmds .= "# For peer $peer local $lip, $tunName.\n";
         #
         # Get the tunnel parameters.
         #
@@ -168,7 +169,7 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
         # description.
         my $description = $vcIntf->returnValue("vti $tunName description");
 
-        # Check if the tunnel exists already.
+        # Check if the tunnel exists already: by tunnel addresses.
         my $vtiPresent = vtiIntf::isVtinamepresent($peer, $lip);
         if (defined($vtiPresent) && !($vtiPresent eq "")) {
             if ($vtiPresent ne $tunName) {
@@ -176,6 +177,7 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
 		my $currMark = vtiIntf::isVtimarkpresent($peer, $lip);
 		$gencmds .= "sudo /sbin/ip link delete $vtiPresent &> /dev/null\n";
 		$gencmds .= iptableDelMark($peer, $lip, $currMark);
+		vtiIntf::deleteVtibyname($vtiPresent);
                 $change = 1;
             }
         }
@@ -193,6 +195,7 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
         }
 
         vtiIntf::deleteVtinamepresent($peer, $lip);
+	vtiIntf::deleteVtibyname($tunName);
         if ($change eq 0) {
             next;
         }
@@ -279,13 +282,17 @@ sub cleanupVtiNotConfigured {
     # for all remaining entries in the Vtinamepresent hash
     # remove them from the system.
     my $localVtiNames = vtiIntf::getVtiNames();
+    my $localVtibyNames = vtiIntf::getVtibyNames();
     while (my ($tunKey, $presentVtiName) =  each(%$localVtiNames) ) {
         my ($remote, $local) = vtiIntf::extractRemoteLocal($tunKey);
         my $existingMark = vtiIntf::isVtimarkpresent($remote, $local);
         $gencmds .= "# For peer $remote local $local.\n";
-        $gencmds .= "sudo /sbin/ip link delete $presentVtiName &> /dev/null\n";
         $gencmds .= iptableDelMark($remote, $local, $existingMark);
         vtiIntf::freeVtiMark($existingMark);
+    }
+    for my $name (keys %$localVtibyNames) {
+	$gencmds .= "#For tunnel name $name.\n";
+        $gencmds .= "sudo /sbin/ip link delete $name &> /dev/null\n";
     }
 }
 

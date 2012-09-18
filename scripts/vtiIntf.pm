@@ -30,6 +30,7 @@ use strict;
 
 # Collect set of existing Vti's.
 my %existingVtiName = ();
+my %existingVtibyName = ();
 my %existingVtiMark = ();
 my @VtiMarks;
 my $vtiMarkBase = 0x90000000;
@@ -46,6 +47,7 @@ sub discoverVtiIntfs {
     		$existingVtiName{$key} = $name;
     		$existingVtiMark{$key} = $mark;
     		$VtiMarks[$mark-$vtiMarkBase] = 1;
+            $existingVtibyName{$name} = 1;
     	}
     }
 }
@@ -138,6 +140,25 @@ sub freeVtiMark {
 		$VtiMarks[$freeMark] = 0;
 	}
 	return 0;
+}
+
+sub isVtibynamepresent {
+    my ($name) = @_;
+    if (exists $existingVtibyName{$name} ) {
+        return $existingVtibyName{$name};
+    }
+    return 0;
+}
+
+sub deleteVtibyname {
+    my ($name) = @_;
+    if (exists $existingVtibyName{$name} ) {
+        delete $existingVtibyName{$name};
+    }
+}
+
+sub getVtibyNames {
+    return (\%existingVtibyName);
 }
 
 1;
