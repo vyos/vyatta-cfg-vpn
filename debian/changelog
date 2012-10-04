@@ -1,3 +1,12 @@
+vyatta-cfg-vpn (0.12.104) unstable; urgency=low
+
+  [ Bharat ]
+  * Bug 8200: Changed grep to not display shim6
+
+  [ bharat ]
+
+ -- bharat <bharat@git.vyatta.com>  Thu, 04 Oct 2012 11:57:22 -0700
+
 vyatta-cfg-vpn (0.12.103) unstable; urgency=low
 
   * Bugfix 8358: Handle vti tunnel src, dst changing while the bind
