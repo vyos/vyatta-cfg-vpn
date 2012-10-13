@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.104+pacifica2) unstable; urgency=low
+
+  * new branch
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Oct 2012 18:47:20 -0700
+
 vyatta-cfg-vpn (0.12.104+pacifica1) unstable; urgency=low
 
   * new branch
