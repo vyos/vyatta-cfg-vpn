@@ -1,0 +1,4 @@
+tag:
+type: txt
+help: VPN IPSec Profile
+val_help: txt; Name of the VPN IPSec profile

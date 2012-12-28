@@ -1214,6 +1214,13 @@ if ( $vcVPN->exists('ipsec') ) {
       }
     }
   }
+  if (-e '/etc/dmvpn.conf') {
+    $genout .= "\ninclude /etc/dmvpn.conf\n";
+  }
+  if (-e '/etc/dmvpn.secrets') {
+    $genout_secrets .= "\ninclude /etc/dmvpn.secrets\n";
+  }
+  
 } else {
 
   #

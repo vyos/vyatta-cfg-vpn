@@ -1,0 +1,5 @@
+help: Authentication mode
+type: txt 
+default: "pre-shared-secret"
+syntax:expression: $VAR(@) in "pre-shared-secret"; "must be pre-shared-secret; x509 and rsa are not supported for DMVPN"
+val_help: pre-shared-secret; Use pre-shared secret key

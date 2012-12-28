@@ -11,6 +11,7 @@ sbin_SCRIPTS =
 sbin_PROGRAMS =
 
 sbin_SCRIPTS += scripts/vpn-config.pl
+sbin_SCRIPTS += scripts/dmvpn-config.pl
 sbin_SCRIPTS += scripts/vyatta-vpn-ppp-updown.pl
 sbin_SCRIPTS += scripts/is_valid_address.pl
 sbin_SCRIPTS += scripts/vyatta-vti-config.pl

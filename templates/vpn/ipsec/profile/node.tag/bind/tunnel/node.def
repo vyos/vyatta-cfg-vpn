@@ -1,0 +1,13 @@
+tag:
+type: txt
+help: Tunnel interface associated with this configuration profile
+allowed: cli-shell-api listActiveNodes interfaces tunnel
+
+commit:expression: $VAR(../../esp-group/) != ""; "Must configure esp-group"
+commit:expression: $VAR(../../ike-group/) != ""; "Must configure ike-group"
+commit:expression: $VAR(../../authentication/) != ""; "Must configure authentication"
+commit:expression: `cli-shell-api returnValue interfaces tunnel $VAR(@) encapsulation` == "gre-multipoint"; "Must be mgre tunnel"
+
+end:
+
+    sudo /opt/vyatta/sbin/vyatta-update-nhrp.pl --tunnel "$VAR(@)" --ipsec_profile "$VAR(../../@)" --commit_ipsec 

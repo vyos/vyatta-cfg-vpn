@@ -1,0 +1,19 @@
+type: txt
+help: Ike group name [REQUIRED]
+val_help: Ike group name
+
+allowed: sudo /opt/vyatta/sbin/vyatta-update-nhrp.pl --get_ike_gr_names;
+
+syntax:expression:
+exec "
+      RET=`sudo /opt/vyatta/sbin/vyatta-update-nhrp.pl --get_ike_gr_names`
+      if  echo \"$RET\" | grep -q \"$VAR(@)\"
+      then
+        exit 0
+      fi
+      if [ -z \"$RET\" ]; then
+         echo \"There are no available group names\"
+      else
+         echo \"Must be ($RET)\"
+      fi
+      exit 1"
