@@ -146,7 +146,7 @@ if ( $vcVPN->exists('ipsec') ) {
       my $needs_passthrough = 'false';
       my $tunKeyword = 'tunnel '."$tunnel";
 
-      my $conn_head = "conn dmvpn-$profile-tunnel-$tunnel\n";
+      my $conn_head = "conn vpnprof-tunnel-$tunnel\n";
       $genout .= $conn_head;
 
       my $lip = $vc->returnValue("interfaces tunnel $tunnel local-ip");
@@ -371,7 +371,7 @@ if ( $vcVPN->exists('ipsec') ) {
       #
       $right = '%any';
       if (not ($prev_profile eq $profile)){
-        $genout_secrets .= "$lip $right ";
+        $genout_secrets .= "\n$lip $right ";
         if ( defined ($authid) ){
           $genout_secrets .= "$authid ";
         }
