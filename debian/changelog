@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+daisy3) unstable; urgency=low
+
+  * Dmvpn merge with mirantis jan22-2013
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 22 Jan 2013 12:31:45 -0800
+
 vyatta-cfg-vpn (0.12.105+daisy2) unstable; urgency=low
 
   * DMVPN support with profiles.
