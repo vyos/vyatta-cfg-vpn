@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+daisy4) unstable; urgency=low
+
+  * Bug 8666: merged.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 05 Feb 2013 14:57:44 -0800
+
 vyatta-cfg-vpn (0.12.105+daisy3) unstable; urgency=low
 
   * Dmvpn merge with mirantis jan22-2013
