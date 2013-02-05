@@ -397,7 +397,7 @@ if ( $vcVPN->exists('ipsec') ) {
   # Connection configurations
   #
   my @peers = $vcVPN->listNodes('ipsec site-to-site peer');
-  if ( @peers == 0 && !( $vcVPN->exists('l2tp') ) ) {
+  if ( @peers == 0 && !( $vcVPN->exists('l2tp') ) && !( $vcVPN->exists('ipsec profile') ) ) {
     print "VPN Warning: IPSec configured but no site-to-site peers or l2tp"
       . " remote-users configured\n";
   }
