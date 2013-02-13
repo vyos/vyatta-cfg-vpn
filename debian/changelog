@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+daisy5) unstable; urgency=low
+
+  * mGRE support for change of local-ip addr change.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 12 Feb 2013 16:12:16 -0800
+
 vyatta-cfg-vpn (0.12.105+daisy4) unstable; urgency=low
 
   * Bug 8666: merged.
