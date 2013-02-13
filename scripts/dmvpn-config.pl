@@ -23,10 +23,14 @@ use Vyatta::VPN::vtiIntf;
 my $config_file;
 my $secrets_file;
 my $init_script;
+my $tunnel_context;
+my $tun_id;
 GetOptions(
   "config_file=s"   => \$config_file,
   "secrets_file=s"  => \$secrets_file,
-  "init_script=s"   => \$init_script
+  "init_script=s"   => \$init_script,
+  "tunnel_context"  => \$tunnel_context,
+  "tun_id=s"        => \$tun_id
 );
 my $CA_CERT_PATH = '/etc/ipsec.d/cacerts';
 my $CRL_PATH = '/etc/ipsec.d/crls';
@@ -58,8 +62,33 @@ $vcVPN->setLevel('vpn');
 # check to see if the config has changed.
 # if it has not then exit
 my $ipsecstatus = $vcVPN->isChanged('ipsec');
-if (!$ipsecstatus) {
+if ($ipsecstatus && $tunnel_context) {
+  # no sence to do same update twice, will be done via vpn context
   exit 0;
+}
+if (!$ipsecstatus) {
+  my $tun_ip_changed = 0;
+  my @tuns = $vc->listNodes('interfaces tunnel');
+  my @profs = $vcVPN->listNodes('ipsec profile');
+  foreach my $prof (@profs) {
+    my @tuns = $vcVPN->listNodes("ipsec profile $prof bind tunnel");
+    foreach my $tun (@tuns) {
+      my $lip_old = $vc->returnOrigValue("interfaces tunnel $tun local-ip");
+      my $lip_new = $vc->returnValue("interfaces tunnel $tun local-ip");
+      if ( !( "$lip_old" eq "$lip_new" ) ) {
+         if ($tun_ip_changed) {
+            # tunnel $tun_id is not the last tunnel with updated local-ip, so skip
+            exit 0;
+         }
+         if ( "$tun" eq "$tun_id" ) {
+            $tun_ip_changed = 1;
+         }
+      }
+    }
+  }
+  if (!$tun_ip_changed) {
+    exit 0;
+  }
 }
 if ( $vcVPN->exists('ipsec') ) {
 
