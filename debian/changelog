@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+daisy6) unstable; urgency=low
+
+  * perltidy run for vyatta-cfg-vpn
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Tue, 19 Feb 2013 16:27:11 -0800
+
 vyatta-cfg-vpn (0.12.105+daisy5) unstable; urgency=low
 
   * mGRE support for change of local-ip addr change.
