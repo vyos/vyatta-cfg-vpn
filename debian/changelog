@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.13.1) unstable; urgency=low
+
+  * Merge master with daisy.
+
+ -- Saurabh Mohan <saurabh@vyatta.com>  Thu, 02 May 2013 11:53:32 -0700
+
 vyatta-cfg-vpn (0.13.0) unstable; urgency=low
 
   * Merge master with daisy
