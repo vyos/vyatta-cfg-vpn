@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+hydrogen1) unstable; urgency=low
+
+  * New branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 17 Nov 2013 00:17:23 +0100
+
 vyatta-cfg-vpn (0.12.105+daisy6) unstable; urgency=low
 
   * perltidy run for vyatta-cfg-vpn
