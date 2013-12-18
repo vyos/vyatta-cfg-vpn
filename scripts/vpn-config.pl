@@ -1329,6 +1329,15 @@ sub write_config {
   print ${output_config} $genout;
   close $output_config;
 
+  my @lines = split("\n", $genout_secrets);
+  my @any = grep(/%any/, @lines);
+  if (scalar(@any) > 0) {
+      my @noany = grep(!/%any/, @lines);
+      @lines = (@noany, @any);
+      $genout_secrets = join("\n", @lines);
+      $genout_secrets .= "\n";
+  }
+
   open my $output_secrets, '>', $secrets_file
     or die "Can't open $secrets_file: $!";
   print ${output_secrets} $genout_secrets;
