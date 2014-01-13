@@ -162,12 +162,12 @@ $cmd = "mv $tmp_conf $conf_file";
 $rc =system($cmd);
 logit("$cmd = $rc");
 my $update_interval = `cli-shell-api returnActiveValue vpn ipsec auto-update`;
-if ($update_interval = ''){
-  $cmd = "/usr/sbin/ipsec start 2> /dev/null";
+if ($update_interval == ''){
+  $cmd = "/usr/sbin/ipsec restart 2> /dev/null";
   $rc =system($cmd);
   logit("$cmd = $rc");
 } else {
-  $cmd = "/usr/sbin/ipsec start --auto-update ".$update_interval." 2> /dev/null";
+  $cmd = "/usr/sbin/ipsec restart --auto-update ".$update_interval." 2> /dev/null";
   $rc =system($cmd);
   logit("$cmd = $rc");
 }
