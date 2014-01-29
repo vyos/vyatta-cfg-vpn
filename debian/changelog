@@ -1,3 +1,13 @@
+vyatta-cfg-vpn (0.12.105+hydrogen2) unstable; urgency=low
+
+  [ Stig Thormodsrud ]
+  * Move %any peers to the end in ipsec.secrets
+  * Fix vpn ppp up script
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 29 Jan 2014 04:30:23 +0100
+
 vyatta-cfg-vpn (0.12.105+hydrogen1) unstable; urgency=low
 
   * New branch
