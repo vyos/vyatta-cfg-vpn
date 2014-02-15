@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+vyos1+helium1) unstable; urgency=low
+
+  * New branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 15 Feb 2014 16:55:34 +0100
+
 vyatta-cfg-vpn (0.12.105+hydrogen2) unstable; urgency=low
 
   [ Stig Thormodsrud ]
