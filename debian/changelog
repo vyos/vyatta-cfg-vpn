@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+hydrogen3) unstable; urgency=low
+
+  * Bug #183: Add up-client action to the interface up/down script.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 27 Apr 2014 02:28:06 +0200
+
 vyatta-cfg-vpn (0.12.105+hydrogen2) unstable; urgency=low
 
   [ Stig Thormodsrud ]
