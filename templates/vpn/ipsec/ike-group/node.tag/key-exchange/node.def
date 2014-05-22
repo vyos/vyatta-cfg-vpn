@@ -1,0 +1,7 @@
+help: Key Exchange Version
+type: txt
+default: "ikev1"
+syntax:expression: $VAR(@) in "ike", "ikev1", "ikev2"; "must be ike, ikev1 or ikev2"
+val_help: ike; Automatically negoiatate Key Exchange version
+val_help: ikev1; Force IKEv1 for Key Exchange [DEFAULT]
+val_help: ikev2; Force IKEv2 for Key Exchange
