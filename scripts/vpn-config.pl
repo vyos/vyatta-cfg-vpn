@@ -253,7 +253,7 @@ if ( $vcVPN->exists('ipsec') ) {
   $genout .= "version 2.0\n";
   $genout .= "\n";
   $genout .= "config setup\n";
-  $genout .= "\tcharonstart=no\n";    # no need for charon unless we have ikev2
+  $genout .= "\tcharonstart=yes\n";
 
   #
   # Interfaces
@@ -864,6 +864,26 @@ if ( $vcVPN->exists('ipsec') ) {
           }
         }
         $genout .= "!\n";
+
+        #
+        # Get IKE version setting
+        #
+        my $key_exchange = $vcVPN->returnValue(
+          "ipsec ike-group $ike_group key-exchange");
+        if ( defined($key_exchange) ) {
+          if ($key_exchange eq 'auto') {
+            $genout .= "\tkeyexchange=ike\n";
+          }
+          elsif ($key_exchange eq 'ikev1') {
+            $genout .= "\tkeyexchange=ikev1\n";
+          }
+          elsif ($key_exchange eq 'ikev2') {
+            $genout .= "\tkeyexchange=ikev2\n";
+          }
+        }
+        else {
+          $genout .= "\tkeyexchange=ikev1\n";
+        }
 
         my $t_ikelifetime =
           $vcVPN->returnValue("ipsec ike-group $ike_group lifetime");
