@@ -1059,9 +1059,15 @@ if ( $vcVPN->exists('ipsec') ) {
           } elsif ( $pfs eq 'dh-group21' ) {
             $genout .= "\tpfs=yes\n";
             $genout .= "\tpfsgroup=ecp521\n";
-          # Omit groups 22-24 because strongSwan will fail
-          # to parse the generated config if the pfsgroup
-          # parameter is set to the keywords for these groups
+          } elsif ( $pfs eq 'dh-group22' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=modp1024s160\n";
+          } elsif ( $pfs eq 'dh-group23' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=modp2048s224\n";
+          } elsif ( $pfs eq 'dh-group24' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=modp2048s256\n";
           } elsif ( $pfs eq 'dh-group25' ) {
             $genout .= "\tpfs=yes\n";
             $genout .= "\tpfsgroup=ecp192\n";
