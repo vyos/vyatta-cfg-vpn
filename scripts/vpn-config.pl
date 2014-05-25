@@ -897,13 +897,10 @@ if ( $vcVPN->exists('ipsec') ) {
         my $key_exchange = $vcVPN->returnValue(
           "ipsec ike-group $ike_group key-exchange");
         if ( defined($key_exchange) ) {
-          if ($key_exchange eq 'auto') {
-            $genout .= "\tkeyexchange=ike\n";
-          }
-          elsif ($key_exchange eq 'ikev1') {
+          if ($key_exchange eq 'ikev1') {
             $genout .= "\tkeyexchange=ikev1\n";
           }
-          elsif ($key_exchange eq 'ikev2') {
+          if ($key_exchange eq 'ikev2') {
             $genout .= "\tkeyexchange=ikev2\n";
           }
         }
