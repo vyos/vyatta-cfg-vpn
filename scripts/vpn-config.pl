@@ -855,10 +855,36 @@ if ( $vcVPN->exists('ipsec') ) {
                 $genout .= '-modp1024';
               } elsif ( $dh_group eq '5' ) {
                 $genout .= '-modp1536';
+              } elsif ( $dh_group eq '14' ) {
+                $genout .= '-modp2048';
+              } elsif ( $dh_group eq '15' ) {
+                $genout .= '-modp3072';
+              } elsif ( $dh_group eq '16' ) {
+                $genout .= '-modp4096';
+              } elsif ( $dh_group eq '17' ) {
+                $genout .= '-modp6144';
+              } elsif ( $dh_group eq '18' ) {
+                $genout .= '-modp8192';
+              } elsif ( $dh_group eq '19' ) {
+                $genout .= '-ecp256';
+              } elsif ( $dh_group eq '20' ) {
+                $genout .= '-ecp384';
+              } elsif ( $dh_group eq '21' ) {
+                $genout .= '-ecp521';
+              } elsif ( $dh_group eq '22' ) {
+                $genout .= '-modp1024s160';
+              } elsif ( $dh_group eq '23' ) {
+                $genout .= '-modp2048s224';
+              } elsif ( $dh_group eq '24' ) {
+                $genout .= '-modp2048s256';
+              } elsif ( $dh_group eq '25' ) {
+                $genout .= '-ecp192';
+              } elsif ( $dh_group eq '26' ) {
+                $genout .= '-ecp224';
               } elsif ( $dh_group ne '' ) {
                 vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"tunnel", $tunnel],
                   "$vpn_cfg_err Invalid 'dh-group' $dh_group specified for "
-                  . "peer \"$peer\" $tunKeyword.  Only 2 or 5 accepted.\n");
+                  . "peer \"$peer\" $tunKeyword.  Only 2, 5, or 14 through 26 accepted.\n");
               }
             }
           }
@@ -1009,6 +1035,39 @@ if ( $vcVPN->exists('ipsec') ) {
           } elsif ( $pfs eq 'dh-group5' ) {
             $genout .= "\tpfs=yes\n";
             $genout .= "\tpfsgroup=modp1536\n";
+          } elsif ( $pfs eq 'dh-group14' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=modp2048\n";
+          } elsif ( $pfs eq 'dh-group15' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=modp3072\n";
+          } elsif ( $pfs eq 'dh-group16' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=modp4096\n";
+          } elsif ( $pfs eq 'dh-group17' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=modp6144\n";
+          } elsif ( $pfs eq 'dh-group18' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=modp8192\n";
+          } elsif ( $pfs eq 'dh-group19' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=ecp256\n";
+          } elsif ( $pfs eq 'dh-group20' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=ecp384\n";
+          } elsif ( $pfs eq 'dh-group21' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=ecp521\n";
+          # Omit groups 22-24 because strongSwan will fail
+          # to parse the generated config if the pfsgroup
+          # parameter is set to the keywords for these groups
+          } elsif ( $pfs eq 'dh-group25' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=ecp192\n";
+          } elsif ( $pfs eq 'dh-group26' ) {
+            $genout .= "\tpfs=yes\n";
+            $genout .= "\tpfsgroup=ecp224\n";
           } else {
             $genout .= "\tpfs=no\n";
           }
