@@ -1,0 +1,5 @@
+help: Enable MOBIKE Support. MOBIKE is only valid for IKEv2 configurations.
+type: txt
+syntax:expression: $VAR(@) in "enabled", "disabled"; "must be enabled or disabled"
+val_help: enabled; Enable MOBIKE ([DEFAULT] if IKEv2)
+val_help: disabled; Disable MOBIKE 
