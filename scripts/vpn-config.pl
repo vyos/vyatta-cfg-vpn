@@ -910,6 +910,27 @@ if ( $vcVPN->exists('ipsec') ) {
         else {
           $genout .= "\tkeyexchange=ikev1\n";
         }
+        
+        #
+        # Allow the user to disable MOBIKE for IKEv2 connections
+        #
+        my $mob_ike = $vcVPN->returnValue(
+          "ipsec ike-group $ike_group mobike");
+
+        if ( defined($mob_ike) ) {
+          if ( defined($key_exchange) && $key_exchange eq 'ikev2' ) {
+            if ($mob_ike eq 'enabled') {
+                $genout .= "\tmobike=yes\n";
+            }
+            if ($mob_ike eq 'disabled') {
+                $genout .= "\tmobike=no\n";
+            }
+          }
+          else {
+            vpn_die(["vpn","ipsec","ike-group", $ike_group, "mobike"], 
+            "$vpn_cfg_err MOBIKE is only valid for IKEv2 configurations.\n");
+          }
+        }
 
         my $t_ikelifetime =
           $vcVPN->returnValue("ipsec ike-group $ike_group lifetime");
