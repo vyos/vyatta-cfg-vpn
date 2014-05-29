@@ -2,4 +2,5 @@ help: ID for peer authentication
 type: txt
 syntax:expression: pattern $VAR(@) "^[[:print:]]+"
                      ; "invalid ID \"$VAR(@)\""
+val_help: ipv4; ID used for peer authentication
 val_help: @<text>; ID used for peer authentication

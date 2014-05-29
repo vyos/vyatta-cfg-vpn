@@ -591,7 +591,13 @@ if ( $vcVPN->exists('ipsec') ) {
           $genout .= "\tleft=$lip\n";
           $leftsourceip = "\tleftsourceip=$lip\n";
         }
-        $genout .= "\tleftid=$authid\n" if defined $authid;
+        if ( defined($authid) ) {
+          if ( $authid =~ m/^\@/ ) {
+            $genout .= "\tleftid=\"$authid\"\n";
+          } else {
+            $genout .= "\tleftid=$authid\n";
+          }
+        }
       }
 
       # @SM Todo: must have explicit settings for VTI.
@@ -601,9 +607,13 @@ if ( $vcVPN->exists('ipsec') ) {
       if ( $peer =~ /^\@/ ) {
 
         # peer is an "ID"
-        $rightid  = $peer;
+        if ( defined($authremoteid) ) {
+          $rightid = $authremoteid;
+        } else {
+          $rightid = $peer;
+        }
         $any_peer = 1;
-      } elsif ($authremoteid) {
+      } elsif ( defined($authremoteid) ) {
         $rightid = $authremoteid;
       }
       if ( ( $peer eq 'any' )
@@ -621,7 +631,13 @@ if ( $vcVPN->exists('ipsec') ) {
         $right = $peer;
       }
       $genout .= "\tright=$right\n";
-      $genout .= "\trightid=\"$rightid\"\n" if ( defined($rightid) );
+      if ( defined($rightid) ) {
+        if ( $rightid =~ m/^\@/ ) {
+          $genout .= "\trightid=\"$rightid\"\n";
+        } else {
+          $genout .= "\trightid=$rightid\n";
+        }
+      }
       if ($any_peer) {
         $genout .= "\trekey=no\n";
       }
