@@ -1279,10 +1279,11 @@ if ( $vcVPN->exists('ipsec') ) {
             $genout .= "\tauto=start\n";
             $genout .= "\tkeyingtries=%forever\n";      
           } elsif ($conntype eq "respond"){
-            $genout .= "\tauto=add\n";
+            $genout .= "\tauto=route\n";
             ##  We want to act as a responder. Ideally we do not want to ever
-            ##  be a initiator. The best we can do is to not try to attempt 
-            ##  keying forever.
+            ##  be a initiator, but we can't avoid it if SPD entries are installed
+            ##  to protect selected traffic from going out unencrypted. The best we
+            ##  can do is to not try to attempt keying forever.
             $genout .= "\tkeyingtries=1\n";      
           }
         }
