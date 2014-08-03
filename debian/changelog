@@ -1,3 +1,35 @@
+vyatta-cfg-vpn (0.12.105+vyos1+helium2) unstable; urgency=low
+
+  [ Daniil Baturin ]
+  * Bug #183: Add up-client action to the interface up/down script.
+
+  [ Jeff Leung ]
+  * Adding initial support for IKEv2/IKEv1 Site-to-Site VPN's by adding
+    the optional "vpn ipsec ike-group <IKEGROUP> key-exchange"
+    parameter.
+
+  [ Ryan Riske ]
+  * Add support for DH groups 14-26
+  * Bug 220: Add support for SHA2 hashes
+
+  [ Jeff Leung ]
+  * Remove automatic IKE version negoiation.
+
+  [ Ryan Riske ]
+  * Bug 197: Add back support for groups 22-24 for phase2 pfs
+
+  [ Jeff Leung ]
+  * Initial MOBIKE Configuration Support
+
+  [ Ryan Riske ]
+  * Bug 241: Use auto=route for connection-type respond.
+
+  [ Daniil Baturin ]
+  * Bug #224: rename "enabled|disabled" to "enable|disable" for
+    consistency.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 03 Aug 2014 12:52:48 +0200
+
 vyatta-cfg-vpn (0.12.105+vyos1+helium1) unstable; urgency=low
 
   * New branch
