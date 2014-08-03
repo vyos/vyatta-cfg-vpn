@@ -916,10 +916,10 @@ if ( $vcVPN->exists('ipsec') ) {
 
         if ( defined($mob_ike) ) {
           if ( defined($key_exchange) && $key_exchange eq 'ikev2' ) {
-            if ($mob_ike eq 'enabled') {
+            if ($mob_ike eq 'enable') {
                 $genout .= "\tmobike=yes\n";
             }
-            if ($mob_ike eq 'disabled') {
+            if ($mob_ike eq 'disable') {
                 $genout .= "\tmobike=no\n";
             }
           }
