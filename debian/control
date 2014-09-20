@@ -1,8 +1,8 @@
 Source: vyatta-cfg-vpn
 Section: contrib/net
 Priority: extra
-Maintainer: Vyatta Package Maintainers <maintainers@vyatta.com>
-Build-Depends: debhelper (>= 5), autotools-dev
+Maintainer: Vyatta Package Maintainers <maintainers@vyos.net>
+Build-Depends: debhelper (>= 5), autotools-dev, libnfnetlink-dev
 Standards-Version: 3.7.2
 
 Package: vyatta-cfg-vpn
