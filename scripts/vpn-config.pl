@@ -1263,7 +1263,7 @@ if ( $vcVPN->exists('ipsec') ) {
             vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],
                 "$vpn_cfg_err No interface bind specified for peer \"$peer\" vti\n");
           }
-          $genout .= "\tleftupdown=\"/usr/lib/ipsec/vti-up-down.sh $tunName\"\n";
+          $genout .= "\tleftupdown=\"/usr/lib/ipsec/vti-up-down $tunName\"\n";
       }
 
       #

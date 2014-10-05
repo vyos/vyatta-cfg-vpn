@@ -41,4 +41,4 @@ install-exec-hook:
 	cp scripts/vpn-ppp-up $(DESTDIR)/etc/ppp/ip-up.d/
 	cp scripts/vpn-ppp-down $(DESTDIR)/etc/ppp/ip-down.d/
 	cp scripts/ipsecd-dhclient-hook $(DESTDIR)/etc/dhcp3/dhclient-exit-hooks.d/ipsecd
-	cp scripts/vti-up-down.sh $(DESTDIR)/usr/lib/ipsec/
+	cp scripts/vti-up-down $(DESTDIR)/usr/lib/ipsec/
