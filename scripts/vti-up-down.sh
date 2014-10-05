@@ -5,7 +5,7 @@
 source /etc/default/vyatta
 source /etc/default/locale
 case "$PLUTO_VERB" in
-route-client | up-client)
+route-client)
 /opt/vyatta/sbin/vyatta-vti-config.pl --updown --intf=$1 --action=up
     ;;
 down-client)
