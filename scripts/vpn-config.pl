@@ -59,6 +59,7 @@ my $clustering_ip = 0;
 my $dhcp_if = 0;
 my $genout;
 my $genout_secrets;
+my %key_file_list;
 
 # Set $using_klips to 1 if kernel IPsec support is provided by KLIPS.
 # Set it to 0 us using NETKEY.
@@ -417,8 +418,8 @@ if ($vcVPN->exists('ipsec')) {
                     # Verified that dealing with a cluster IP.
                     $clustering_ip = 1;
                 } elsif (!defined($dhcp_iface)) {
-                    print"Warning: Local address $lip specified for peer \"$peer\"\n";
-                    print"is not configured on any of the ipsec-interfaces and is not the\n";
+                    print "Warning: Local address $lip specified for peer \"$peer\"\n";
+                    print "is not configured on any of the ipsec-interfaces and is not the\n";
                     print "clustering address.  IPsec must be re-started after address\n";
                     print "has been configured.\n";
                     print "\n";
@@ -1113,7 +1114,11 @@ if ($vcVPN->exists('ipsec')) {
                         $genout .= "\trightrsasigkey=\"$remote_key\"\n";
                     }
                 }
-                $genout_secrets .= "include $local_key_file\n";
+                # Prevent duplicate includes for rsa keys.
+                if (!defined($key_file_list{$local_key_file})) {
+                    $key_file_list{$local_key_file} = 1;
+                    $genout_secrets .= "include $local_key_file\n";
+                }
             } else {
                 vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"authentication"],"$vpn_cfg_err Unknown authentication mode \"$auth_mode\" for peer ".
                          "\"$peer\" specified.\n");
@@ -1339,7 +1344,7 @@ sub vpn_exec {
             # a script to /etc/ppp/ip-up.d to bring up the vpn
             # tunnel.
             #
-            print ${logf}"VPN commit error.  Unable to $desc, received error code $?\n";
+            print ${logf} "VPN commit error.  Unable to $desc, received error code $?\n";
             #
             # code 768 is for a syntax error in the secrets file
             # this happens when a dhcp interface is configured
