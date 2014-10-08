@@ -1,3 +1,22 @@
+vyatta-cfg-vpn (0.12.105+vyos1+helium3) unstable; urgency=low
+
+  [ Kim Hagen ]
+  * Rename vyatta-update-nhrp.pl to vyos-update-nhrp.pl and change
+    options
+  * Remove gre-multipoint reference
+
+  [ Alex Harpin ]
+  * vyatta-cfg-vpn: add libnfnetlink-dev to build dependencies
+  * vyatta-cfg-vpn: updated the debian package maintainer address
+  * vyatta-cfg-vpn: fix for vti interface going down remains routed
+  * vyatta-cfg-vpn: rename vti-up-down.sh to vti-up-down
+  * vyatta-cfg-vpn: formatting changes for style consistency
+  * vyatta-cfg-vpn: prevent duplicate local rsa key includes
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 08 Oct 2014 16:34:06 +0200
+
 vyatta-cfg-vpn (0.12.105+vyos1+helium2) unstable; urgency=low
 
   [ Daniil Baturin ]
