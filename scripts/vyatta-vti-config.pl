@@ -298,14 +298,15 @@ sub cleanupVtiNotConfigured {
 
 sub execGenCmds {
     if ($gencmds ne "") {
-        open my $output_config, '>', '/tmp/vti_config' or die "Can't open /tmp/vti_config $!";
+        my $vti_script = '/tmp/vti_config';
+        open my $output_config, '>', $vti_script or die "Can't open /tmp/vti_config $!";
         print ${output_config} "#!/bin/sh\n";
         print ${output_config} $gencmds;
         close $output_config;
-        `chmod 755 /tmp/vti_config`;
-        system("/tmp/vti_config");
+        `chmod 755 $vti_script`;
+        system($vti_script);
         $result = $? >> 8;
-        #TODO: remove /tmp/vti_config;
+        unlink($vti_script);
         return $result;
     }
     return 0;
