@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+vyos2+lithium1) unstable; urgency=low
+
+  * new branch
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 29 Oct 2014 22:21:03 +0100
+
 vyatta-cfg-vpn (0.12.105+vyos1+helium4) unstable; urgency=low
 
   * Remove the VTI script after use.
