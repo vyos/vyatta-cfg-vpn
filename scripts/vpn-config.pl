@@ -815,7 +815,7 @@ if ($vcVPN->exists('ipsec')) {
                 #
                 # Get ikev2-reauth configuration
                 #
-                if ((defined($key_exchange) && ($key_exchange eq 'ikev2')) {
+                if ((defined($key_exchange)) && ($key_exchange eq 'ikev2')) {
                     my $ikev2_tunnel_reauth = $vcVPN->returnValue("ipsec site-to-site peer $peer ikev2-reauth");
 
                     if ((defined($ikev2_tunnel_reauth)) && ($ikev2_tunnel_reauth ne 'inherit')) {
