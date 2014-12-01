@@ -1,0 +1,6 @@
+help: Re-authentication of the remote peer during an IKE re-key.  IKEv2 option only
+type: txt
+default: "no"
+syntax:expression: $VAR(@) in "yes", "no"; "must be yes or no (Default)"
+val_help: yes; Enable remote host re-autentication during an IKE rekey. Currently broken due to a strong swan bug
+val_help: no; Disable remote host re-authenticaton during an IKE rekey. (Default)
