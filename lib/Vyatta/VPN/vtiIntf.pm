@@ -33,7 +33,7 @@ my %existingVtiName = ();
 my %existingVtibyName = ();
 my %existingVtiMark = ();
 my @VtiMarks;
-my $vtiMarkBase = 0x90000000;
+my $vtiMarkBase = 0x900000;
 my $maxMarks = 2048;
 
 sub discoverVtiIntfs {
