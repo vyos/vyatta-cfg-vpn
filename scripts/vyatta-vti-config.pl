@@ -175,8 +175,7 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
             if ($vtiPresent ne $tunName) {
                 # Binding changed.
 		my $currMark = vtiIntf::isVtimarkpresent($peer, $lip);
-		$gencmds .= "sudo /sbin/ip link delete $vtiPresent &> /dev/null\n";
-		$gencmds .= iptableDelMark($peer, $lip, $currMark);
+		$gencmds .= "sudo /sbin/ip link delete $vtiPresent type vti &> /dev/null\n";
 		vtiIntf::deleteVtibyname($vtiPresent);
                 $change = 1;
             }
@@ -205,8 +204,8 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
         #
         # By default we delete the tunnel...
         my $genmark = $mark;
-        $gencmds .= "sudo /sbin/ip link delete $tunName &> /dev/null\n";
-        $gencmds .= "sudo /opt/vyatta/sbin/cfgvti add name $tunName key $genmark remote $peer local $lip\n";
+        $gencmds .= "sudo /sbin/ip link delete $tunName type vti &> /dev/null\n";
+        $gencmds .= "sudo /sbin/ip link add $tunName type vti local $lip remote $peer okey $genmark\n";
         foreach my $tunIP (@tunIPs) {
             $gencmds .= "sudo /sbin/ip addr add $tunIP dev $tunName\n";
         }
@@ -215,9 +214,6 @@ if (!$vcVPN->exists('ipsec site-to-site') ) {
         if (defined($description)) {
             $gencmds .= "if [ -d /sys/class/net/$tunName ] ; then\n\tsudo echo \"$description\" > /sys/class/net/$tunName/ifalias\nfi\n";
         }
-
-        # setup the new mark.
-        $gencmds .= iptableAddMark($peer, $lip, $mark);
     }
 
     cleanupVtiNotConfigured();
@@ -260,24 +256,6 @@ sub vti_check_reference {
     return 0;
 }
 
-sub iptableDelMark {
-	my ($remote, $local, $mark) = @_;
-	my $opcmd="";
-
-	$opcmd .= "sudo iptables -t mangle -D PREROUTING -s $remote -d $local -p esp -j MARK --set-mark $mark\n";
-	$opcmd .= "sudo iptables -t mangle -D PREROUTING -s $remote -d $local -p udp --dport 4500 -j MARK --set-mark $mark\n";
-	return $opcmd;
-}
-
-sub iptableAddMark {
-	my ($remote, $local, $mark) = @_;
-	my $opcmd="";
-
-	$opcmd .= "sudo iptables -t mangle -A PREROUTING -s $remote -d $local -p esp -j MARK --set-mark $mark\n";
-	$opcmd .= "sudo iptables -t mangle -A PREROUTING -s $remote -d $local -p udp --dport 4500 -j MARK --set-mark $mark\n";
-	return $opcmd;
-}
-
 sub cleanupVtiNotConfigured {
     # for all remaining entries in the Vtinamepresent hash
     # remove them from the system.
@@ -287,12 +265,11 @@ sub cleanupVtiNotConfigured {
         my ($remote, $local) = vtiIntf::extractRemoteLocal($tunKey);
         my $existingMark = vtiIntf::isVtimarkpresent($remote, $local);
         $gencmds .= "# For peer $remote local $local.\n";
-        $gencmds .= iptableDelMark($remote, $local, $existingMark);
         vtiIntf::freeVtiMark($existingMark);
     }
     for my $name (keys %$localVtibyNames) {
 	$gencmds .= "#For tunnel name $name.\n";
-        $gencmds .= "sudo /sbin/ip link delete $name &> /dev/null\n";
+        $gencmds .= "sudo /sbin/ip link delete $name type vti &> /dev/null\n";
     }
 }
 
