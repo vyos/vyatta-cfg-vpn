@@ -39,16 +39,16 @@ my $maxMarks = 2048;
 sub discoverVtiIntfs {
     my @currentVtis = `/sbin/ip tunnel | grep "^vti"`;
     if (@currentVtis != 0) {
-    	my ($remote, $local, $name, $mark);
-    	my $key;
-    	foreach my $curVti (@currentVtis) {
-    		($remote, $local, $name, $mark) = parseVtiTun($curVti);
-    		$key = "remote $remote local $local";
-    		$existingVtiName{$key} = $name;
-    		$existingVtiMark{$key} = $mark;
-    		$VtiMarks[$mark-$vtiMarkBase] = 1;
+        my ($remote, $local, $name, $mark);
+        my $key;
+        foreach my $curVti (@currentVtis) {
+            ($remote, $local, $name, $mark) = parseVtiTun($curVti);
+            $key = "remote $remote local $local";
+            $existingVtiName{$key} = $name;
+            $existingVtiMark{$key} = $mark;
+            $VtiMarks[$mark-$vtiMarkBase] = 1;
             $existingVtibyName{$name} = 1;
-    	}
+        }
     }
 }
 
@@ -59,92 +59,92 @@ sub discoverVtiIntfs {
 # vti2: ip/ip  remote 12.0.0.2  local 12.0.0.1  ttl inherit  nopmtudisc key 15
 # 
 sub parseVtiTun {
-	my ($tunop) = @_;
-	my ($tunName, $remote, $local, $mark);
-	if ($tunop =~ m/(^vti.*): .*/) {
-		$tunName = $1;
-	}
-	if ($tunop =~ m/remote ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/) {
-		$remote = $1;
-	}
-	if ($tunop =~ m/local ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/) {
-		$local = $1;
-	}
-	if ($tunop =~ m/okey ([0-9\.]+)/) {
-		$mark = $1;
-	}
-	return($remote, $local, $tunName, $mark);
+    my ($tunop) = @_;
+    my ($tunName, $remote, $local, $mark);
+    if ($tunop =~ m/(^vti.*): .*/) {
+        $tunName = $1;
+    }
+    if ($tunop =~ m/remote ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/) {
+        $remote = $1;
+    }
+    if ($tunop =~ m/local ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/) {
+        $local = $1;
+    }
+    if ($tunop =~ m/okey ([0-9\.]+)/) {
+        $mark = $1;
+    }
+    return($remote, $local, $tunName, $mark);
 }
 
 sub extractRemoteLocal {
-	my ($key) = @_;
-	my ($remote, $local);
-	if ($key =~ m/remote ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/) {
-		$remote = $1;
-	}
-	if ($key =~ m/local ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/) {
-		$local = $1;
-	}
-	return($remote, $local);
+    my ($key) = @_;
+    my ($remote, $local);
+    if ($key =~ m/remote ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/) {
+        $remote = $1;
+    }
+    if ($key =~ m/local ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/) {
+        $local = $1;
+    }
+    return($remote, $local);
 }
 
 sub isVtinamepresent {
-	my ($remote, $local) = @_;
-	my $key = "remote $remote local $local";
+    my ($remote, $local) = @_;
+    my $key = "remote $remote local $local";
 
-	if (exists $existingVtiName{$key} ) {
-		return $existingVtiName{$key};
-	}
-	return ""; 
+    if (exists $existingVtiName{$key} ) {
+        return $existingVtiName{$key};
+    }
+    return ""; 
 }
 
 #
 # Pass a referenct to the existing Vti names.
 #
 sub getVtiNames {
-	return (\%existingVtiName);
+    return (\%existingVtiName);
 }
 
 sub deleteVtinamepresent {
-	my ($remote, $local) = @_;
-	my $key = "remote $remote local $local";
+    my ($remote, $local) = @_;
+    my $key = "remote $remote local $local";
 
-	if (exists $existingVtiName{$key} ) {
-		delete $existingVtiName{$key};
-	}
+    if (exists $existingVtiName{$key} ) {
+        delete $existingVtiName{$key};
+    }
 }
 
 sub isVtimarkpresent {
-	my ($remote, $local) = @_;
-	my $key = "remote $remote local $local";
+    my ($remote, $local) = @_;
+    my $key = "remote $remote local $local";
 
-	if (exists $existingVtiMark{$key} ) {
-		return $existingVtiMark{$key};
-	}
-	return ""; 
+    if (exists $existingVtiMark{$key}) {
+        return $existingVtiMark{$key};
+    }
+    return ""; 
 }
 
 sub allocVtiMark {
-	for my $cmark (1 .. ($maxMarks-1)) {
-		if (! defined($VtiMarks[$cmark])) {
-			$VtiMarks[$cmark] = 1;
-			return $cmark + $vtiMarkBase ;
-		}
-	}
-	return 0;
+    for my $cmark (1 .. ($maxMarks-1)) {
+        if (! defined($VtiMarks[$cmark])) {
+            $VtiMarks[$cmark] = 1;
+            return $cmark + $vtiMarkBase ;
+        }
+    }
+    return 0;
 }
 
 sub freeVtiMark {
-	my ($freeMark) = @_;
-	if ($freeMark > 0 && $freeMark < $maxMarks) {
-		$VtiMarks[$freeMark] = 0;
-	}
-	return 0;
+    my ($freeMark) = @_;
+    if ($freeMark > 0 && $freeMark < $maxMarks) {
+        $VtiMarks[$freeMark] = 0;
+    }
+    return 0;
 }
 
 sub isVtibynamepresent {
     my ($name) = @_;
-    if (exists $existingVtibyName{$name} ) {
+    if (exists $existingVtibyName{$name}) {
         return $existingVtibyName{$name};
     }
     return 0;
@@ -152,7 +152,7 @@ sub isVtibynamepresent {
 
 sub deleteVtibyname {
     my ($name) = @_;
-    if (exists $existingVtibyName{$name} ) {
+    if (exists $existingVtibyName{$name}) {
         delete $existingVtibyName{$name};
     }
 }
