@@ -813,6 +813,25 @@ if ($vcVPN->exists('ipsec')) {
                 }
 
                 #
+                # Get ikev2-reauth configuration
+                #
+                if ((defined($key_exchange)) && ($key_exchange eq 'ikev2')) {
+                    my $ikev2_tunnel_reauth = $vcVPN->returnValue("ipsec site-to-site peer $peer ikev2-reauth");
+
+                    if ((defined($ikev2_tunnel_reauth)) && ($ikev2_tunnel_reauth ne 'inherit')) {
+                        $genout .= "\treauth=$ikev2_tunnel_reauth\n";
+                    } else {
+                        my $ikev2_group_reauth = $vcVPN->returnValue("ipsec ike-group $ike_group ikev2-reauth");
+                        if (defined($ikev2_group_reauth)) {
+                            $genout .= "\treauth=$ikev2_group_reauth\n";
+                        } else {
+                            $genout .= "\treauth=no\n";
+                        }
+                    }
+
+                }
+
+                #
                 # Allow the user to disable MOBIKE for IKEv2 connections
                 #
                 my $mob_ike = $vcVPN->returnValue("ipsec ike-group $ike_group mobike");

@@ -1,0 +1,7 @@
+help: Re-authentication of the remote peer during an IKE re-key.  IKEv2 option only
+type: txt
+default: "inherit"
+syntax:expression: $VAR(@) in "yes", "no", "inherit"; "must be yes, no or inherit (Default)"
+val_help: yes; Enable remote host re-autentication during an IKE re-key. Currently broken due to a strong swan bug
+val_help: no; Disable remote host re-authenticaton during an IKE re-key.
+val_help: inherit; Inherit the reauth configuration form your IKE-group (Default)
