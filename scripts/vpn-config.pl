@@ -528,7 +528,7 @@ if ($vcVPN->exists('ipsec')) {
                     $genout .= "\tleft=$lip\n";
                     $leftsourceip = "\tleftsourceip=$lip\n";
                 }
-                $genout .= "\tleftid=$authid\n" if defined $authid;
+                $genout .= "\tleftid=\"$authid\"\n" if defined $authid;
             }
 
             # @SM Todo: must have explicit settings for VTI.
