@@ -1,3 +1,17 @@
+vyatta-cfg-vpn (0.12.105+vyos2+lithium5) unstable; urgency=low
+
+  [ Jason Hendry ]
+  * Exposing ikev2 reauth option in CLI, defaulting to 'no'
+  * Fixing syntax error in vpn-config.pl, fixing allowed parameters in
+    the per-tunnel ikev2-reauth node
+
+  [ Daniil Baturin ]
+  * Bug #414: quote the leftid value to avoid problems with non-
+    alphanumeric characters.
+  * Bug #415: use remote-id for peer ID unconditionally if it's set.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 19 Dec 2014 21:40:28 +0100
+
 vyatta-cfg-vpn (0.12.105+vyos2+lithium4) unstable; urgency=low
 
   [ Alex Harpin ]
