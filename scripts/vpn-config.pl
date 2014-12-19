@@ -540,9 +540,15 @@ if ($vcVPN->exists('ipsec')) {
                 # peer is an "ID"
                 $rightid  = $peer;
                 $any_peer = 1;
-            } elsif ($authremoteid) {
+            }
+
+            # If "remote-id" is set, use it even if the peer is an "ID".
+            # This is mainly for the case when actual ID (e.g. certificate CN) can't be used
+            # as peer node name.
+            if ($authremoteid) {
                 $rightid = $authremoteid;
             }
+
             if (   ($peer eq 'any')
                 or ($peer eq '0.0.0.0')
                 or $any_peer == 1)
