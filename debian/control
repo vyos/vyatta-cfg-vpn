@@ -1,7 +1,7 @@
 Source: vyatta-cfg-vpn
 Section: contrib/net
 Priority: extra
-Maintainer: Vyatta Package Maintainers <maintainers@vyos.net>
+Maintainer: VyOS Package Maintainers <maintainers@vyos.net>
 Build-Depends: debhelper (>= 5), autotools-dev, libnfnetlink-dev
 Standards-Version: 3.7.2
 
@@ -12,5 +12,5 @@ Depends: perl,
  vyatta-bash | bash (>= 3.1),
  vyatta-ipsec,
  libc6 (>= 2.7-6)
-Description: Vyatta VPN configuration templates/scripts
- Vyatta VPN configuration templates and scripts.
+Description: VyOS VPN configuration templates/scripts
+ VyOS VPN configuration templates and scripts.
