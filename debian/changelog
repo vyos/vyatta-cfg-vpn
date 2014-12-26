@@ -1,3 +1,15 @@
+vyatta-cfg-vpn (0.12.105+vyos1+helium6) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-vpn: move scripts/vtiIntf.pm to lib/Vyatta/VPN/vtiIntf.pm
+  * vyatta-cfg-vpn: update parseVtiTun to account for vti changes
+  * vyatta-cfg-vpn: update vti creation in line with changes to strongswan
+  * vyatta-cfg-vpn: reduce the vti mark base to prevent integer overflow
+  * vyatta-cfg-vpn: formatting changes for style consistency
+  * vyatta-cfg-vpn: remove the cfgvti helper program
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Fri, 26 Dec 2014 15:56:06 +0000
+
 vyatta-cfg-vpn (0.12.105+vyos1+helium5) unstable; urgency=low
 
   [ Jason Hendry ]
