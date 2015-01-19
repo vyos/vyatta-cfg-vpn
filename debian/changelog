@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+vyos2+lithium9) unstable; urgency=low
+
+  * Remove @ from the id/remote-id help string. It was never required.
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 19 Jan 2015 13:01:38 +0100
+
 vyatta-cfg-vpn (0.12.105+vyos2+lithium8) unstable; urgency=low
 
   * Bug #348: remove unnecessary restrictions on the PSK format.
