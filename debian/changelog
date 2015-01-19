@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+vyos1+helium8) unstable; urgency=low
+
+  * Force release
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 19 Jan 2015 12:45:28 +0100
+
 vyatta-cfg-vpn (0.12.105+vyos1+helium7) unstable; urgency=low
 
   [ Alex Harpin ]
