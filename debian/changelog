@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+vyos2+lithium8) unstable; urgency=low
+
+  * Bug #348: remove unnecessary restrictions on the PSK format.
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 19 Jan 2015 12:40:01 +0100
+
 vyatta-cfg-vpn (0.12.105+vyos2+lithium7) unstable; urgency=low
 
   [ Alex Harpin ]
