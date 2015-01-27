@@ -862,10 +862,11 @@ if ($vcVPN->exists('ipsec')) {
                 foreach my $esp_proposal (@esp_proposals) {
 
                     #
-                    # Get encryption, hash
+                    # Get encryption, hash and PFS group settings
                     #
                     my $encryption = $vcVPN->returnValue("ipsec esp-group $esp_group proposal $esp_proposal encryption");
                     my $hash = $vcVPN->returnValue("ipsec esp-group $esp_group proposal $esp_proposal hash");
+                    my $pfs = $vcVPN->returnValue("ipsec esp-group $esp_group pfs");
 
                     #
                     # Write separator if not first proposal
@@ -875,12 +876,26 @@ if ($vcVPN->exists('ipsec')) {
                     } else {
                         $genout .= ",";
                     }
+                    if (defined($pfs)) {
+                        if ($pfs eq 'enable') {
+                            # Get the first IKE group's dh-group and use that as our PFS setting
+                            my $default_pfs = $vcVPN->returnValue("ipsec ike-group $ike_group proposal 1 dh-group");
+                            $pfs = get_dh_cipher_result($default_pfs);
+                        } elsif ($pfs eq 'disable') {
+                            undef $pfs;
+                        } else {
+                            $pfs = get_dh_cipher_result($pfs);
+                        }
+                    }
 
                     #
                     # Write values
                     #
                     if (defined($encryption) && defined($hash)) {
                         $genout .= "$encryption-$hash";
+                        if (defined($pfs)) {
+                            $genout .= "-$pfs";
+                        }
                     }
                 }
                 $genout .= "!\n";
