@@ -940,63 +940,6 @@ if ($vcVPN->exists('ipsec')) {
                 $genout .= "\ttype=$espmode\n";
 
                 #
-                # Perfect Forward Secrecy
-                #
-                my $pfs = $vcVPN->returnValue("ipsec esp-group $esp_group pfs");
-                if (defined($pfs)) {
-                    if ($pfs eq 'enable') {
-                        $genout .= "\tpfs=yes\n";
-                    } elsif ($pfs eq 'dh-group2') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=modp1024\n";
-                    } elsif ($pfs eq 'dh-group5') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=modp1536\n";
-                    } elsif ($pfs eq 'dh-group14') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=modp2048\n";
-                    } elsif ($pfs eq 'dh-group15') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=modp3072\n";
-                    } elsif ($pfs eq 'dh-group16') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=modp4096\n";
-                    } elsif ($pfs eq 'dh-group17') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=modp6144\n";
-                    } elsif ($pfs eq 'dh-group18') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=modp8192\n";
-                    } elsif ($pfs eq 'dh-group19') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=ecp256\n";
-                    } elsif ($pfs eq 'dh-group20') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=ecp384\n";
-                    } elsif ($pfs eq 'dh-group21') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=ecp521\n";
-                    } elsif ($pfs eq 'dh-group22') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=modp1024s160\n";
-                    } elsif ($pfs eq 'dh-group23') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=modp2048s224\n";
-                    } elsif ($pfs eq 'dh-group24') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=modp2048s256\n";
-                    } elsif ($pfs eq 'dh-group25') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=ecp192\n";
-                    } elsif ($pfs eq 'dh-group26') {
-                        $genout .= "\tpfs=yes\n";
-                        $genout .= "\tpfsgroup=ecp224\n";
-                    } else {
-                        $genout .= "\tpfs=no\n";
-                    }
-                }
-
-                #
                 # Compression
                 #
                 my $compression =$vcVPN->returnValue("ipsec esp-group $esp_group compression");
