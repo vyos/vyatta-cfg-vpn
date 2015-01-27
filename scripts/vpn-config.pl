@@ -212,12 +212,9 @@ if ($vcVPN->exists('ipsec')) {
     }
 
     #
-    # Version 2
+    # Configuration of system wide options
     #
-    $genout .= "version 2.0\n";
-    $genout .= "\n";
     $genout .= "config setup\n";
-    $genout .= "\tcharonstart=yes\n";
 
     #
     # Interfaces
