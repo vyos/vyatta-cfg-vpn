@@ -761,39 +761,12 @@ if ($vcVPN->exists('ipsec')) {
                     if (defined($encryption) && defined($hash)) {
                         $genout .= "$encryption-$hash";
                         if (defined($dh_group)) {
-                            if ($dh_group eq '2') {
-                                $genout .= '-modp1024';
-                            } elsif ($dh_group eq '5') {
-                                $genout .= '-modp1536';
-                            } elsif ($dh_group eq '14') {
-                                $genout .= '-modp2048';
-                            } elsif ($dh_group eq '15') {
-                                $genout .= '-modp3072';
-                            } elsif ($dh_group eq '16') {
-                                $genout .= '-modp4096';
-                            } elsif ($dh_group eq '17') {
-                                $genout .= '-modp6144';
-                            } elsif ($dh_group eq '18') {
-                                $genout .= '-modp8192';
-                            } elsif ($dh_group eq '19') {
-                                $genout .= '-ecp256';
-                            } elsif ($dh_group eq '20') {
-                                $genout .= '-ecp384';
-                            } elsif ($dh_group eq '21') {
-                                $genout .= '-ecp521';
-                            } elsif ($dh_group eq '22') {
-                                $genout .= '-modp1024s160';
-                            } elsif ($dh_group eq '23') {
-                                $genout .= '-modp2048s224';
-                            } elsif ($dh_group eq '24') {
-                                $genout .= '-modp2048s256';
-                            } elsif ($dh_group eq '25') {
-                                $genout .= '-ecp192';
-                            } elsif ($dh_group eq '26') {
-                                $genout .= '-ecp224';
-                            } elsif ($dh_group ne '') {
+                            my $cipher_out = get_dh_cipher_result($dh_group);
+                            if ($cipher_out eq 'unknown') {
                                 vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"tunnel", $tunnel],"$vpn_cfg_err Invalid 'dh-group' $dh_group specified for ".
                                          "peer \"$peer\" $tunKeyword.  Only 2, 5, or 14 through 26 accepted.\n");
+                            } else {
+                                $genout .= "-$cipher_out";
                             }
                         }
                     }
