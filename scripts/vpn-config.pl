@@ -1551,4 +1551,43 @@ EOS
     close $dhcp_hook;
 }
 
+sub get_dh_cipher_result { 
+    my ($cipher) = @_;
+    my $ciph_out;
+    if ($cipher eq '2' || $cipher eq 'dh-group2') {
+        $ciph_out = 'modp1024';
+    } elsif ($cipher eq '5' || $cipher eq 'dh-group5') {
+        $ciph_out = 'modp1536';
+    } elsif ($cipher eq '14' || $cipher eq 'dh-group14') {
+        $ciph_out = 'modp2048';
+    } elsif ($cipher eq '15' || $cipher eq 'dh-group15') {
+        $ciph_out = 'modp3072';
+    } elsif ($cipher eq '16' || $cipher eq 'dh-group16') {
+        $ciph_out = 'modp4096';
+    } elsif ($cipher eq '17' || $cipher eq 'dh-group17') {
+        $ciph_out = 'modp6144';
+    } elsif ($cipher eq '18' || $cipher eq 'dh-group18') {
+        $ciph_out = 'modp8192';
+    } elsif ($cipher eq '19' || $cipher eq 'dh-group19') {
+        $ciph_out = 'ecp256';
+    } elsif ($cipher eq '20' || $cipher eq 'dh-group20') {
+        $ciph_out = 'ecp384';
+    } elsif ($cipher eq '21' || $cipher eq 'dh-group21') {
+        $ciph_out = 'ecp521';
+    } elsif ($cipher eq '22' || $cipher eq 'dh-group22') {
+        $ciph_out = 'modp1024s160';
+    } elsif ($cipher eq '23' || $cipher eq 'dh-group23') {
+        $ciph_out = 'modp2048s224';
+    } elsif ($cipher eq '24' || $cipher eq 'dh-group24') {
+        $ciph_out = 'modp2048s256';
+    } elsif ($cipher eq '25' || $cipher eq 'dh-group25') {
+        $ciph_out = 'ecp192';
+    } elsif ($cipher eq '26' || $cipher eq 'dh-group26') {
+        $ciph_out = 'ecp224';
+    } else {
+        $ciph_out = 'unknown';
+    }
+    return $ciph_out;
+}
+
 # end of file
