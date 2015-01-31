@@ -825,6 +825,18 @@ if ($vcVPN->exists('ipsec')) {
                     }
                 }
 
+                #
+                # Allow the user to specify aggressive mode for IKEv1 connections
+                #
+                my $aggressive_mode = $vcVPN->returnValue("ipsec ike-group $ike_group mode");
+
+                if (defined($aggressive_mode)) {
+                  if (defined($key_exchange) && $key_exchange eq 'ikev2') {
+                    vpn_die(["vpn","ipsec","ike-group", $ike_group, "mode"], "$vpn_cfg_err Selection of Main/Aggressive modes is only valid for IKEv1 configurations");
+                  } else {
+                    $genout .= "\taggressive=yes\n";
+                  }
+                }
                 my $t_ikelifetime =$vcVPN->returnValue("ipsec ike-group $ike_group lifetime");
                 if (defined($t_ikelifetime) && $t_ikelifetime ne '') {
                     $ikelifetime = $t_ikelifetime;
