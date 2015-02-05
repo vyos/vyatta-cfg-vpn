@@ -306,23 +306,23 @@ if ($vcVPN->exists('ipsec')) {
     }
 
     #
-    # log-mode
+    # charon log-mode
     #
     my @logmodes = $vcVPN->returnValues('ipsec logging log-modes');
+    my $charonloglevel = $vcVPN->returnValue('ipsec logging log-level');
     if (@logmodes > 0) {
         my $debugmode = '';
+        my $first_debug_mode = 1;
+        $genout .= "\tcharondebug=\"";
         foreach my $mode (@logmodes) {
-            if ($mode eq "all") {
-                $debugmode = "all";
-                last;
-            }
-            if ($debugmode eq '') {
-                $debugmode = "$mode";
+            if ($first_debug_mode) { 
+                $first_debug_mode = 0;
             } else {
-                $debugmode .= " $mode";
+                $genout .= ", ";
             }
+            $genout .= "$mode $charonloglevel";
         }
-        $genout .= "\tplutodebug=\"$debugmode\"\n";
+        $genout .= "\"\n";
     }
 
     # Set plutoopts:

@@ -1,0 +1,5 @@
+help: strongSwan Logger Level
+type: u32
+default: 1
+syntax:expression: ($VAR(@) >= 0 && $VAR(@) <= 2) ; "must be between levels 0-2"
+val_help: u32:0-2; Logger Verbosity Level (default 0)
