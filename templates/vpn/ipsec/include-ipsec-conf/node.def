@@ -1,0 +1,2 @@
+type: txt
+help: Sets to include an additional configuration directive file for strongSwan. Use an absolute path to specify the included file.
