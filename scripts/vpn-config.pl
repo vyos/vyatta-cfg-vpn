@@ -1239,7 +1239,7 @@ if (   $vcVPN->isDeleted('.')
                 vpn_exec('ipsec restart >&/dev/null', 're-starting ipsec');
             }else {
                 vpn_exec('ipsec rereadall >&/dev/null', 're-read secrets and certs');
-                vpn_exec('ipsec update >&/dev/null', 'update changes to ipsec.conf');
+                vpn_exec('ipsec reload >&/dev/null', 'reload changes to ipsec.conf');
             }
         } else {
             if (!defined($update_interval)) {
