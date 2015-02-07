@@ -37,7 +37,7 @@ use constant LOCAL_KEY_FILE_DEFAULT
     => '/opt/vyatta/etc/config/ipsec.d/rsa-keys/localhost.key';
 
 sub is_vpn_running {
-    return ( -e '/var/run/pluto.ctl');
+    return ( -e '/var/run/charon.ctl');
 }
 
 sub get_protocols {
