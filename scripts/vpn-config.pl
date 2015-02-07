@@ -1238,6 +1238,29 @@ if (   $vcVPN->isDeleted('.')
                 print "Re-starting IPsec daemon to deactivate auto-update...\n";
                 vpn_exec('ipsec restart >&/dev/null', 're-starting ipsec');
             }else {
+
+                # Grab the list of old peers and tunnels
+                my @tunnel_cfg_new = $vcVPN->listNodes('ipsec site-to-site peer');
+                my @tunnel_cfg_old = $vcVPN->listOrigNodes('ipsec site-to-site peer');
+                my @old_tunnels;
+                my %seen;
+                @seen{@tunnel_cfg_new} = ();
+
+                # Find the old tunnels in previous configuration
+                foreach my $tunnel (@tunnel_cfg_old) {
+                    push (@old_tunnels, $tunnel) unless exists $seen{$tunnel};
+                }
+                
+                # Issue an ipsec down on the old tunnel since charon doesn't clean up
+                # connections removed from ipsec.conf
+                foreach my $old_peer (@old_tunnels) {
+                    my @tunnels = $vcVPN->listOrigNodes("ipsec site-to-site peer $old_peer tunnel");
+                    foreach my $tunnel (@tunnels)
+                    {
+                        vpn_exec("ipsec down peer-$old_peer-tunnel-$tunnel", "Cleaning up site-to-site peer $old_peer at tunnel $tunnel");
+                    }
+                }
+
                 vpn_exec('ipsec rereadall >&/dev/null', 're-read secrets and certs');
                 vpn_exec('ipsec reload >&/dev/null', 'reload changes to ipsec.conf');
             }
