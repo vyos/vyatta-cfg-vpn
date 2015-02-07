@@ -1271,6 +1271,24 @@ if (   $vcVPN->isDeleted('.')
                 vpn_exec('ipsec start --auto-update '.$update_interval.' >&/dev/null','start ipsec with auto-update $update_interval');
             }
         }
+        
+        # Activate any debugging options by
+        # calling ipsec stroke loglevel <source> <level>
+        my @logmodes = $vcVPN->returnValues('ipsec logging log-modes');
+        my @oldmodes = $vcVPN->returnOrigValues('ipsec logging log-modes');
+        my $charonloglevel = $vcVPN->returnValue('ipsec logging log-level');
+        # Clean up any logging modes if present
+        if (@oldmodes > 0) {
+            foreach my $mode (@oldmodes) {
+                vpn_exec("ipsec stroke loglevel $mode 0", "Deactivating log source $mode");
+            }
+        }
+        # Finally activate our new logger configuration
+        if (@logmodes > 0) {
+            foreach my $mode (@logmodes) {
+                vpn_exec("ipsec stroke loglevel $mode $charonloglevel", "Stroking log source $mode to loglevel $charonloglevel");
+            }
+        }
     }
 }
 
