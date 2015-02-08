@@ -813,8 +813,11 @@ if ($vcVPN->exists('ipsec')) {
                 if (defined($aggressive_mode)) {
                   if (defined($key_exchange) && $key_exchange eq 'ikev2') {
                     vpn_die(["vpn","ipsec","ike-group", $ike_group, "mode"], "$vpn_cfg_err Selection of Main/Aggressive modes is only valid for IKEv1 configurations");
-                  } else {
+                  } 
+                  if ($aggressive_mode eq 'aggressive') {
                     $genout .= "\taggressive=yes\n";
+                  } else {
+                    $genout .= "\taggressive=no\n";
                   }
                 }
                 my $t_ikelifetime =$vcVPN->returnValue("ipsec ike-group $ike_group lifetime");
