@@ -1,3 +1,12 @@
+vyatta-cfg-vpn (0.12.105+vyos2+lithium10) unstable; urgency=low
+
+  [ Kim Hagen ]
+  * Bug #367 - DMVPN Testing, but I do not see ESP traffic.
+  
+  [ Alex Harpin ]
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 09 Feb 2015 22:23:51 +0000
+ 
 vyatta-cfg-vpn (0.12.105+vyos2+lithium9) unstable; urgency=low
 
   * Remove @ from the id/remote-id help string. It was never required.
