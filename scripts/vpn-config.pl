@@ -37,7 +37,6 @@ use Vyatta::TypeChecker;
 use Vyatta::VPN::Util;
 use Getopt::Long;
 use Vyatta::Misc;
-use NetAddr::IP;
 use Vyatta::VPN::vtiIntf;
 
 my $config_file;
@@ -479,16 +478,6 @@ if ($vcVPN->exists('ipsec')) {
                 $lip = get_dhcp_addr($dhcp_iface);
             }
 
-            # -> leftsourceip is the internal source IP to use in a tunnel
-            # -> we use leftsourceip to add a route to the rightsubnet
-            #    only when rightsubnet is defined and is not 0.0.0.0/0. we do not
-            #    want to add a vpn route for everything i.e. rightsubnet = 0.0.0.0/0
-            # -> if leftsubnet is defined and is not 0.0.0.0/0; we try and find
-            #    an interface on the system that has an IP address lying within
-            #    the leftsubnet and use that as leftsourceip. if leftsubnet is not
-            #    defined or is 0.0.0.0/0 then we use local-address as leftsourceip.
-            my $leftsourceip = undef;
-
             #
             # Assign left and right to local and remote interfaces
             #
@@ -499,11 +488,8 @@ if ($vcVPN->exists('ipsec')) {
                                  "for peer \"$peer\" $tunKeyword.\n");
                     }
                     $genout .= "\tleft=%defaultroute\n";
-
-                    # no need for leftsourceip as a defaultroute is must for this to work
                 } else {
                     $genout .= "\tleft=$lip\n";
-                    $leftsourceip = "\tleftsourceip=$lip\n";
                 }
                 $genout .= "\tleftid=\"$authid\"\n" if defined $authid;
             }
@@ -554,19 +540,6 @@ if ($vcVPN->exists('ipsec')) {
 
             if (defined($leftsubnet)) {
                 $genout .= "\tleftsubnet=$leftsubnet\n";
-                if (!($leftsubnet eq '0.0.0.0/0')) {
-                    my $localsubnet_object = new NetAddr::IP($leftsubnet);
-
-                    # leftsourceip should now be an IP on system lying within the leftsubnet
-                    my @system_ips = Vyatta::Misc::getIP(undef, '4');
-                    foreach my $system_ip (@system_ips) {
-                        my $systemip_object = new NetAddr::IP($system_ip);
-                        if (CheckIfAddressInsideNetwork($systemip_object, $localsubnet_object)){
-                            my $sourceip = $systemip_object->addr();
-                            $leftsourceip = "\tleftsourceip=$sourceip\n";
-                        }
-                    }
-                }
             }
 
             my $remotesubnet = $vcVPN->returnValue("ipsec site-to-site peer $peer $tunKeyword remote prefix");
@@ -624,20 +597,7 @@ if ($vcVPN->exists('ipsec')) {
             }
             if (defined($rightsubnet)) {
                 $genout .= "\trightsubnet=$rightsubnet\n";
-
-                # not adding vpn route if remote prefix is 0.0.0.0/0
-                # user should add a route [default/static] manually
-                $leftsourceip = undef if $rightsubnet eq '0.0.0.0/0';
-                if ($rightsubnet =~ /vhost:%priv/) {
-
-                    # can't add route when rightsubnet is not specific
-                    $leftsourceip = undef;
-                }
-            } else {
-                $leftsourceip =undef;    # no need for vpn route if rightsubnet not defined
             }
-
-            $genout .= $leftsourceip if defined $leftsourceip;
 
             #
             # Protocol/port
@@ -1413,26 +1373,6 @@ sub hasLocalWildcard {
         }
         return 1 if ($lip && $lip eq '0.0.0.0');
     }
-    return 0;
-}
-
-sub CheckIfAddressInsideNetwork {
-    my ($address, $naipNetwork) = @_;
-
-    if (!defined($address) || !defined($naipNetwork)) {
-        return 0;
-    }
-
-    my $naipSM = new NetAddr::IP($address);
-    if (defined($naipSM)) {
-        my $subnetIA = $naipSM->network()->addr();
-        my $naipIA = new NetAddr::IP($subnetIA, $naipSM->masklen());
-
-        if (defined($naipIA) && $naipNetwork->within($naipIA)) {
-            return 1;
-        }
-    }
-
     return 0;
 }
 
