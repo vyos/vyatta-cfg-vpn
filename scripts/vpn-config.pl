@@ -800,6 +800,19 @@ if ($vcVPN->exists('ipsec')) {
                     $genout .= "\tdpdtimeout=$dpd_timeout" . "s\n";
                     $genout .= "\tdpdaction=$dpd_action\n";
                 }
+                
+                #
+                # Allow the user for force UDP encapsulation for the ESP
+                # payload.
+                #
+                my $forceencaps = $vcVPN->returnValue("ipsec site-to-site $peer force-encapsulation");
+                if (defined($forceencaps)) {
+                    if ($forceencaps eq 'enable') {
+                        $genout .= "\tforceencaps=yes\n";
+                    } else {
+                        $genout .= "\tforceencaps=no\n";
+                    }
+                }
             }
 
             #
