@@ -312,15 +312,6 @@ if ($vcVPN->exists('ipsec')) {
     }
 
     #
-    # Disable implicit connections
-    #
-    foreach my $conn (qw/clear clear-or-private private-or-clear private block packetdefault/){
-        $genout .= "\n";
-        $genout .= "conn $conn\n";
-        $genout .= "\tauto=ignore\n";
-    }
-
-    #
     # Default keyengine is ikev1
     #
     $genout .= "\n";
