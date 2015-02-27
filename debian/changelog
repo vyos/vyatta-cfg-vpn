@@ -1,3 +1,14 @@
+vyatta-cfg-vpn (0.12.105+vyos1+helium10) unstable; urgency=low
+
+  [ Kim Hagen ]
+  * Bug #367 - DMVPN Testing, but I do not see ESP traffic.
+  * Move execution of nhrp script to "end" of ipsec config so it
+    executes on all changes made
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 27 Feb 2015 19:59:36 +0100
+
 vyatta-cfg-vpn (0.12.105+vyos1+helium9) unstable; urgency=low
 
   * Remove @ from the id/remote-id help string. It was never required.
