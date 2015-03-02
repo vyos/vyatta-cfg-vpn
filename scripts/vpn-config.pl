@@ -1036,7 +1036,7 @@ if ($vcVPN->exists('ipsec')) {
                 # Prevent duplicate includes for rsa keys.
                 if (!defined($key_file_list{$local_key_file})) {
                     $key_file_list{$local_key_file} = 1;
-                    $genout_secrets .= "include $local_key_file\n";
+                    $genout_secrets .= ": RSA $local_key_file\n";
                 }
             } else {
                 vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"authentication"],"$vpn_cfg_err Unknown authentication mode \"$auth_mode\" for peer ".
