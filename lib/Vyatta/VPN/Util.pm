@@ -157,7 +157,7 @@ sub rsa_get_local_pubkey {
 
 sub rsa_convert_pubkey_pem {
     my $key = shift;
-    my $decoded = decode_base64($key);
+    my $decoded = decode_base64(substr($key, 2));
     my $len = unpack("C", substr($decoded, 0, 1));
     my $e = Crypt::OpenSSL::Bignum->new_from_bin(substr($decoded, 1, $len));
     my $n = Crypt::OpenSSL::Bignum->new_from_bin(substr($decoded, 1 + $len));
