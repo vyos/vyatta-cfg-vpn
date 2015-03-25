@@ -1301,6 +1301,43 @@ if (   $vcVPN->isDeleted('.')
     }
 }
 
+sub run_ipt {
+    my ($cmd) = @_;
+    system("sudo iptables $cmd");
+}
+
+my $auto_fw_nat = $vcVPN->returnValue('ipsec auto-firewall-nat-exclude');
+my $hook_fw = 'VYOS_VPN_IPSEC_FW_HOOK';
+my $hook_fw_in = 'VYOS_VPN_IPSEC_FW_IN_HOOK';
+my $hook_nat = 'VYOS_VPN_IPSEC_SNAT_HOOK';
+my $flush_ct = 0;
+run_ipt("-F $hook_fw");
+run_ipt("-F $hook_fw_in");
+run_ipt("-t nat -F $hook_nat");
+if (defined($auto_fw_nat) && $auto_fw_nat eq 'enable') {
+    my @peers = $vcVPN->listNodes('ipsec site-to-site peer');
+    if ($#peers >= 0) {
+        run_ipt("-A $hook_fw -p udp -m multiport --dports 500,4500 -j ACCEPT");
+        run_ipt("-A $hook_fw -p esp -j ACCEPT");
+    }
+    for my $peer (@peers) {
+        my @tuns = $vcVPN->listNodes("ipsec site-to-site peer $peer tunnel");
+        for my $tun (@tuns) {
+            my $tpath = "ipsec site-to-site peer $peer tunnel $tun";
+            my $lsub = $vcVPN->returnValue("$tpath local prefix");
+            my $rsub = $vcVPN->returnValue("$tpath remote prefix");
+            if (defined($lsub) && defined($rsub)) {
+                $flush_ct = 1;
+                run_ipt("-t nat -A $hook_nat -s $lsub -d $rsub -j ACCEPT");
+                run_ipt("-A $hook_fw_in -s $rsub -d $lsub -j ACCEPT");
+            }
+        }
+    }
+}
+if ($flush_ct) {
+    system('sudo conntrack -F ; sudo /usr/sbin/conntrack -F expect');
+}
+
 #
 # Return success
 #

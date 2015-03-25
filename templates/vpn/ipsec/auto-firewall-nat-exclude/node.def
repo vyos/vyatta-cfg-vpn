@@ -1,0 +1,4 @@
+type: txt
+default: "disable"
+help: Option to enable/disable auto firewall and NAT exclude (IPv4)
+syntax:expression: $VAR(@) in "enable", "disable"; "Must be enable or disable"
