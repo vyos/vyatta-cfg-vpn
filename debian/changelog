@@ -1,3 +1,12 @@
+vyatta-cfg-vpn (0.12.105+vyos2+lithium11) unstable; urgency=low
+
+  [ Kim Hagen ]
+  * Move execution of nhrp script to "end" of ipsec config
+  
+  [ Alex Harpin ]
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Thu, 02 Apr 2015 21:53:48 +0100
+ 
 vyatta-cfg-vpn (0.12.105+vyos2+lithium10) unstable; urgency=low
 
   [ Kim Hagen ]
