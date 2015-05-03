@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+vyos2+lithium12) unstable; urgency=low
+
+  * Bug #469: add options for AES-128/256-GCM mode.
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 04 May 2015 00:37:05 +0200
+
 vyatta-cfg-vpn (0.12.105+vyos2+lithium11) unstable; urgency=low
 
   [ Kim Hagen ]
