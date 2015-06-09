@@ -59,6 +59,7 @@ my $dhcp_if = 0;
 my $genout;
 my $genout_secrets;
 my %key_file_list;
+my %public_keys;
 
 # Set $using_klips to 1 if kernel IPsec support is provided by KLIPS.
 # Set it to 0 us using NETKEY.
@@ -1010,7 +1011,10 @@ if ($vcVPN->exists('ipsec')) {
                     vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"authentication"],"$vpn_cfg_err Unable to determine local public key from local key".
                              " file \"$local_key_file\" for peer \"$peer\".\n");
                 } else {
-                    $genout .= "\tleftrsasigkey=\"$local_key\"\n";
+                    if (!defined($public_keys{localhost})) {
+                        $public_keys{localhost} = $local_key;
+                        $genout .= "\tleftsigkey=localhost.pub\n";
+                    }
                 }
 
                 my $rsa_key_name = $vcVPN->returnValue("ipsec site-to-site peer $peer authentication rsa-key-name");
@@ -1023,13 +1027,16 @@ if ($vcVPN->exists('ipsec')) {
                         vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"authentication"],"$vpn_cfg_err No remote key configured for rsa key name ".
                                  "\"$rsa_key_name\" that is specified for peer \"$peer\".\n");
                     } else {
-                        $genout .= "\trightrsasigkey=\"$remote_key\"\n";
+                        if (!defined($public_keys{$rsa_key_name})) {
+                            $public_keys{$rsa_key_name} = $remote_key;
+                            $genout .= "\trightsigkey=$rsa_key_name.pub\n";
+                        }
                     }
                 }
                 # Prevent duplicate includes for rsa keys.
                 if (!defined($key_file_list{$local_key_file})) {
                     $key_file_list{$local_key_file} = 1;
-                    $genout_secrets .= "include $local_key_file\n";
+                    $genout_secrets .= ": RSA $local_key_file\n";
                 }
             } else {
                 vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"authentication"],"$vpn_cfg_err Unknown authentication mode \"$auth_mode\" for peer ".
@@ -1156,13 +1163,13 @@ if (   $vcVPN->isDeleted('.')
     if (!enableICMP('1')) {
         vpn_die(["vpn","ipsec"],"VPN commit error.  Unable to re-enable ICMP redirects.\n");
     }
-    write_config($genout, $config_file, $genout_secrets, $secrets_file, $dhcp_if);
+    write_config($genout, $config_file, $genout_secrets, $secrets_file, $dhcp_if, %public_keys);
 } else {
     if (!enableICMP('0')) {
         vpn_die(["vpn","ipsec"],"VPN commit error.  Unable to disable ICMP redirects.\n");
     }
 
-    write_config($genout, $config_file, $genout_secrets, $secrets_file, $dhcp_if);
+    write_config($genout, $config_file, $genout_secrets, $secrets_file, $dhcp_if, %public_keys);
 
     # Assumming that if there was a local IP missmatch and clustering is enabled,
     # then the clustering scripts will take care of starting the VPN daemon.
@@ -1251,7 +1258,7 @@ sub vpn_die {
 }
 
 sub write_config {
-    my ($genout, $config_file, $genout_secrets, $secrets_file, $dhcp_if) = @_;
+    my ($genout, $config_file, $genout_secrets, $secrets_file, $dhcp_if, %public_keys) = @_;
 
     open my $output_config, '>', $config_file
         or die "Can't open $config_file: $!";
@@ -1272,6 +1279,14 @@ sub write_config {
     print ${output_secrets} $genout_secrets;
     close $output_secrets;
     dhcp_hook($dhcp_if);
+
+    for my $name (keys %public_keys) {
+        my $output_path = "/etc/ipsec.d/certs/$name.pub";
+        open my $output_file, '>', $output_path
+            or die "Can't open $output_path: $!";
+        print ${output_file} rsa_convert_pubkey_pem($public_keys{$name});
+        close $output_file;
+    }
 }
 
 sub vpn_exec {
