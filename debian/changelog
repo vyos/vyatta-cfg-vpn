@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+vyos2+lithium13) unstable; urgency=low
+
+  * Bug #504: add an option for pulling IPsec local id from the cert.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 14 Jun 2015 01:53:07 +0200
+
 vyatta-cfg-vpn (0.12.105+vyos2+lithium12) unstable; urgency=low
 
   * Bug #469: add options for AES-128/256-GCM mode.
