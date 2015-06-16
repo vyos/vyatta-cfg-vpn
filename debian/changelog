@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+vyos2+lithium14) unstable; urgency=low
+
+  * vyatta-cfg-vpn: update dh_gencontrol with new development build flag
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Tue, 16 Jun 2015 19:35:00 +0100
+ 
 vyatta-cfg-vpn (0.12.105+vyos2+lithium13) unstable; urgency=low
 
   * Bug #504: add an option for pulling IPsec local id from the cert.
