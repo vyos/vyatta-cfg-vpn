@@ -36,6 +36,7 @@ use lib "/opt/vyatta/share/perl5";
 
 use Getopt::Long;
 use Vyatta::VPN::vtiIntf;
+use Vyatta::Config;
 
 my $vti_cfg_err = "VPN VTI configuration error:";
 my $gencmds = "";
@@ -57,12 +58,10 @@ GetOptions(
 #
 if ($updown ne '') {
     if (!(defined $intfName) || $intfName eq '') {
-
         # invalid
         exit -1;
     }
     if (!(defined $action) || $action eq '') {
-
         # invalid
         exit -1;
     }
@@ -76,7 +75,6 @@ if ($updown ne '') {
 #
 if ($checkref ne '') {
     if (!(defined $intfName) || $intfName eq '') {
-
         # invalid
         exit -1;
     }
@@ -84,16 +82,14 @@ if ($checkref ne '') {
     exit $rval;
 }
 
-###
+#
 # Following code is to configure the vti.
 #
-
 vtiIntf::discoverVtiIntfs();
 
 #
 # Prepare Vyatta::Config object
 #
-use Vyatta::Config;
 my $vcIntf = new Vyatta::Config();
 my $vcVPN  = new Vyatta::Config();
 $vcVPN->setLevel('vpn');
@@ -165,8 +161,6 @@ foreach my $peer (@peers) {
         $mtu = 1500;
     }
 
-    #my $exists = `ls -l /sys/class/net/$tunName &> /dev/null`;
-
     # description.
     my $description = $vcIntf->returnValue("vti $tunName description");
 
@@ -227,7 +221,6 @@ exit $result;
 #
 sub vti_handle_updown {
     my ($intfName, $action) = @_;
-    use Vyatta::Config;
     my $vcIntf = new Vyatta::Config();
     $vcIntf->setLevel('interfaces');
     my $disabled = $vcIntf->existsOrig("vti $intfName disabled");
@@ -238,7 +231,6 @@ sub vti_handle_updown {
 
 sub vti_check_reference {
     my ($intfName) = @_;
-    use Vyatta::Config;
     my $vcVPN = new Vyatta::Config();
     $vcVPN->setLevel('vpn ipsec site-to-site');
     my @peers = $vcVPN->listNodes('peer');
