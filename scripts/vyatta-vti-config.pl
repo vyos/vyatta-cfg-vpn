@@ -37,7 +37,6 @@ use lib "/opt/vyatta/share/perl5";
 use Getopt::Long;
 use Vyatta::VPN::vtiIntf;
 
-
 my $vti_cfg_err = "VPN VTI configuration error:";
 my $gencmds = "";
 my $result = 0;
@@ -53,16 +52,17 @@ GetOptions(
     "checkref" => \$checkref,
 );
 
-
 #
 # --updown intfName --action=[up|down]
 #
 if ($updown ne '') {
-    if (!(defined $intfName) || $intfName eq '' ) {
+    if (!(defined $intfName) || $intfName eq '') {
+
         # invalid
         exit -1;
     }
-    if (!(defined $action) || $action eq '' ) {
+    if (!(defined $action) || $action eq '') {
+
         # invalid
         exit -1;
     }
@@ -74,8 +74,9 @@ if ($updown ne '') {
 # --checkref --intf=<intfName>
 # Return 1 if the interface reference exits.
 #
-if ($checkref ne '' ) {
-    if (!(defined $intfName) || $intfName eq '' ) {
+if ($checkref ne '') {
+    if (!(defined $intfName) || $intfName eq '') {
+
         # invalid
         exit -1;
     }
@@ -98,129 +99,128 @@ my $vcVPN  = new Vyatta::Config();
 $vcVPN->setLevel('vpn');
 $vcIntf->setLevel('interfaces');
 
-if (!$vcVPN->exists('ipsec') ) {
+if (!$vcVPN->exists('ipsec')) {
     cleanupVtiNotConfigured();
     $result = execGenCmds();
     exit $result;
 }
-if (!$vcVPN->exists('ipsec site-to-site') ) {
+if (!$vcVPN->exists('ipsec site-to-site')) {
     cleanupVtiNotConfigured();
     $result = execGenCmds();
     exit $result;
 }
 
-    my %binds = ();
-    my %vtiVpns = ();
-    my @peers = $vcVPN->listNodes('ipsec site-to-site peer');
-    foreach my $peer (@peers) {
-        if (! $vcVPN->exists("ipsec site-to-site peer $peer vti")) {
-            next;
-        }
-        #
-        # we have the vti configured.
-        #
-        my $mark;
-        my $lip = $vcVPN->returnValue("ipsec site-to-site peer $peer local-address");
-        my $tunName = $vcVPN->returnValue("ipsec site-to-site peer $peer vti bind");
-        my $change = 0;
+my %binds = ();
+my %vtiVpns = ();
+my @peers = $vcVPN->listNodes('ipsec site-to-site peer');
+foreach my $peer (@peers) {
+    if (!$vcVPN->exists("ipsec site-to-site peer $peer vti")) {
+        next;
+    }
+    #
+    # we have the vti configured.
+    #
+    my $mark;
+    my $lip = $vcVPN->returnValue("ipsec site-to-site peer $peer local-address");
+    my $tunName = $vcVPN->returnValue("ipsec site-to-site peer $peer vti bind");
+    my $change = 0;
 
-        # Check local address is valid.
-        if (!defined($lip)) {
-            print STDERR "$vti_cfg_err local-address not defined.\n";
-            exit -1;
-        }
+    # Check local address is valid.
+    if (!defined($lip)) {
+        print STDERR "$vti_cfg_err local-address not defined.\n";
+        exit -1;
+    }
 
-        if ($lip eq "" || $lip eq "0.0.0.0") {
-            print STDERR "$vti_cfg_err Invalid local-address \"$lip\".\n";
-            exit -1;
-        }
-        # Check tunName is valid.
-        if (!defined($tunName) || $tunName eq ""  || ! $vcIntf->exists("vti $tunName") ) {
-	    if (defined($tunName)) {
-	            vti_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],
-			    "Invalid tunnel name vti \"$tunName\".\n");
-	    } else {
-	            vti_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],
-			    "tunnel name is empty.\n");
-	    }
-        }
-        $vtiVpns{ $tunName } = 1;
+    if ($lip eq "" || $lip eq "0.0.0.0") {
+        print STDERR "$vti_cfg_err Invalid local-address \"$lip\".\n";
+        exit -1;
+    }
 
-        if (exists $binds{ $tunName }) {
-                vti_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],
-                    "vti bind $tunName already used.\n");
+    # Check tunName is valid.
+    if (!defined($tunName) || $tunName eq ""  || !$vcIntf->exists("vti $tunName")) {
+        if (defined($tunName)) {
+            vti_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],"Invalid tunnel name vti \"$tunName\".\n");
         } else {
-            $binds{ $tunName } = 1;
+            vti_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],"tunnel name is empty.\n");
         }
+    }
+    $vtiVpns{$tunName} = 1;
 
-        $gencmds .= "# For peer $peer local $lip, $tunName.\n";
-        #
-        # Get the tunnel parameters.
-        #
-        # ip address's
-        my @tunIPs = $vcIntf->returnValues("vti $tunName address");
-        # mtu
-        my $mtu = $vcIntf->returnValue("vti $tunName mtu");
-        if (!defined($mtu) || $mtu eq "") {
-            $mtu = 1500;
-        }
-        #my $exists = `ls -l /sys/class/net/$tunName &> /dev/null`;
+    if (exists $binds{$tunName}) {
+        vti_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],"vti bind $tunName already used.\n");
+    } else {
+        $binds{$tunName} = 1;
+    }
 
-        # description.
-        my $description = $vcIntf->returnValue("vti $tunName description");
+    $gencmds .= "# For peer $peer local $lip, $tunName.\n";
+    #
+    # Get the tunnel parameters.
+    #
+    # ip address's
+    my @tunIPs = $vcIntf->returnValues("vti $tunName address");
 
-        # Check if the tunnel exists already: by tunnel addresses.
-        my $vtiPresent = vtiIntf::isVtinamepresent($peer, $lip);
-        if (defined($vtiPresent) && !($vtiPresent eq "")) {
-            if ($vtiPresent ne $tunName) {
-                # Binding changed.
-		my $currMark = vtiIntf::isVtimarkpresent($peer, $lip);
-		$gencmds .= "sudo /sbin/ip link delete $vtiPresent type vti &> /dev/null\n";
-		vtiIntf::deleteVtibyname($vtiPresent);
-                $change = 1;
-            }
-        }
+    # mtu
+    my $mtu = $vcIntf->returnValue("vti $tunName mtu");
+    if (!defined($mtu) || $mtu eq "") {
+        $mtu = 1500;
+    }
 
-        my $existingMark = vtiIntf::isVtimarkpresent($peer, $lip);
-        if (defined($existingMark) && !($existingMark eq "")) {
-	    $mark = $existingMark;
-        } else {
-	    $mark = vtiIntf::allocVtiMark();
-	    if ($mark == 0) {
-                vti_die(["vpn","ipsec","site-to-site","peer",$peer,"vti"],
-                    "vti failed to create (not able to allocate a mark)\n");
-	    }
+    #my $exists = `ls -l /sys/class/net/$tunName &> /dev/null`;
+
+    # description.
+    my $description = $vcIntf->returnValue("vti $tunName description");
+
+    # Check if the tunnel exists already: by tunnel addresses.
+    my $vtiPresent = vtiIntf::isVtinamepresent($peer, $lip);
+    if (defined($vtiPresent) && !($vtiPresent eq "")) {
+        if ($vtiPresent ne $tunName) {
+
+            # Binding changed.
+            my $currMark = vtiIntf::isVtimarkpresent($peer, $lip);
+            $gencmds .= "sudo /sbin/ip link delete $vtiPresent type vti &> /dev/null\n";
+            vtiIntf::deleteVtibyname($vtiPresent);
             $change = 1;
-        }
-
-        vtiIntf::deleteVtinamepresent($peer, $lip);
-	vtiIntf::deleteVtibyname($tunName);
-        if ($change eq 0) {
-            next;
-        }
-
-        #
-        # Set the configuration into the output string.
-        #
-        # By default we delete the tunnel...
-        my $genmark = $mark;
-        $gencmds .= "sudo /sbin/ip link delete $tunName type vti &> /dev/null\n";
-        $gencmds .= "sudo /sbin/ip link add $tunName type vti local $lip remote $peer okey $genmark\n";
-        foreach my $tunIP (@tunIPs) {
-            $gencmds .= "sudo /sbin/ip addr add $tunIP dev $tunName\n";
-        }
-        $gencmds .= "sudo /sbin/ip link set $tunName mtu $mtu\n";
-
-        if (defined($description)) {
-            $gencmds .= "if [ -d /sys/class/net/$tunName ] ; then\n\tsudo echo \"$description\" > /sys/class/net/$tunName/ifalias\nfi\n";
         }
     }
 
-    cleanupVtiNotConfigured();
-    checkUnrefIntfVti($vcIntf, %vtiVpns);
-    $result = execGenCmds();
-    exit $result;
+    my $existingMark = vtiIntf::isVtimarkpresent($peer, $lip);
+    if (defined($existingMark) && !($existingMark eq "")) {
+        $mark = $existingMark;
+    } else {
+        $mark = vtiIntf::allocVtiMark();
+        if ($mark == 0) {
+            vti_die(["vpn","ipsec","site-to-site","peer",$peer,"vti"],"vti failed to create (not able to allocate a mark)\n");
+        }
+        $change = 1;
+    }
 
+    vtiIntf::deleteVtinamepresent($peer, $lip);
+    vtiIntf::deleteVtibyname($tunName);
+    if ($change eq 0) {
+        next;
+    }
+
+    #
+    # Set the configuration into the output string.
+    #
+    # By default we delete the tunnel...
+    my $genmark = $mark;
+    $gencmds .= "sudo /sbin/ip link delete $tunName type vti &> /dev/null\n";
+    $gencmds .= "sudo /sbin/ip link add $tunName type vti local $lip remote $peer okey $genmark\n";
+    foreach my $tunIP (@tunIPs) {
+        $gencmds .= "sudo /sbin/ip addr add $tunIP dev $tunName\n";
+    }
+    $gencmds .= "sudo /sbin/ip link set $tunName mtu $mtu\n";
+
+    if (defined($description)) {
+        $gencmds .= "if [ -d /sys/class/net/$tunName ] ; then\n\tsudo echo \"$description\" > /sys/class/net/$tunName/ifalias\nfi\n";
+    }
+}
+
+cleanupVtiNotConfigured();
+checkUnrefIntfVti($vcIntf, %vtiVpns);
+$result = execGenCmds();
+exit $result;
 
 #
 # Handle VTI tunnel state based on input from strongswan and configuration.
@@ -231,7 +231,7 @@ sub vti_handle_updown {
     my $vcIntf = new Vyatta::Config();
     $vcIntf->setLevel('interfaces');
     my $disabled = $vcIntf->existsOrig("vti $intfName disabled");
-    if (!defined($disabled) || ! $disabled) {
+    if (!defined($disabled) || !$disabled) {
         system("sudo /sbin/ip link set $intfName $action\n");
     }
 }
@@ -246,10 +246,10 @@ sub vti_check_reference {
         return 0;
     }
     foreach my $peer (@peers) {
-        if (! $vcVPN->exists("peer $peer vti")) {
+        if (!$vcVPN->exists("peer $peer vti")) {
             next;
         }
-        if ( $vcVPN->exists("peer $peer vti bind $intfName")) {
+        if ($vcVPN->exists("peer $peer vti bind $intfName")) {
             return 1;
         }
     }
@@ -257,18 +257,19 @@ sub vti_check_reference {
 }
 
 sub cleanupVtiNotConfigured {
+
     # for all remaining entries in the Vtinamepresent hash
     # remove them from the system.
     my $localVtiNames = vtiIntf::getVtiNames();
     my $localVtibyNames = vtiIntf::getVtibyNames();
-    while (my ($tunKey, $presentVtiName) =  each(%$localVtiNames) ) {
+    while (my ($tunKey, $presentVtiName) =  each(%$localVtiNames)) {
         my ($remote, $local) = vtiIntf::extractRemoteLocal($tunKey);
         my $existingMark = vtiIntf::isVtimarkpresent($remote, $local);
         $gencmds .= "# For peer $remote local $local.\n";
         vtiIntf::freeVtiMark($existingMark);
     }
     for my $name (keys %$localVtibyNames) {
-	$gencmds .= "#For tunnel name $name.\n";
+        $gencmds .= "#For tunnel name $name.\n";
         $gencmds .= "sudo /sbin/ip link delete $name type vti &> /dev/null\n";
     }
 }
@@ -290,9 +291,9 @@ sub execGenCmds {
 }
 
 sub vti_die {
-  my (@path,$msg) = @_;
-  Vyatta::Config::outputError(@path, $msg);
-  exit 1;
+    my (@path,$msg) = @_;
+    Vyatta::Config::outputError(@path, $msg);
+    exit 1;
 }
 
 #
@@ -306,7 +307,7 @@ sub checkUnrefIntfVti {
 
     my @vtiIntfs = $vcIntf->listNodes("vti");
     foreach my $tunName (@vtiIntfs) {
-        if ( ! exists($vtiVpns{ $tunName }) ) {
+        if (!exists($vtiVpns{$tunName})) {
             print STDOUT "Warning: [interface vti $tunName] defined but not used under VPN configuration\n";
         }
     }
