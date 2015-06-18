@@ -37,6 +37,7 @@ use lib "/opt/vyatta/share/perl5";
 use Getopt::Long;
 use Vyatta::VPN::vtiIntf;
 use Vyatta::Config;
+use Vyatta::Misc;
 
 my $vti_cfg_err = "VPN VTI configuration error:";
 my $gencmds = "";
@@ -225,7 +226,11 @@ sub vti_handle_updown {
     $vcIntf->setLevel('interfaces');
     my $disabled = $vcIntf->existsOrig("vti $intfName disabled");
     if (!defined($disabled) || !$disabled) {
-        system("sudo /sbin/ip link set $intfName $action\n");
+        my $vtiInterface = new Vyatta::Interface($intfName);
+        my $state = $vtiInterface->up();
+        if (!($state && ($action eq "up"))) {
+            system("sudo /sbin/ip link set $intfName $action\n");
+        }
     }
 }
 
