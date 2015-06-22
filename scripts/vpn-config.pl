@@ -509,7 +509,7 @@ if ($vcVPN->exists('ipsec')) {
                 or $any_peer == 1)
             {
                 if ($isVti) {
-                    vpn_die(["vpn","ipsec","site-to-site","peer",$peer],"$vpn_cfg_err The \"$peer\" is invalid ". "ip address must be specified for $tunKeyword.\n");
+                    vpn_die(["vpn","ipsec","site-to-site","peer",$peer],"$vpn_cfg_err The peer \"$peer\" is invalid, an ip address must be specified for $tunKeyword.\n");
                 }
                 $right    = '%any';
                 $any_peer = 1;

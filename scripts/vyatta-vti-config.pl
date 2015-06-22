@@ -38,6 +38,7 @@ use Getopt::Long;
 use Vyatta::VPN::vtiIntf;
 use Vyatta::Config;
 use Vyatta::Misc;
+use Vyatta::TypeChecker;
 
 my $vti_cfg_err = "VPN VTI configuration error:";
 my $gencmds = "";
@@ -114,6 +115,11 @@ foreach my $peer (@peers) {
     if (!$vcVPN->exists("ipsec site-to-site peer $peer vti")) {
         next;
     }
+
+    if (!(validateType('ipv4', $peer, 'quiet') || validateType('ipv6', $peer, 'quiet')) || ($peer eq '0.0.0.0')) {
+        vti_die(["vpn","ipsec","site-to-site","peer",$peer],"$vti_cfg_err The peer \"$peer\" is invalid, an ip address must be specified for VTIs.\n");
+    }
+    
     #
     # we have the vti configured.
     #
