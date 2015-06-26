@@ -128,8 +128,8 @@ foreach my $peer (@peers) {
         exit -1;
     }
 
-    if ($lip eq "" || $lip eq "0.0.0.0") {
-        print STDERR "$vti_cfg_err Invalid local-address \"$lip\".\n";
+    if (!(validateType('ipv4', $lip, 'quiet') || validateType('ipv6', $lip, 'quiet')) || ($lip eq '0.0.0.0')) {
+        print STDERR "$vti_cfg_err Invalid local-address \"$lip\", an ip address must be specified for VTIs.\n";
         exit -1;
     }
 
