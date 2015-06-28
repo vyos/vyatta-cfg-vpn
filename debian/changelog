@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.105+vyos2+lithium17) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-vpn: validate local address for vti based vpn connections 
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 28 Jun 2015 13:44:16 +0100
+ 
 vyatta-cfg-vpn (0.12.105+vyos2+lithium16) unstable; urgency=low
 
   [ Alex Harpin ]
