@@ -1124,7 +1124,7 @@ if ($vcVPN->exists('ipsec')) {
         if ( ! -e $custom_include ) {
             vpn_die(["vpn","ipsec","include-ipsec-conf"],"$vpn_cfg_err The specified file for inclusion inside ipsec.conf does not exist.");
         }
-		$genout .= "\ninclude $custom_include";
+		$genout .= "\ninclude $custom_include\n";
     }
 	if (defined($custom_secrets)) {
 		if ( ! -e $custom_secrets) {	
