@@ -1123,6 +1123,7 @@ if ($vcVPN->exists('ipsec')) {
         if ( ! -e $custom_include ) {
             vpn_die(["vpn","ipsec","include-ipsec-conf"],"$vpn_cfg_err The specified file for inclusion inside ipsec.conf does not exist.");
         }
+		$genout .= "\ninclude $custom_include";
     }
     if (-e '/etc/dmvpn.conf') {
         $genout .= "\ninclude /etc/dmvpn.conf\n";
