@@ -371,7 +371,22 @@ if ($vcVPN->exists('ipsec')) {
             $dhcp_if = $dhcp_if + 1;
             $lip = get_dhcp_addr($dhcp_iface, $peer);
         }
-        my $authid =$vcVPN->returnValue("ipsec site-to-site peer $peer authentication id");
+
+        # Get the local ID
+        my $authid = undef;
+        my $authidfromcert = undef;
+        if ($vcVPN->exists("ipsec site-to-site peer $peer authentication use-x509-id")) {
+            if ($vcVPN->exists("ipsec site-to-site peer $peer authentication id")) {
+                vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer], "Manually set peer id and use-x509-id are mutually exclusive");
+            }
+            else {
+                $authidfromcert = 1;
+            }
+        }
+        else {
+            $authid =$vcVPN->returnValue("ipsec site-to-site peer $peer authentication id");
+        }
+
         my $authremoteid = $vcVPN->returnValue("ipsec site-to-site peer $peer authentication remote-id");
         if ((!defined($lip) || $lip eq "") && (!defined($dhcp_iface) || $dhcp_iface eq "")) {
             vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"local-address"],"$vpn_cfg_err No local-address specified for peer \"$peer\"\n");
@@ -483,7 +498,12 @@ if ($vcVPN->exists('ipsec')) {
                 } else {
                     $genout .= "\tleft=$lip\n";
                 }
-                $genout .= "\tleftid=\"$authid\"\n" if defined $authid;
+                if (defined($authidfromcert)) {
+                    $genout .= "\tleftid=%fromcert\n";
+                }
+                else {
+                    $genout .= "\tleftid=\"$authid\"\n" if defined $authid;
+                }
             }
 
             # @SM Todo: must have explicit settings for VTI.

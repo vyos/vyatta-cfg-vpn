@@ -1,3 +1,62 @@
+vyatta-cfg-vpn (0.12.105+vyos2+lithium17) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-vpn: validate local address for vti based vpn connections 
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Sun, 28 Jun 2015 13:44:16 +0100
+ 
+vyatta-cfg-vpn (0.12.105+vyos2+lithium16) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-vpn: validate peer address for vti based vpn connections
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Fri, 26 Jun 2015 07:51:33 +0100
+ 
+vyatta-cfg-vpn (0.12.105+vyos2+lithium15) unstable; urgency=low
+
+  [ Alex Harpin ]
+  * vyatta-cfg-vpn: formatting changes for style consistency
+  * vyatta-cfg-vpn: further tidy up of vyatta-vti-config.pl
+  * vyatta-cfg-vpn: vti interfaces remain link down after ipsec sa renewal
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Thu, 18 Jun 2015 07:44:43 +0100
+ 
+vyatta-cfg-vpn (0.12.105+vyos2+lithium14) unstable; urgency=low
+
+  * vyatta-cfg-vpn: update dh_gencontrol with new development build flag
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Tue, 16 Jun 2015 19:35:00 +0100
+ 
+vyatta-cfg-vpn (0.12.105+vyos2+lithium13) unstable; urgency=low
+
+  * Bug #504: add an option for pulling IPsec local id from the cert.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sun, 14 Jun 2015 01:53:07 +0200
+
+vyatta-cfg-vpn (0.12.105+vyos2+lithium12) unstable; urgency=low
+
+  * Bug #469: add options for AES-128/256-GCM mode.
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 04 May 2015 00:37:05 +0200
+
+vyatta-cfg-vpn (0.12.105+vyos2+lithium11) unstable; urgency=low
+
+  [ Kim Hagen ]
+  * Move execution of nhrp script to "end" of ipsec config
+  
+  [ Alex Harpin ]
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Thu, 02 Apr 2015 21:53:48 +0100
+ 
+vyatta-cfg-vpn (0.12.105+vyos2+lithium10) unstable; urgency=low
+
+  [ Kim Hagen ]
+  * Bug #367 - DMVPN Testing, but I do not see ESP traffic.
+  
+  [ Alex Harpin ]
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 09 Feb 2015 22:23:51 +0000
+ 
 vyatta-cfg-vpn (0.12.105+vyos2+lithium9) unstable; urgency=low
 
   * Remove @ from the id/remote-id help string. It was never required.
