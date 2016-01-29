@@ -1,0 +1,5 @@
+help: IKEv1 Phase 1 Mode Selection 
+type: txt
+syntax:expression: $VAR(@) in "main", "aggressive"; "must be main or aggressive"
+val_help: main; Use Main mode for Key Exchanges in the IKEv1 Protocol (Recommended Default)
+val_help: aggressive; Use Aggressive mode for Key Exchanges in the IKEv1 protocol - We do not recommend users to use aggressive mode as it is much more insecure compared to Main mode.
