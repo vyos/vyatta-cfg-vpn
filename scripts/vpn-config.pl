@@ -1567,7 +1567,7 @@ sub dhcp_hook {
 /opt/vyatta/bin/sudo-users/vyatta-ipsec-dhcp.pl --interface=\"\$interface\" --new_ip=\"\$new_ip_address\" --reason=\"\$reason\" --old_ip=\"\$old_ip_address\"
 EOS
     }
-    my $hook = "/etc/dhcp3/dhclient-exit-hooks.d/ipsecd";
+    my $hook = "/etc/dhcp/dhclient-exit-hooks.d/ipsecd";
     open my $dhcp_hook, '>', $hook
         or die "cannot open $hook";
     print ${dhcp_hook} $str;
