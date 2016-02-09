@@ -1,3 +1,10 @@
+vyatta-cfg-vpn (0.12.105+vyos2+current2) unstable; urgency=low
+
+  * Remove dependency on vyatta-ipsec for migration to upstream
+    strongswan.
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 25 Jan 2016 14:15:24 +0100
+
 vyatta-cfg-vpn (0.12.105+vyos2+current1) unstable; urgency=medium
 
   [ Thomas Jepp ]
