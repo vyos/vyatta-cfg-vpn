@@ -217,6 +217,7 @@ if ($vcVPN->exists('ipsec')) {
     $genout .= "version 2.0\n";
     $genout .= "\n";
     $genout .= "config setup\n";
+    $genout .= "\tcharonstart=yes\n";
 
     #
     # Interfaces
@@ -232,6 +233,7 @@ if ($vcVPN->exists('ipsec')) {
         # not used, though we do need to include the line and the keyword
         # "%none" to keep the IPsec setup code from defaulting the entry.
         if ($using_klips) {
+            $genout .= "\tinterfaces=\"";
             my $counter = 0;
             foreach my $interface (@interfaces) {
                 if (!(-d "/sys/class/net/$interface")) {
@@ -262,6 +264,8 @@ if ($vcVPN->exists('ipsec')) {
                     ++$counter;
                 }
                 $genout .= '%defaultroute"';
+            } else {
+                $genout .= 'interfaces="%none"';
             }
             $genout .= "\n";
         }
