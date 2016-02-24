@@ -1146,17 +1146,11 @@ if ($vcVPN->exists('ipsec')) {
         }
 		$genout .= "\ninclude $custom_include\n";
     }
-	if (defined($custom_secrets)) {
-		if ( ! -e $custom_secrets) {	
-			vpn_die(["vpn","ipsec","include-ipsec-secrets"],"$vpn_cfg_err The specified file for inclusion inside ipsec.secrets does not exist.");
-		}
-		$genout_secrets .= "\ninclude $custom_secrets\n";
-	}
-    if (-e '/etc/dmvpn.conf') {
-        $genout .= "\ninclude /etc/dmvpn.conf\n";
-    }
-    if (-e '/etc/dmvpn.secrets') {
-        $genout_secrets .= "\ninclude /etc/dmvpn.secrets\n";
+    if (defined($custom_secrets)) {
+        if ( ! -e $custom_secrets) {	
+            vpn_die(["vpn","ipsec","include-ipsec-secrets"],"$vpn_cfg_err The specified file for inclusion inside ipsec.secrets does not exist.");
+        }
+        $genout_secrets .= "\ninclude $custom_secrets\n";
     }
 
 } else {
