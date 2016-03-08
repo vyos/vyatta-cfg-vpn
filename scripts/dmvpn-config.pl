@@ -97,8 +97,6 @@ if ( $vcVPN->exists('ipsec') ) {
 			. "\"$profile\" has not been configured.\n");
 		}
 
-		my $authid = $vcVPN->returnValue("ipsec profile $profile authentication id");
-
 		#
 		# ESP group
 		#
@@ -114,39 +112,46 @@ if ( $vcVPN->exists('ipsec') ) {
 		}
 
 		#
-		# Authentication mode
-		#
-		#
-		# Write shared secrets to ipsec.secrets
-		#
+        # Authentication mode
+        #
+        #
+        # Write shared secrets to ipsec.secrets
+        #
 		my $auth_mode = $vcVPN->returnValue("ipsec profile $profile authentication mode");
 		my $psk = '';
 		if ( !defined($auth_mode) || $auth_mode eq '' ) {
-			vpn_die([ "vpn", "ipsec", "profile", $profile, "authentication" ],
-			"$vpn_cfg_err No authentication mode for profile \"$profile\" specified.\n");
+			vpn_die(
+				[ "vpn", "ipsec", "profile", $profile, "authentication" ],
+				"$vpn_cfg_err No authentication mode for profile \"$profile\" specified.\n"
+			);
 		}
 		elsif ( defined($auth_mode) && ( $auth_mode eq 'pre-shared-secret' ) ) {
-			$psk = $vcVPN->returnValue("ipsec profile $profile authentication pre-shared-secret");
-			my $orig_psk = $vcVPN->returnOrigValue("ipsec profile $profile authentication pre-shared-secret");
+			$psk = $vcVPN->returnValue(
+				"ipsec profile $profile authentication pre-shared-secret");
+			my $orig_psk = $vcVPN->returnOrigValue(
+				"ipsec profile $profile authentication pre-shared-secret");
 			$orig_psk = "" if ( !defined($orig_psk) );
 			if ( $psk ne $orig_psk && $orig_psk ne "" ) {
 				print "WARNING: The pre-shared-secret will not be updated until the next re-keying interval\n";
 				print "To force the key change use: 'reset vpn ipsec-peer'\n";
 			}
 			if ( !defined($psk) || $psk eq '' ) {
-				vpn_die([ "vpn", "ipsec", "profile", $profile, "authentication" ],
-				"$vpn_cfg_err No 'pre-shared-secret' specified for profile \"$profile\""
-				. " while 'pre-shared-secret' authentication mode is specified.\n");
+				vpn_die(
+					[ "vpn", "ipsec", "profile", $profile, "authentication" ],
+					"$vpn_cfg_err No 'pre-shared-secret' specified for profile \"$profile\""
+					. " while 'pre-shared-secret' authentication mode is specified.\n"
+				);
 			}
 		}
 		else {
-			vpn_die([ "vpn", "ipsec", "profile", $profile, "authentication" ],
-			"$vpn_cfg_err Unknown/unsupported authentication mode \"$auth_mode\" for profile "
-			. "\"$profile\" specified.\n");
+			vpn_die(
+				[ "vpn", "ipsec", "profile", $profile, "authentication" ],
+				"$vpn_cfg_err Unknown/unsupported authentication mode \"$auth_mode\" for profile "
+				. "\"$profile\" specified.\n"
+			);
 		}
 
 		my @tunnels = $vcVPN->listNodes("ipsec profile $profile bind tunnel");
-
 		foreach my $tunnel (@tunnels) {
 			#
 			# Check whether this tunnel is already in some profile
@@ -231,9 +236,9 @@ if ( $vcVPN->exists('ipsec') ) {
 				# Check for Dead Peer Detection DPD
 				#
 				my $dpd_interval = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection interval");
-                my $dpd_timeout = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection timeout");
-                my $dpd_action = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection action");
-                if (   defined($dpd_interval) && defined($dpd_timeout) && defined($dpd_action) ) {
+				my $dpd_timeout = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection timeout");
+				my $dpd_action = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection action");
+				if (   defined($dpd_interval) && defined($dpd_timeout) && defined($dpd_action) ) {
 					$genout .= "\tdpddelay=$dpd_interval" . "s\n";
 					$genout .= "\tdpdtimeout=$dpd_timeout" . "s\n";
 					$genout .= "\tdpdaction=$dpd_action\n";
@@ -374,13 +379,28 @@ if ( $vcVPN->exists('ipsec') ) {
 			$genout .= "\t}\n"; # to identify end of connection definition
 								# used by clear vpn op-mode command
 		}
+		$genout .= "}\n";
+		$genout .= "secrets {\n";
+		my @tunnels = $vcVPN->listNodes("ipsec profile $profile bind tunnel");
+		foreach my $tunnel (@tunnels) {
+			#
+			# Check whether this tunnel is already in some profile
+			#
+			foreach my $prof (@profiles) {
+				if ( $prof != $profile ) {
+					if ($vcVPN->exists("ipsec profile $prof bind tunnel $tunnel")){
+						vpn_die(["vpn",  "ipsec",  "profile", $profile,"bind", "tunnel", $tunnel],
+								"$vpn_cfg_err Tunnel \"$tunnel\" is already configured in profile \"$prof\".");
+					}
+				}
+			}
+			my $ike_id = "\tike-dmvpn-$tunnel {\n";
+			$genout .= $ike_id;
+			$genout .= "\t\tsecret = $psk\n";
+			$genout .= "\t}\n";
+		}
+		$genout .= "}\n";
 	}
-	$genout .= "}\n";
-	$genout .= "secrets {\n";
-	$genout .= "\tike-dmvpn {\n";
-	$genout .= "\t\tsecret = 0sFpZAZqEN6Ti9sqt4ZP5EWcqx\n";
-	$genout .= "\t}\n";
-	$genout .= "}\n";
 }
 else {
 	#
@@ -533,7 +553,7 @@ sub get_dh_cipher_result {
 		$ciph_out = 'ecp256';
 	} elsif ($cipher eq '20' || $cipher eq 'dh-group20') {
 		$ciph_out = 'ecp384';	
-    } elsif ($cipher eq '21' || $cipher eq 'dh-group21') {
+	} elsif ($cipher eq '21' || $cipher eq 'dh-group21') {
 		$ciph_out = 'ecp521';
 	} elsif ($cipher eq '22' || $cipher eq 'dh-group22') {
 		$ciph_out = 'modp1024s160';
@@ -550,5 +570,4 @@ sub get_dh_cipher_result {
 	}
 	return $ciph_out;
 }
-
 # end of file
