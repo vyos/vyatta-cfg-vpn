@@ -112,11 +112,11 @@ if ( $vcVPN->exists('ipsec') ) {
 		}
 
 		#
-        # Authentication mode
-        #
-        #
-        # Write shared secrets to ipsec.secrets
-        #
+		# Authentication mode
+		#
+		#
+		# Write shared secrets to ipsec.secrets
+		#
 		my $auth_mode = $vcVPN->returnValue("ipsec profile $profile authentication mode");
 		my $psk = '';
 		if ( !defined($auth_mode) || $auth_mode eq '' ) {
@@ -125,11 +125,9 @@ if ( $vcVPN->exists('ipsec') ) {
 				"$vpn_cfg_err No authentication mode for profile \"$profile\" specified.\n"
 			);
 		}
-		elsif ( defined($auth_mode) && ( $auth_mode eq 'pre-shared-secret' ) ) {
-			$psk = $vcVPN->returnValue(
-				"ipsec profile $profile authentication pre-shared-secret");
-			my $orig_psk = $vcVPN->returnOrigValue(
-				"ipsec profile $profile authentication pre-shared-secret");
+		elsif ( defined($auth_mode) && ( $auth_mode eq 'pre-shared-secret' ) ) { 
+			$psk = $vcVPN->returnValue("ipsec profile $profile authentication pre-shared-secret");
+			my $orig_psk = $vcVPN->returnOrigValue("ipsec profile $profile authentication pre-shared-secret");
 			$orig_psk = "" if ( !defined($orig_psk) );
 			if ( $psk ne $orig_psk && $orig_psk ne "" ) {
 				print "WARNING: The pre-shared-secret will not be updated until the next re-keying interval\n";
@@ -158,7 +156,7 @@ if ( $vcVPN->exists('ipsec') ) {
 			#
 			foreach my $prof (@profiles) {
 				if ( $prof != $profile ) {
-					if ($vcVPN->exists("ipsec profile $prof bind tunnel $tunnel"))
+					if ( $vcVPN->exists("ipsec profile $prof bind tunnel $tunnel") )
                     {
 						vpn_die(["vpn",  "ipsec",  "profile", $profile,"bind", "tunnel", $tunnel],
 						"$vpn_cfg_err Tunnel \"$tunnel\" is already configured in profile \"$prof\".");
@@ -200,6 +198,10 @@ if ( $vcVPN->exists('ipsec') ) {
 					# Write separator if not first proposal
 					#
 					if ($first_ike_proposal) {
+						if ( !defined($dh_group) ) {
+							vpn_die(["vpn","ipsec","profile", $profile,"bind","tunnel", $tunnel],"$vpn_cfg_err 'dh-group' must be specified in ".
+									"ike-group \"$ike_group\" proposal \"$ike_proposal\"  dh-group. \n");
+						}
 						$first_ike_proposal = 0;
 					}
 					else {
@@ -210,7 +212,7 @@ if ( $vcVPN->exists('ipsec') ) {
 					# Write values
 					#
 					if ( defined($encryption) && defined($hash) ) {
-                        $genout .= "$encryption-$hash";
+						$genout .= "$encryption-$hash";
 						if ( defined($dh_group) ) {
 							my $cipher_out = get_dh_cipher_result($dh_group);
 							if ($cipher_out eq 'unknown') {
@@ -222,15 +224,59 @@ if ( $vcVPN->exists('ipsec') ) {
 						}
 					}
 				}
-
-				#why we always set strict mode?
 				$genout .= "\n";
+				
+				#
+				# Get IKE version setting
+				#
+				my $key_exchange = $vcVPN->returnValue("ipsec ike-group $ike_group key-exchange");
+				if ( defined($key_exchange) ) {
+					if ( $key_exchange eq 'ikev1' ) {
+						$genout .= "\t\tversion = 1\n";
+					}
+					if ( $key_exchange eq 'ikev2' ) {
+						$genout .= "\t\tversion = 2\n";
+					}
+				}else {
+					$genout .= "\t\tversion = 0\n";
+				}
 
+				#
+				# Get ikev2-reauth configuration
+				# Check IKE Lifetime
+				#
+				my $ikev2_group_reauth = $vcVPN->returnValue("ipsec ike-group $ike_group ikev2-reauth");
 				my $t_ikelifetime = $vcVPN->returnValue("ipsec ike-group $ike_group lifetime");
 				if ( defined($t_ikelifetime) && $t_ikelifetime ne '' ) {
 					$ikelifetime = $t_ikelifetime;
 				}
-				$genout .= "\t\treauth_time = $ikelifetime" . "s\n";
+				if ( defined($ikev2_group_reauth) ) {
+					if ( $ikev2_group_reauth eq 'yes' && defined($ikelifetime) ) {
+						$genout .= "\t\treauth_time = $ikelifetime" . "s\n";
+						}else {
+							$genout .= "\t\trekey_time = $ikelifetime" . "s\n";
+						}
+				} else {
+					$genout .= "\t\trekey_time = $ikelifetime" . "s\n";
+				}
+                
+				#
+				# Allow the user to disable MOBIKE for IKEv2 connections
+				#
+				my $mob_ike = $vcVPN->returnValue("ipsec ike-group $ike_group mobike");
+ 
+				if (defined($mob_ike)) {
+					if (defined($key_exchange) && $key_exchange eq 'ikev2') {
+						if ($mob_ike eq 'enable') {
+							$genout .= "\t\tmobike = yes";
+						}
+						if ($mob_ike eq 'disable') {
+							$genout .= "\t\tmobike = no";
+						}
+					}else {
+						$genout .= "\t\tmobike = no";
+					}
+				}
 
 				#
 				# Check for Dead Peer Detection DPD
@@ -238,10 +284,9 @@ if ( $vcVPN->exists('ipsec') ) {
 				my $dpd_interval = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection interval");
 				my $dpd_timeout = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection timeout");
 				my $dpd_action = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection action");
-				if (   defined($dpd_interval) && defined($dpd_timeout) && defined($dpd_action) ) {
-					$genout .= "\tdpddelay=$dpd_interval" . "s\n";
-					$genout .= "\tdpdtimeout=$dpd_timeout" . "s\n";
-					$genout .= "\tdpdaction=$dpd_action\n";
+				if ( defined($dpd_interval) && defined($dpd_timeout) && defined($dpd_action) ) {
+					$genout .= "\t\tdpd_delay = $dpd_interval" . "s\n";
+					$genout .= "\t\tdpd_timeou = $dpd_timeout" . "s\n";
 				}
 			}
 
@@ -294,6 +339,10 @@ if ( $vcVPN->exists('ipsec') ) {
 							# Get the first IKE group's dh-group and use that as our PFS setting
 							my $default_pfs = $vcVPN->returnValue("ipsec ike-group $ike_group proposal 1 dh-group");
 							$pfs = get_dh_cipher_result($default_pfs);
+							if ( !defined($default_pfs) && $pfs eq 'unknown' ) {
+								vpn_die(["vpn","ipsec","profile", $profile,"bind","tunnel", $tunnel],"$vpn_cfg_err 'pfs enabled' needs 'dh-group' specified in ".
+								"ike-group \"$ike_group\" proposal 1 dh-group. \n");
+							}
 						} elsif ($pfs eq 'disable') {
 							undef $pfs;
 						} else {
@@ -317,23 +366,23 @@ if ( $vcVPN->exists('ipsec') ) {
 				if ( defined($t_esplifetime) && $t_esplifetime ne '' ) {
 					$esplifetime = $t_esplifetime;
 				}
-				$genout .= "\t\t\t\trekey_time=$esplifetime" . "s\n";
+				$genout .= "\t\t\t\trekey_time = $esplifetime" . "s\n";
 
 				my $lower_lifetime = $ikelifetime;
 				if ( $esplifetime < $ikelifetime ) {
 					$lower_lifetime = $esplifetime;
 				}
-
+				
 				#
 				# The lifetime values need to be greater than:
 				#   rekeymargin*(100+rekeyfuzz)/100
 				#
 				my $rekeymargin = REKEYMARGIN_DEFAULT;
-				if ( $lower_lifetime <= ( 2 * $rekeymargin ) ) {
-					$rekeymargin = int( $lower_lifetime / 2 ) - 1;
+				if ($lower_lifetime <= (2 * $rekeymargin)) {
+					$rekeymargin = int($lower_lifetime / 2) - 1;
 				}
-				$genout .= "\t\t\t\trand_time=$rekeymargin" . "s\n";
-
+				$genout .= "\t\t\t\trand_time = $rekeymargin" . "s\n";
+                
 				#
 				# Protocol/port
 				#
@@ -362,6 +411,18 @@ if ( $vcVPN->exists('ipsec') ) {
 					$espmode = "transport";
 				}
 				$genout .= "\t\t\t\tmode = $espmode\n";
+				
+				#
+				# Check for Dead Peer Detection DPD
+				#
+				my $dpd_interval = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection interval");
+				my $dpd_timeout = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection timeout");
+				my $dpd_action = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection action");	
+				if (   defined($dpd_interval) && defined($dpd_timeout) && defined($dpd_action) ) {
+
+					$genout .= "\t\t\t\tdpd_action = $dpd_action\n";
+				}
+				
 
 				#
 				# Compression
