@@ -491,11 +491,35 @@ if ( is_vpn_running() ) {
 else {
 	if ( !defined($update_interval) ) {
 		vpn_exec( 'ipsec start >&/dev/null', 'start ipsec' );
+        my $counter = 10;
+		while($counter > 0){
+			if (-e "/var/run/charon.pid") {
+				vpn_exec( 'swanctl -q >&/dev/null',    'reload changes to swanctl.conf' );
+				last;
+			}
+			$counter--;
+			sleep(1);
+			if($counter == 0){
+				vpn_die("$vpn_cfg_err Ipsec is not running.");
+			}
+		}
 	}
 	else {
 		vpn_exec(
 			'ipsec start --auto-update ' . $update_interval . ' >&/dev/null',
 			'start ipsec with auto-update $update_interval' );
+			        my $counter = 10;
+		while($counter > 0){
+			if (-e "/var/run/charon.pid") {
+				vpn_exec( 'swanctl -q >&/dev/null',    'reload changes to swanctl.conf' );
+				last;
+			}
+			$counter--;
+			sleep(1);
+			if($counter == 0){
+				vpn_die("$vpn_cfg_err Ipsec is not running.");
+			}
+		}
 	}
 }
 
