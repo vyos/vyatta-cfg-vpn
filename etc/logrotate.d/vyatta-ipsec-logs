@@ -1,5 +1,6 @@
 
 /var/log/vyatta/ipsec.log {
+	missingok
 	nocompress
 	size 1M
 	rotate 2
