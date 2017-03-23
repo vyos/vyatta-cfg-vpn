@@ -25,7 +25,7 @@
 #
 # For each VTI tunnel (vpn ipsec site-to-site peer ip-address sti); find the vti tunnel, local address, mark.
 #   Find the corresponding tunnel (interfaces vti vtiXXX), tunnel address, disable, mtu
-#        if not configured: ip tunnel add vtiXXX mode esp local $local remote $remote i_key $mark
+#        if not configured: ip tunnel add vtiXXX mode esp local $local remote $remote ikey $mark okey $mark
 #                           if (mtu): configure mtu
 #                           if (tunnel-addres): configur ip link vtiXXX address
 #                           if (!disable): enable the interface.
@@ -207,7 +207,7 @@ foreach my $peer (@peers) {
     # By default we delete the tunnel...
     my $genmark = $mark;
     $gencmds .= "sudo /sbin/ip link delete $tunName type vti &> /dev/null\n";
-    $gencmds .= "sudo /sbin/ip link add $tunName type vti local $lip remote $peer okey $genmark\n";
+    $gencmds .= "sudo /sbin/ip link add $tunName type vti local $lip remote $peer okey $genmark ikey $genmark\n";
     foreach my $tunIP (@tunIPs) {
         $gencmds .= "sudo /sbin/ip addr add $tunIP dev $tunName\n";
     }
