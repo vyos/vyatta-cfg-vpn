@@ -207,7 +207,7 @@ foreach my $peer (@peers) {
     # By default we delete the tunnel...
     my $genmark = $mark;
     $gencmds .= "sudo /sbin/ip link delete $tunName type vti &> /dev/null\n";
-    $gencmds .= "sudo /sbin/ip link add $tunName type vti local $lip remote $peer okey $genmark\n";
+    $gencmds .= "sudo /sbin/ip link add $tunName type vti local $lip remote $peer okey $genmark ikey $genmark\n";
     foreach my $tunIP (@tunIPs) {
         $gencmds .= "sudo /sbin/ip addr add $tunIP dev $tunName\n";
     }
