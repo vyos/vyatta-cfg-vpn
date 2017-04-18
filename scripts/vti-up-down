@@ -10,7 +10,7 @@ PLUTO_MARK_IN_ARR=(${PLUTO_MARK_IN//// })
 
 case "$PLUTO_VERB" in
 route-client | up-client)
-/opt/vyatta/sbin/vyatta-vti-config.pl --updown --intf=$1 --action=up
+#/opt/vyatta/sbin/vyatta-vti-config.pl --updown --intf=$1 --action=up
 sudo sysctl -w net.ipv4.conf.$1.disable_policy=1
 sudo sysctl -w net.ipv4.conf.$1.rp_filter=2 || sysctl -w net.ipv4.conf.$1.rp_filter=0
 sudo /sbin/ip addr add ${VTI_LOCALADDR} remote ${VTI_REMOTEADDR} dev $1
@@ -20,7 +20,7 @@ sudo /sbin/iptables -t mangle -I INPUT -p esp -s ${PLUTO_PEER} -d ${PLUTO_ME} -j
 sudo /sbin/ip route flush table 220
     ;;
 down-client)
-/opt/vyatta/sbin/vyatta-vti-config.pl --updown --intf=$1 --action=down 
+#/opt/vyatta/sbin/vyatta-vti-config.pl --updown --intf=$1 --action=down 
 sudo /sbin/ip link del ${VTI_INTERFACE}
 sudo /sbin/iptables -t mangle -D FORWARD -o $1 -p tcp -m tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 sudo /sbin/iptables -t mangle -D INPUT -p esp -s ${PLUTO_PEER} -d ${PLUTO_ME} -j MARK --set-xmark ${PLUTO_MARK_IN}
