@@ -121,6 +121,9 @@ if ( $vcVPN->exists('ipsec') ) {
         my $authid =
           $vcVPN->returnValue("ipsec profile $profile authentication id");
 
+        my $authprefix =
+          $vcVPN->returnValue("ipsec profile $profile authentication remote-prefix");
+
         #
         # ESP group
         #
@@ -216,9 +219,14 @@ if ( $vcVPN->exists('ipsec') ) {
             my $lip = $vc->returnValue("interfaces tunnel $tunnel local-ip");
             my $leftsourceip = undef;
 
-            $genout .= "\tleft=$lip\n";
+            if ($lip eq '0.0.0.0') {
+                $genout .= "\tleft=%defaultroute\n";
+            } else {
+                $genout .= "\tleft=$lip\n";
+            }
             $leftsourceip = "\tleftsourceip=$lip\n";
             $genout .= "\tleftid=$authid\n" if defined $authid;
+            $genout .= "\trightsubnetwithin=$authprefix\n" if defined $authprefix;
 
             my $right    = '%any';
             my $any_peer = 1;
