@@ -124,6 +124,9 @@ if ( $vcVPN->exists('ipsec') ) {
         my $authprefix =
           $vcVPN->returnValue("ipsec profile $profile authentication remote-prefix");
 
+        my $lauthprefix =
+          $vcVPN->returnValue("ipsec profile $profile authentication local-prefix");
+
         #
         # ESP group
         #
@@ -226,6 +229,7 @@ if ( $vcVPN->exists('ipsec') ) {
             }
             $leftsourceip = "\tleftsourceip=$lip\n";
             $genout .= "\tleftid=$authid\n" if defined $authid;
+            $genout .= "\tleftsubnet=$lauthprefix\n" if defined $lauthprefix;
             $genout .= "\trightsubnetwithin=$authprefix\n" if defined $authprefix;
 
             my $right    = '%any';
