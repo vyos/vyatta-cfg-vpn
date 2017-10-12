@@ -1,3 +1,20 @@
+vyatta-cfg-vpn (0.12.105+vyos1+helium11) unstable; urgency=low
+
+  [ Kim Hagen ]
+  * add configuration options to make dmvpn work with nat
+  * add configuration option to set leftsubnet
+  * add local-prefix template
+
+  [ Alex Harpin ]
+  * vyatta-cfg-vpn: formatting changes for style consistency
+  * vyatta-cfg-vpn: further tidy up of vyatta-vti-config.pl
+  * vyatta-cfg-vpn: vti interfaces remain link down after ipsec sa
+    renewal
+
+  [ Daniil Baturin ]
+
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 12 Oct 2017 06:53:30 +0200
+
 vyatta-cfg-vpn (0.12.105+vyos1+helium10) unstable; urgency=low
 
   [ Kim Hagen ]
