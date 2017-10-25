@@ -52,7 +52,7 @@ my $CRL_PATH = '/etc/ipsec.d/crls';
 my $SERVER_CERT_PATH = '/etc/ipsec.d/certs';
 my $SERVER_KEY_PATH = '/etc/ipsec.d/private';
 my $LOGFILE = '/var/log/vyatta/ipsec.log';
-my $STRONGSWAN = '/etc/strongswan.d/interfaces_use.conf';
+my $STRONGSWAN_INTF_CONFIG = '/etc/strongswan.d/interfaces_use.conf';
 
 my $vpn_cfg_err   = "VPN configuration error:";
 my $clustering_ip = 0;
@@ -218,7 +218,7 @@ if ($vcVPN->exists('ipsec')) {
     # Configuration of system wide options
     #
     $genout .= "config setup\n";
-    $interfaces_use .= "charon {\n\t";
+
 
     #
     # Interfaces
@@ -226,10 +226,10 @@ if ($vcVPN->exists('ipsec')) {
     my @interfaces = $vcVPN->returnValues('ipsec ipsec-interfaces interface');
     if (scalar(@interfaces) > 0) {
 
-        $interfaces_use .= "interfaces_use = ";
+        $interfaces_use .= "charon {\n\tinterfaces_use = ";
         foreach my $interface (@interfaces) {
             if (!(-d "/sys/class/net/$interface")) {
-                next;
+                print "Warning: unable to configure non-existent interface\n";
             }
             $interfaces_use .= "$interface, ";
         }
@@ -281,8 +281,10 @@ if ($vcVPN->exists('ipsec')) {
 
         }
 
-    }
+    } else {
+         $interfaces_use .= "";
 
+    }
     #
     # NAT traversal
     #
@@ -1200,13 +1202,13 @@ if (   $vcVPN->isDeleted('.')
     if (!enableICMP('1')) {
         vpn_die(["vpn","ipsec"],"VPN commit error.  Unable to re-enable ICMP redirects.\n");
     }
-    write_config($genout, $interfaces_use, $STRONGSWAN, $config_file, $genout_secrets, $secrets_file, $dhcp_if, %public_keys);
+    write_config($genout, $interfaces_use, $STRONGSWAN_INTF_CONFIG, $config_file, $genout_secrets, $secrets_file, $dhcp_if, %public_keys);
 } else {
     if (!enableICMP('0')) {
         vpn_die(["vpn","ipsec"],"VPN commit error.  Unable to disable ICMP redirects.\n");
     }
 
-    write_config($genout, $interfaces_use, $STRONGSWAN, $config_file, $genout_secrets, $secrets_file, $dhcp_if, %public_keys);
+    write_config($genout, $interfaces_use, $STRONGSWAN_INTF_CONFIG, $config_file, $genout_secrets, $secrets_file, $dhcp_if, %public_keys);
 
     # Assumming that if there was a local IP missmatch and clustering is enabled,
     # then the clustering scripts will take care of starting the VPN daemon.
@@ -1295,7 +1297,7 @@ sub vpn_die {
 }
 
 sub write_config {
-    my ($genout, $interfaces_use, $STRONGSWAN, $config_file, $genout_secrets, $secrets_file, $dhcp_if, %public_keys) = @_;
+    my ($genout, $interfaces_use, $STRONGSWAN_INTF_CONFIG, $config_file, $genout_secrets, $secrets_file, $dhcp_if, %public_keys) = @_;
 
     open my $output_config, '>', $config_file
         or die "Can't open $config_file: $!";
@@ -1303,8 +1305,8 @@ sub write_config {
     close $output_config;
 
 
-    open my $strong_config, '>', $STRONGSWAN
-        or die "Can't open $STRONGSWAN: $!";
+    open my $strong_config, '>', $STRONGSWAN_INTF_CONFIG
+        or die "Can't open $STRONGSWAN_INTF_CONFIG: $!";
     print ${strong_config} $interfaces_use;
     close $strong_config;
 
