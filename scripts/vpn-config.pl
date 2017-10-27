@@ -1253,9 +1253,14 @@ if (   $vcVPN->isDeleted('.')
                         vpn_exec("ipsec down peer-$old_peer-tunnel-$tunnel", "Cleaning up site-to-site peer $old_peer at tunnel $tunnel");
                     }
                 }
-
-                vpn_exec('ipsec rereadall >&/dev/null', 're-read secrets and certs');
-                vpn_exec('ipsec reload >&/dev/null', 'reload changes to ipsec.conf');
+                my @working_interfaces = $vcVPN->returnValues("ipsec ipsec-interfaces interface");
+                my @active_interfaces = $vcVPN->returnOrigValues("ipsec ipsec-interfaces interface");
+                if (@working_interfaces != @active_interfaces) {
+                    vpn_exec('ipsec restart >&/dev/null', 're-starting ipsec');
+                }else {
+                    vpn_exec('ipsec rereadall >&/dev/null', 're-read secrets and certs');
+                    vpn_exec('ipsec reload >&/dev/null', 'reload changes to ipsec.conf');
+                }
             }
         } else {
             if (!defined($update_interval)) {
