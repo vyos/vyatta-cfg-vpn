@@ -1,3 +1,25 @@
+vyatta-cfg-vpn (0.12.105+vyos2+current3) unstable; urgency=medium
+
+  * Merge StrongSWAN 5.x compatibility changes from Jeff Leung
+
+ --  <daniil@baturin.org>  Thu, 11 Feb 2016 12:31:57 -0500
+
+vyatta-cfg-vpn (0.12.105+vyos2+current2) unstable; urgency=low
+
+  * Remove dependency on vyatta-ipsec for migration to upstream
+    strongswan.
+
+ -- Daniil Baturin <daniil@baturin.org>  Mon, 25 Jan 2016 14:15:24 +0100
+
+vyatta-cfg-vpn (0.12.105+vyos2+current1) unstable; urgency=medium
+
+  [ Thomas Jepp ]
+  * Fix build depends.
+
+  [ Kim Hagen ]
+
+ -- Kim Hagen <kim.sidney@gmail.com>  Sun, 24 Jan 2016 15:04:53 -0500
+
 vyatta-cfg-vpn (0.12.105+vyos2+lithium17) unstable; urgency=low
 
   [ Alex Harpin ]

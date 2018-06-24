@@ -70,7 +70,7 @@ sub parseVtiTun {
     if ($tunop =~ m/local ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/) {
         $local = $1;
     }
-    if ($tunop =~ m/okey ([0-9\.]+)/) {
+    if ($tunop =~ m/key ([0-9\.]+)/) {
         $mark = $1;
     }
     return($remote, $local, $tunName, $mark);

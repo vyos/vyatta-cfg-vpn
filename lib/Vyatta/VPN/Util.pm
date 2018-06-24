@@ -27,17 +27,21 @@ use strict;
 use warnings;
 
 our @EXPORT = qw(rsa_get_local_key_file LOCAL_KEY_FILE_DEFAULT rsa_get_local_pubkey
-                 is_vpn_running vpn_debug enableICMP is_tcp_udp get_protocols conv_protocol);
+                 rsa_convert_pubkey_pem is_vpn_running vpn_debug enableICMP is_tcp_udp
+                 get_protocols conv_protocol);
 use base qw(Exporter);
 
 use Vyatta::Config;
+use Crypt::OpenSSL::RSA;
+use MIME::Base64;
+use File::Copy;
 use POSIX qw(strftime);
 
 use constant LOCAL_KEY_FILE_DEFAULT 
     => '/opt/vyatta/etc/config/ipsec.d/rsa-keys/localhost.key';
 
 sub is_vpn_running {
-    return ( -e '/var/run/pluto.ctl');
+    return ( -e '/var/run/charon.pid');
 }
 
 sub get_protocols {
@@ -110,13 +114,55 @@ sub rsa_get_local_pubkey {
     my @raw_data=<$dat>;
     close($dat);
     
+    # PEM encoded private key
+    my $rsa = Crypt::OpenSSL::RSA->new_private_key(join("", @raw_data));
+    if (defined $rsa) {
+        my ($n, $e) = $rsa->get_key_parameters();
+        my $eb = $e->to_bin();
+        return "0s" . encode_base64(pack("C", length($eb)) . $eb . $n->to_bin(), '');
+    }
+
+    # legacy private key format
     foreach my $line (@raw_data) {
 	my $file_pubkey;
 	if (($file_pubkey) = ($line =~ m/\s+\#pubkey=(\S+)/)) {
+            # Found a legacy private key; convert to PEM for strongSwan 5.2.x
+            my $key = join("", @raw_data);
+            $key =~ /^\s+Modulus:\s+0x([0-9a-fA-F]+)$/m;
+            my $n = Crypt::OpenSSL::Bignum->new_from_hex($1);
+            $key =~ /^\s+PublicExponent:\s+0x([0-9a-fA-F]+)$/m;
+            my $e = Crypt::OpenSSL::Bignum->new_from_hex($1);
+            $key =~ /^\s+PrivateExponent:\s+0x([0-9a-fA-F]+)$/m;
+            my $d = Crypt::OpenSSL::Bignum->new_from_hex($1);
+            $key =~ /^\s+Prime1:\s+0x([0-9a-fA-F]+)$/m;
+            my $p = Crypt::OpenSSL::Bignum->new_from_hex($1);
+            $key =~ /^\s+Prime2:\s+0x([0-9a-fA-F]+)$/m;
+            my $q = Crypt::OpenSSL::Bignum->new_from_hex($1);
+
+            my $rsa = Crypt::OpenSSL::RSA->new_key_from_parameters($n, $e, $d, $p, $q);
+            if (defined $rsa) {
+                # write out PEM formatted key
+                move("$file", "$file.bak");
+                open(my $priv, '>', "$file")
+                    or return 0;
+                chmod 0600, $file;
+                print {$priv} $rsa->get_private_key_string();
+                close($priv);
+            }
 	    return $file_pubkey;
 	}
     }
     return 0;
+}
+
+sub rsa_convert_pubkey_pem {
+    my $key = shift;
+    my $decoded = decode_base64(substr($key, 2));
+    my $len = unpack("C", substr($decoded, 0, 1));
+    my $e = Crypt::OpenSSL::Bignum->new_from_bin(substr($decoded, 1, $len));
+    my $n = Crypt::OpenSSL::Bignum->new_from_bin(substr($decoded, 1 + $len));
+    my $rsa = Crypt::OpenSSL::RSA->new_key_from_parameters($n, $e);
+    return $rsa->get_public_key_x509_string();
 }
 
 sub vpn_debug {

@@ -1,11 +1,21 @@
 multi:
-help: Log mode
+help: Log mode. To see what each log mode exactly does, please refer to the strongSwan documentation
 type: txt
-syntax:expression: $VAR(@) in "raw", "crypt", "parsing", "emitting", "control", "all", "private" ; "must be one of the following: raw, crypt, parsing, emitting, control, all, private"
-val_help: raw; Debug log option for pluto
-val_help: crypt; Debug log option for pluto
-val_help: parsing; Debug log option for pluto
-val_help: emitting; Debug log option for pluto
-val_help: control; Debug log option for pluto
-val_help: all; Debug log option for pluto
-val_help: private; Debug log option for pluto
+syntax:expression: $VAR(@) in "dmn", "mgr", "ike", "chd", "job", "cfg", "knl", "net", "asn", "enc", "lib", "esp", "tls", "tnc", "imc", "imv", "pts" ; "must be one of the following: dmn, mgr, ike, chd, job, cfg, knl, net, asn, enc, lib, esp, tls, tnc, imc, imv, pts"
+val_help: dmn; Debug log option for strongSwan
+val_help: mgr; Debug log option for strongSwan
+val_help: ike; Debug log option for strongSwan
+val_help: chd; Debug log option for strongSwan
+val_help: job; Debug log option for strongSwan
+val_help: cfg; Debug log option for strongSwan
+val_help: knl; Debug log option for strongSwan
+val_help: net; Debug log option for strongSwan
+val_help: asn; Debug log option for strongSwan
+val_help: enc; Debug log option for strongSwan
+val_help: lib; Debug log option for strongSwan
+val_help: esp; Debug log option for strongSwan
+val_help: tls; Debug log option for strongSwan
+val_help: tnc; Debug log option for strongSwan
+val_help: imc; Debug log option for strongSwan
+val_help: imv; Debug log option for strongSwan
+val_help: pts; Debug log option for strongSwan

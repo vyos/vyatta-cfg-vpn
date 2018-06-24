@@ -1,0 +1,6 @@
+help: Force UDP Encapsulation for ESP Payloads 
+type: txt 
+syntax:expression: $VAR(@) in "enable", "disable"; "Must be enable or disable"
+val_help: enable; This endpoint will force UDP encapsulation for this peer 
+val_help: disable; This endpoint will not force UDP encapsulation for this peer
+
