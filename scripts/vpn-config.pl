@@ -274,9 +274,6 @@ if ($vcVPN->exists('ipsec')) {
                 }
                 $genout .= '%defaultroute"';
             }
-            else {
-                $genout .= 'interfaces="%none"';
-            }
             $genout .= "\n";
 
         }
