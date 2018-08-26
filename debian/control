@@ -10,8 +10,10 @@ Architecture: any
 Depends: perl,
  vyatta-cfg (>= 0.15.33),
  vyatta-bash | bash (>= 3.1),
- strongswan (>= 5.2),
- strongswan-swanctl (>= 5.2),
+ strongswan (>= 5.6),
+ strongswan-swanctl (>= 5.6),
+ libstrongswan-extra-plugins (>=5.6),
+ libcharon-extra-plugins (>=5.6),
  libcrypt-openssl-rsa-perl,
  libc6 (>= 2.7-6)
 Description: VyOS IPsec VPN configuration templates/scripts
