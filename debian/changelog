@@ -1,8 +1,14 @@
+vyatta-cfg-vpn (1.2.0-1) stable; urgency=medium
+
+  * New branch.
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 28 Sep 2018 21:46:33 +0200
+
 vyatta-cfg-vpn (0.12.105+vyos2+current3) unstable; urgency=medium
 
   * Merge StrongSWAN 5.x compatibility changes from Jeff Leung
 
- --  <daniil@baturin.org>  Thu, 11 Feb 2016 12:31:57 -0500
+ -- Daniil Baturin <daniil@baturin.org>  Thu, 11 Feb 2016 12:31:57 -0500
 
 vyatta-cfg-vpn (0.12.105+vyos2+current2) unstable; urgency=low
 
