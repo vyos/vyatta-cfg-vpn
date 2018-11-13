@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 5), autotools-dev, libnfnetlink-dev, autoconf, auto
 Standards-Version: 3.9.1
 
 Package: vyatta-cfg-vpn
-Architecture: any
+Architecture: all
 Depends: perl,
  vyatta-cfg (>= 0.15.33),
  vyatta-bash | bash (>= 3.1),
