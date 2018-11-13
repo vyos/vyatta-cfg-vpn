@@ -12,7 +12,6 @@ sbin_SCRIPTS =
 sbin_SCRIPTS += scripts/vpn-config.pl
 sbin_SCRIPTS += scripts/dmvpn-config.pl
 sbin_SCRIPTS += scripts/vyatta-vpn-ppp-updown.pl
-sbin_SCRIPTS += scripts/is_valid_address.pl
 sbin_SCRIPTS += scripts/vyatta-vti-config.pl
 
 bin_sudo_users_SCRIPTS = scripts/vyatta-ipsec-dhcp.pl
