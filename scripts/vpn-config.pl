@@ -589,49 +589,65 @@ if ($vcVPN->exists('ipsec')) {
                 }
             }
             if (defined($rightsubnet)) {
-                $genout .= "\trightsubnet=$rightsubnet\n";
-            }
+                my $protocol = $vcVPN->returnValue("ipsec site-to-site peer $peer $tunKeyword protocol");
+                my $rport = $vcVPN->returnValue("ipsec site-to-site peer $peer $tunKeyword remote port");
 
-            #
-            # Protocol/port
-            #
-            my $protocol = $vcVPN->returnValue("ipsec site-to-site peer $peer $tunKeyword protocol");
-            my $lprotoport = '';
-            if (defined($protocol)){
-                $lprotoport .= $protocol;
-            }
-            my $lport = $vcVPN->returnValue("ipsec site-to-site peer $peer $tunKeyword local port");
-            if (defined($lport)){
-                if (!defined($protocol)){
-                    $lprotoport .= "0/$lport";
-                } elsif (is_tcp_udp($protocol)){
-                    $lprotoport .= "/$lport";
-                } else {
-                    vpn_die(["vpn","ipsec","site-to-site","peer",$peer, "tunnel", $tunnel, "local", "port"],
-                             "$vpn_cfg_err local port can only be defined when protocol is tcp, udp, or undefined.\n");
+                if ($protocol eq 'all') {
+                  $protocol = '%any';
                 }
-            }
-            if (not($lprotoport eq '')){
-                $genout .= "\tleftprotoport=$lprotoport\n";
-            }
-
-            my $rprotoport = '';
-            if (defined($protocol)){
-                $rprotoport .= $protocol;
-            }
-            my $rport = $vcVPN->returnValue("ipsec site-to-site peer $peer $tunKeyword remote port");
-            if (defined($rport)){
-                if (!defined($protocol)){
-                    $rprotoport .= "0/$rport";
-                } elsif (is_tcp_udp($protocol)){
-                    $rprotoport .= "/$rport";
-                } else {
+                if (defined($rport)){
+                  if (is_tcp_udp($protocol)){
+                    if ($rport eq 'all') {
+                      $rport = '%any';
+                    }
+                  }
+                  else {
                     vpn_die(["vpn","ipsec","site-to-site","peer",$peer, "tunnel", $tunnel, "remote", "port"],
-                             "$vpn_cfg_err remote port can only be defined when protocol is tcp, udp, or undefined.\n");
+                            "$vpn_cfg_err remote port can only be defined when protocol is tcp, udp, or undefined.\n");
+                  }
+                }
+                else {
+                  $rport = '%any';
+                }
+                if (defined($protocol)) {
+                  $genout .= "\trightsubnet=$rightsubnet\[$protocol/$rport\]\n";
+                }
+                else {
+                  $genout .= "\trightsubnet=$rightsubnet\n";
                 }
             }
-            if (not($rprotoport eq '')){
-                $genout .= "\trightprotoport=$rprotoport\n";
+
+            if (defined($leftsubnet)) {
+                my $protocol = $vcVPN->returnValue("ipsec site-to-site peer $peer $tunKeyword protocol");
+                my $lport = $vcVPN->returnValue("ipsec site-to-site peer $peer $tunKeyword local port");
+
+                if ($protocol eq 'all') {
+                  $protocol = '%any';
+                }
+
+                if (defined($lport)){
+                  if (is_tcp_udp($protocol)){
+                    if ($lport eq 'all') {
+                      $lport = '%any';
+                    }
+
+                  }
+                  else {
+                    vpn_die(["vpn","ipsec","site-to-site","peer",$peer, "tunnel", $tunnel, "remote", "port"],
+                            "$vpn_cfg_err remote port can only be defined when protocol is tcp, udp, or undefined.\n");
+                  }
+
+                }
+                else {
+                  $lport = '%any';
+                }
+
+                if (defined($protocol)) {
+                  $genout .= "\tleftsubnet=$leftsubnet\[$protocol/$lport\]\n";
+                }
+                else {
+                  $genout .= "\tleftsubnet=$leftsubnet\n";
+                }
             }
 
             #
