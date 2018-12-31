@@ -1,8 +1,9 @@
-vyatta-cfg-vpn (1.2.0-1) stable; urgency=medium
+vyatta-cfg-vpn (0.12.105+vyos2+current4) unstable; urgency=medium
 
-  * New branch.
+  * T1048 - [IPSec] Protocol all does not work in IPSec Tunnel
+    - syntax has changed (https://wiki.strongswan.org/projects/strongswan/wiki/ConnSection)
 
- -- Daniil Baturin <daniil@baturin.org>  Fri, 28 Sep 2018 21:46:33 +0200
+ -- hagbard <vyosdev@derith.de>  Thu, 06 Dec 2018 11:02:21 -0800
 
 vyatta-cfg-vpn (0.12.105+vyos2+current3) unstable; urgency=medium
 
