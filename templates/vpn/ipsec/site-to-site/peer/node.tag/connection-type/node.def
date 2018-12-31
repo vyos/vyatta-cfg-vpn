@@ -3,6 +3,6 @@ type: txt
 default: "initiate"
 syntax:expression: $VAR(@) in "initiate", "respond";
                    "Invalid connection-type"
-val_help: initiate; This endpoint can initiate or respond to a connection
-val_help: respond; This endpoint will only respond to a connection
+val_help: initiate; Bring the connection up immediately
+val_help: respond; Bring the connection up only if traffic is detected
 
