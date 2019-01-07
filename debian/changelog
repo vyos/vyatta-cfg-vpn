@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+vyos2+current5) unstable; urgency=low
+
+  * T1168 - logging mode changed from all to any when configured.
+
+ -- hagbard <vyosdev@derith.de>  Mon, 07 Jan 2019 11:24:15 -0800
+
 vyatta-cfg-vpn (0.12.105+vyos2+current4) unstable; urgency=medium
 
   * T1048 - [IPSec] Protocol all does not work in IPSec Tunnel

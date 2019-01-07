@@ -1,7 +1,7 @@
 multi:
 help: Log mode. To see what each log mode exactly does, please refer to the strongSwan documentation
 type: txt
-syntax:expression: $VAR(@) in "dmn", "mgr", "ike", "chd", "job", "cfg", "knl", "net", "asn", "enc", "lib", "esp", "tls", "tnc", "imc", "imv", "pts" ; "must be one of the following: dmn, mgr, ike, chd, job, cfg, knl, net, asn, enc, lib, esp, tls, tnc, imc, imv, pts"
+syntax:expression: $VAR(@) in "any", "dmn", "mgr", "ike", "chd", "job", "cfg", "knl", "net", "asn", "enc", "lib", "esp", "tls", "tnc", "imc", "imv", "pts" ; "must be one of the following: dmn, mgr, ike, chd, job, cfg, knl, net, asn, enc, lib, esp, tls, tnc, imc, imv, pts"
 val_help: dmn; Debug log option for strongSwan
 val_help: mgr; Debug log option for strongSwan
 val_help: ike; Debug log option for strongSwan
@@ -19,3 +19,4 @@ val_help: tnc; Debug log option for strongSwan
 val_help: imc; Debug log option for strongSwan
 val_help: imv; Debug log option for strongSwan
 val_help: pts; Debug log option for strongSwan
+val_help: any; Debug log option for strongSwan
