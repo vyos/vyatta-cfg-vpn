@@ -167,7 +167,7 @@ if ( $vcVPN->exists('ipsec') ) {
 			my $needs_passthrough = 'false';
 			my $tunKeyword        = 'tunnel ' . "$tunnel";
 
-			my $conn_head = "\tvpnprof-dmvpn-$tunnel {\n";
+			my $conn_head = "\tdmvpn-$profile-$tunnel {\n";
 			$genout .= $conn_head;
 
 			my $lip = $vc->returnValue("interfaces tunnel $tunnel local-ip");
