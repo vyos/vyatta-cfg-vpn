@@ -291,7 +291,7 @@ if ( $vcVPN->exists('ipsec') ) {
 				my $dpd_action = $vcVPN->returnValue("ipsec ike-group $ike_group dead-peer-detection action");
 				if ( defined($dpd_interval) && defined($dpd_timeout) && defined($dpd_action) ) {
 					$genout .= "\t\tdpd_delay = $dpd_interval" . "s\n";
-					$genout .= "\t\tdpd_timeou = $dpd_timeout" . "s\n";
+					$genout .= "\t\tdpd_timeout = $dpd_timeout" . "s\n";
 				}
 			}
 
