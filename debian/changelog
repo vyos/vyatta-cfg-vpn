@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (1.2.0-1) unstable; urgency=medium
+
+  * New release.
+
+ -- Daniil Baturin <daniil@baturin.org>  Sat, 26 Jan 2019 23:25:06 +0100
+
 vyatta-cfg-vpn (0.12.105+vyos2+current5) unstable; urgency=low
 
   * T1168 - logging mode changed from all to any when configured.
