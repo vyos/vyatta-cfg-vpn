@@ -20,7 +20,7 @@ share_perl5_DATA += lib/Vyatta/VPN/vtiIntf.pm
 
 logrotate_DATA = etc/logrotate.d/vyatta-ipsec-logs
 
-curver_DATA = cfg-version/ipsec@4
+curver_DATA = cfg-version/ipsec@5
 
 cpiop = find  . ! -regex '\(.*~\|.*\.bak\|.*\.swp\|.*\#.*\#\)' -print0 | \
   cpio -0pd
