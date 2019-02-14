@@ -129,9 +129,12 @@ foreach my $peer (@peers) {
     my $change = 0;
 
     # Check local address is valid.
-    if (!defined($lip)) {
-        print STDERR "$vti_cfg_err local-address not defined.\n";
-        exit -1;
+    my $dhcp_iface = $vcVPN->returnValue("ipsec site-to-site peer $peer dhcp-interface");
+    if (defined($lip) && defined($dhcp_iface)){
+        vti_die(["vpn","ipsec","site-to-site","peer",$peer],"$vti_cfg_err Only one of local-address or dhcp-interface may be defined");
+    }
+    if (defined($dhcp_iface)){
+        $lip = get_dhcp_addr($dhcp_iface, $peer);
     }
 
     if (!(validateType('ipv4', $lip, 'quiet') || validateType('ipv6', $lip, 'quiet')) || ($lip eq '0.0.0.0')) {
@@ -314,4 +317,19 @@ sub checkUnrefIntfVti {
             print STDOUT "Warning: [interface vti $tunName] defined but not used under VPN configuration\n";
         }
     }
+}
+
+sub get_dhcp_addr {
+    my ($dhcp_iface, $peer) = @_;
+    vti_die(["vpn","ipsec","site-to-site","peer",$peer,"dhcp-interface"],"$vti_cfg_err The specified interface is not configured for dhcp.")
+        if (!(Vyatta::Misc::is_dhcp_enabled($dhcp_iface,0)));
+    my @dhcp_addr = Vyatta::Misc::getIP($dhcp_iface,4);
+    my $addr = pop(@dhcp_addr);
+    if (!defined($addr)){
+        $addr = '';
+        return $addr;
+    }
+    @dhcp_addr = split(/\//, $addr);
+    $addr = $dhcp_addr[0];
+    return $addr;
 }
