@@ -11,4 +11,3 @@ end: sudo ${vyos_conf_scripts_dir}/ipsec-settings.py || exit 1
               --init_script='/etc/init.d/ipsec' || exit 1
     sudo /opt/vyatta/sbin/vyos-update-nhrp.pl --set_ipsec || exit 1
         sudo /opt/vyatta/sbin/vyatta-update-l2tp.pl || exit 1
-        sudo /opt/vyatta/sbin/vyatta-update-pptp.pl || exit 1
