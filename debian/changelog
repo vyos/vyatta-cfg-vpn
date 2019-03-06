@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (0.12.105+vyos2+current6) unstable; urgency=low
+
+  * T833: accel-ppp: pptp implementation
+
+ -- hagbard <vyosdev@derith.de>  Wed, 06 Mar 2019 10:57:35 -0800
+
 vyatta-cfg-vpn (0.12.105+vyos2+current5) unstable; urgency=low
 
   * T1168 - logging mode changed from all to any when configured.
