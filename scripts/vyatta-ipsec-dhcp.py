@@ -25,6 +25,7 @@ import syslog
 import time
 import vici
 
+import vyos.config
 
 config_file = "/etc/ipsec.conf";
 secrets_file = "/etc/ipsec.secrets";
@@ -125,16 +126,21 @@ def ipsec_sec_w(lines, interface, new_ip):
         sys.exit('Can\'t open {0}: {1}'.format(config_file, e))
 
 
-def conn_list(connlist):
+def conn_list():
     v = vici.Session()
+    config = vyos.config.Config()
+    config_conns = config.list_effective_nodes("vpn ipsec site-to-site peer")
     connup = []
-    
+
+
+    v = vici.Session()
     for conn in v.list_sas():
         for key in conn:
-            for connid in connlist:
-                connname = next(iter(connid))
-                if connid[connname]['_dhcp_iface'] and key == connname:
-                    connup.append(connname)
+            for c_conn in config_conns:
+                if c_conn in key:
+                    if config.return_effective_value("vpn ipsec site-to-site peer {0} dhcp-interface".format(c_conn)):
+                        connup.append(key)
+    
     return connup
 
 
@@ -159,9 +165,12 @@ def run(*popenargs, input=None, check=False, **kwargs):
 
 
 def term_conn(active_conn):
+    v = vici.Session()
     for conn in active_conn:
-        run(["/usr/sbin/swanctl", "-t", "--ike", conn],
-            stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+        try:
+            list(v.terminate({"ike": conn, "force": "true"}))
+        except:
+            pass
 
 
 def reload_conn():
@@ -172,21 +181,25 @@ def reload_conn():
 
 
 def init_conn(active_conn, updated_conn):
+    v = vici.Session()
     for conn in active_conn:
         if conn not in updated_conn:
-            run(["/usr/sbin/swanctl", "-i", "--child", conn, "--timeout", "5"],
-                stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+            list(v.initiate({"child": conn, "timeout": "10000"}))
 
 
 def main():
     args = parse_cli_args()
     syslog.openlog('ipsec-dhclient-hook')
+    
+    syslog.syslog(syslog.LOG_NOTICE, 'Receive DHCP address updated to {0} from {1}'
+           ', reason: {2}.'.format(args.new_ip, args.old_ip, args.reason))
 
-    if args.old_ip == args.new_ip and args.reason != 'BOUND': 
+    if args.old_ip == args.new_ip and args.reason != 'BOUND' or args.reason == 'REBOOT' or args.reason == 'EXPIRE': 
+        syslog.syslog(syslog.LOG_NOTICE, 'No ipsec update needed.')
         sys.exit(0)
 
-    syslog.syslog(syslog.LOG_NOTICE, 'DHCP address updated to {0} from {1}: \
-           Updating ipsec configuration.'.format(args.new_ip, args.old_ip))
+    syslog.syslog(syslog.LOG_NOTICE, 'DHCP address updated to {0} from {1}: '
+          ' Updating ipsec configuration, reason: {2}.'.format(args.new_ip, args.old_ip, args.reason))
 
     connlist, header, footer = ipsec_conf_r()
     ipsec_conf_w(connlist, header, footer, args.interface, args.new_ip)
@@ -195,11 +208,11 @@ def main():
     ipsec_sec_w(lines, args.interface, args.new_ip)
 
     if args.new_ip:
-        active_conn = conn_list(connlist)
+        active_conn = conn_list()
         term_conn(active_conn)
         reload_conn()
-        time.sleep(1)
-        updated_conn = conn_list(connlist)
+        time.sleep(5)
+        updated_conn = conn_list()
         init_conn(active_conn, updated_conn)
     
 
