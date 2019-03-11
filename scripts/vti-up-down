@@ -5,12 +5,12 @@
 source /etc/default/vyatta
 source /etc/default/locale
 case "$PLUTO_VERB" in
-route-client | up-client)
+up-client)
 /bin/ip route delete default table 220
-/opt/vyatta/sbin/vyatta-vti-config.pl --updown --intf=$1 --action=up
+setsid /opt/vyatta/sbin/vyatta-vti-config.pl --updown --intf=$1 --conn=$PLUTO_CONNECTION --action=up < /dev/null > /dev/null 2>&1 &
     ;;
 down-client)
-/opt/vyatta/sbin/vyatta-vti-config.pl --updown --intf=$1 --action=down 
+setsid /opt/vyatta/sbin/vyatta-vti-config.pl --updown --intf=$1 --conn=$PLUTO_CONNECTION --action=down < /dev/null > /dev/null 2>&1 &
     ;;
 *)
     ;;
