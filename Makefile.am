@@ -5,7 +5,7 @@ etcudevdir	 = /etc/udev
 initddir	 = /etc/init.d
 logrotatedir     = /etc/logrotate.d
 curverdir = $(sysconfdir)/config-migrate/current
-bin_sudo_usersdir = $(bindir)/sudo-users
+bin_sudo_usersdir = /usr/libexec/vyos/system
 
 sbin_SCRIPTS =
 
@@ -14,7 +14,7 @@ sbin_SCRIPTS += scripts/dmvpn-config.pl
 sbin_SCRIPTS += scripts/vyatta-vpn-ppp-updown.pl
 sbin_SCRIPTS += scripts/vyatta-vti-config.pl
 
-bin_sudo_users_SCRIPTS = scripts/vyatta-ipsec-dhcp.pl
+bin_sudo_users_SCRIPTS = scripts/vyatta-ipsec-dhcp.py
 share_perl5_DATA = lib/Vyatta/VPN/Util.pm
 share_perl5_DATA += lib/Vyatta/VPN/vtiIntf.pm
 

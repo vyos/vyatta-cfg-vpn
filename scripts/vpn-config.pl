@@ -1078,6 +1078,9 @@ if ($vcVPN->exists('ipsec')) {
                     vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"vti","bind"],"$vpn_cfg_err No interface bind specified for peer \"$peer\" vti\n");
                 }
                 $genout .= "\tleftupdown=\"/usr/lib/ipsec/vti-up-down $tunName\"\n";
+                if (defined($dhcp_iface)){
+                    $dhcp_if = $dhcp_if + 1;
+                }
             }
 
             #
@@ -1522,7 +1525,7 @@ sub dhcp_hook {
     if ($dhcp_iface > 0){
         $str =<<EOS;
 #!/bin/sh
-/opt/vyatta/bin/sudo-users/vyatta-ipsec-dhcp.pl --interface=\"\$interface\" --new_ip=\"\$new_ip_address\" --reason=\"\$reason\" --old_ip=\"\$old_ip_address\"
+/usr/libexec/vyos/system/vyatta-ipsec-dhcp.py --interface=\"\$interface\" --new_ip=\"\$new_ip_address\" --reason=\"\$reason\" --old_ip=\"\$old_ip_address\"
 EOS
     }
     my $hook = "/etc/dhcp/dhclient-exit-hooks.d/ipsecd";
