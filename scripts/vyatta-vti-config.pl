@@ -237,20 +237,20 @@ sub vti_handle_updown {
     if (!defined($disabled) || !$disabled) {
         my $vcVPN = new Vyatta::Config();
         $vcVPN->setLevel('vpn ipsec site-to-site');
-        my @peers = $vcVPN->listNodes('peer');
+        my @peers = $vcVPN->listOrigNodes('peer');
         my $vtiInterface = new Vyatta::Interface($intfName);
         my $state = $vtiInterface->up();
         if (!($state && ($action eq "up"))) {
-            if $action eq "up" {
+            if ($action eq "up") {
                 foreach my $peer (@peers) {
-                    if (!$vcVPN->exists("peer $peer vti bind $intfName")) {
+                    if (!$vcVPN->existsOrig("peer $peer vti bind $intfName")) {
                         next;
                     }
 
-                    my $dhcp_iface = $vcVPN->returnValue("peer $peer dhcp-interface");
-                    if (defined($dhcp_iface)){
+                    my $dhcp_iface = $vcVPN->returnOrigValue("peer $peer dhcp-interface");
+                    if (defined($dhcp_iface)) {
                         my $lip = get_dhcp_addr($dhcp_iface, $peer);
-                        system("sudo /sbin/ip tunnel change $intfName $lip\n");
+                        system("sudo /sbin/ip tunnel change $intfName local $lip\n");
                     }
                 }
             }
