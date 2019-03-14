@@ -241,16 +241,17 @@ sub vti_handle_updown {
         my $vtiInterface = new Vyatta::Interface($intfName);
         my $state = $vtiInterface->up();
         if (!($state && ($action eq "up"))) {
-            foreach my $peer (@peers) {
-                if (!$vcVPN->exists("peer $peer vti bind $intfName")) {
-                    next;
-                }
+            if $action eq "up" {
+                foreach my $peer (@peers) {
+                    if (!$vcVPN->exists("peer $peer vti bind $intfName")) {
+                        next;
+                    }
 
-                my $lip = $vcVPN->returnValue("peer $peer local-address");
-                my $dhcp_iface = $vcVPN->returnValue("peer $peer dhcp-interface");
-                if (defined($dhcp_iface)){
-                    $lip = get_dhcp_addr($dhcp_iface, $peer);
-                    system("sudo /sbin/ip tunnel change $intfName $lip\n");
+                    my $dhcp_iface = $vcVPN->returnValue("peer $peer dhcp-interface");
+                    if (defined($dhcp_iface)){
+                        my $lip = get_dhcp_addr($dhcp_iface, $peer);
+                        system("sudo /sbin/ip tunnel change $intfName $lip\n");
+                    }
                 }
             }
             system("sudo /sbin/ip link set $intfName $action\n");
