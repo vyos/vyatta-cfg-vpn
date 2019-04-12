@@ -15,6 +15,7 @@ Depends: perl,
  libstrongswan-extra-plugins (>=5.6),
  libcharon-extra-plugins (>=5.6),
  libcrypt-openssl-rsa-perl,
- libc6 (>= 2.7-6)
+ libc6 (>= 2.7-6),
+ python3-vici
 Description: VyOS IPsec VPN configuration templates/scripts
  VyOS IPsec VPN configuration templates and scripts.
