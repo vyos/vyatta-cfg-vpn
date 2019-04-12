@@ -2,6 +2,12 @@ pipeline {
   agent any
   stages {
     stage('build') {
+      agent {
+        node {
+          label 'jessie-amd64'
+        }
+
+      }
       steps {
         sh '''
 
