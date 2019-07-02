@@ -1030,8 +1030,8 @@ if ($vcVPN->exists('ipsec')) {
                 } else {
                     if (!defined($public_keys{localhost})) {
                         $public_keys{localhost} = $local_key;
-                        $genout .= "\tleftsigkey=localhost.pub\n";
                     }
+                    $genout .= "\tleftsigkey=localhost.pub\n";
                 }
 
                 my $rsa_key_name = $vcVPN->returnValue("ipsec site-to-site peer $peer authentication rsa-key-name");
@@ -1046,8 +1046,8 @@ if ($vcVPN->exists('ipsec')) {
                     } else {
                         if (!defined($public_keys{$rsa_key_name})) {
                             $public_keys{$rsa_key_name} = $remote_key;
-                            $genout .= "\trightsigkey=$rsa_key_name.pub\n";
                         }
+                        $genout .= "\trightsigkey=$rsa_key_name.pub\n";
                     }
                 }
                 # Prevent duplicate includes for rsa keys.
