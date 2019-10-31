@@ -1,0 +1,8 @@
+help: Action if the remote peer unexpectedly closes a CHILD_SA
+type:  txt
+default:  "none"
+syntax:expression: $VAR(@) in "none","hold", "clear", "restart"; "must be none, hold clear, or restart"
+val_help: none; Set action to none (default)
+val_help: hold; Set action to hold
+val_help: clear; Set action to clear
+val_help: restart; Set action to restart
