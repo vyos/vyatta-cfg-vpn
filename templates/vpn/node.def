@@ -5,9 +5,8 @@ end: sudo /opt/vyatta/sbin/vyatta-vti-config.pl || exit 1
               --config_file='/etc/ipsec.conf' \
               --secrets_file='/etc/ipsec.secrets' \
               --init_script='/etc/init.d/ipsec' || exit 1
+    sudo ${vyos_conf_scripts_dir}/ipsec-settings.py || exit 1
     sudo /opt/vyatta/sbin/dmvpn-config.pl \
               --config_file='/etc/swanctl/swanctl.conf' \
               --init_script='/etc/init.d/ipsec' || exit 1
     sudo /opt/vyatta/sbin/vyos-update-nhrp.pl --set_ipsec || exit 1
-    sudo ${vyos_conf_scripts_dir}/ipsec-settings.py || exit 1
-#        sudo /opt/vyatta/sbin/vyatta-update-l2tp.pl || exit 1
