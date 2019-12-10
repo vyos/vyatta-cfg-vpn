@@ -1,3 +1,9 @@
+vyatta-cfg-vpn (1.2.4) unstable; urgency=low
+
+  * New release.
+
+ -- VyOS maintainers <maintainers@vyos.io>  Tue, 10 Dec 2019 23:40:05 +0200
+
 vyatta-cfg-vpn (1.2.0-1) unstable; urgency=medium
 
   * New release.
@@ -1163,4 +1169,3 @@ vyatta-cfg-vpn (0.1) unstable; urgency=low
   * Initial Release.
 
  -- Stig Thormodsrud <stig@vyatta.com>  Wed, 19 Dec 2007 14:09:00 -0700
-
