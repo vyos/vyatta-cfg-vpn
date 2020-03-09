@@ -811,6 +811,14 @@ if ($vcVPN->exists('ipsec')) {
                 }
 
                 #
+                # Check for closeaction
+                #
+                my $close_act = $vcVPN->returnValue("ipsec ike-group $ike_group close-action");
+                if (defined($close_act)) {
+                    $genout .= "\tcloseaction=$close_act\n";
+                }
+
+                #
                 # Allow the user for force UDP encapsulation for the ESP
                 # payload.
                 #
