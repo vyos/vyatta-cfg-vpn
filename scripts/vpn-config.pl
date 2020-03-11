@@ -1546,7 +1546,9 @@ EOS
 sub get_dh_cipher_result { 
     my ($cipher) = @_;
     my $ciph_out;
-    if ($cipher eq '2' || $cipher eq 'dh-group2') {
+    if ($cipher eq '1' || $cipher eq 'dh-group1') {
+        $ciph_out = 'modp768';
+    } elsif ($cipher eq '2' || $cipher eq 'dh-group2') {
         $ciph_out = 'modp1024';
     } elsif ($cipher eq '5' || $cipher eq 'dh-group5') {
         $ciph_out = 'modp1536';
@@ -1576,6 +1578,18 @@ sub get_dh_cipher_result {
         $ciph_out = 'ecp192';
     } elsif ($cipher eq '26' || $cipher eq 'dh-group26') {
         $ciph_out = 'ecp224';
+    } elsif ($cipher eq '27' || $cipher eq 'dh-group27') {
+        $ciph_out = 'ecp224bp';
+    } elsif ($cipher eq '28' || $cipher eq 'dh-group28') {
+        $ciph_out = 'ecp256bp';
+    } elsif ($cipher eq '29' || $cipher eq 'dh-group29') {
+        $ciph_out = 'ecp384bp';
+    } elsif ($cipher eq '30' || $cipher eq 'dh-group30') {
+        $ciph_out = 'ecp512bp';
+    } elsif ($cipher eq '31' || $cipher eq 'dh-group31') {
+        $ciph_out = 'curve25519';
+    } elsif ($cipher eq '32' || $cipher eq 'dh-group32') {
+        $ciph_out = 'curve448';
     } else {
         $ciph_out = 'unknown';
     }

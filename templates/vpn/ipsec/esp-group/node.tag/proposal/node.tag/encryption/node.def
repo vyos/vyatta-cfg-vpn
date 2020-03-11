@@ -1,10 +1,59 @@
 help: Encryption algorithm
 type: txt
 default: "aes128"
-syntax:expression: $VAR(@) in "aes128", "aes256", "aes128gcm128", "aes256gcm128", "3des", "chacha20poly1305"; "must be aes128, aes256, 3des, or chacha20poly1305"
-val_help: aes128; AES-128 encryption (default)
-val_help: aes256; AES-256 encryption
-val_help: aes128gcm128; AES-128 encryption with Galois Counter Mode 128-bit
-val_help: aes256gcm128; AES-256 encryption with Galois Counter Mode 128-bit
-val_help: 3des; 3DES encryption
-val_help: chacha20poly1305; ChaCha20-Poly1305 encryption
+syntax:expression: $VAR(@) in "null", "aes128", "aes192", "aes256", "aes128ctr", "aes192ctr", "aes256ctr", "aes128ccm64", "aes192ccm64", "aes256ccm64", "aes128ccm96", "aes192ccm96", "aes256ccm96", "aes128ccm128", "aes192ccm128", "aes256ccm128", "aes128gcm64", "aes192gcm64", "aes256gcm64", "aes128gcm96", "aes192gcm96", "aes256gcm96", "aes128gcm128", "aes192gcm128", "aes256gcm128", "aes128gmac", "aes192gmac", "aes256gmac", "3des", "blowfish128", "blowfish192", "blowfish256", "camellia128", "camellia192", "camellia256", "camellia128ctr", "camellia192ctr", "camellia256ctr", "camellia128ccm64", "camellia192ccm64", "camellia256ccm64", "camellia128ccm96", "camellia192ccm96", "camellia256ccm96", "camellia128ccm128", "camellia192ccm128", "camellia256ccm128", "serpent128", "serpent192", "serpent256", "twofish128", "twofish192", "twofish256", "cast128", "chacha20poly1305"; "Wrong encryption algorithm"
+val_help: null; Null encryption
+val_help: aes128; 128 bit AES-CBC (default)
+val_help: aes192; 192 bit AES-CBC
+val_help: aes256; 256 bit AES-CBC
+val_help: aes128ctr; 128 bit AES-COUNTER
+val_help: aes192ctr; 192 bit AES-COUNTER
+val_help: aes256ctr; 256 bit AES-COUNTER
+val_help: aes128ccm64; 128 bit AES-CCM with 64 bit ICV
+val_help: aes192ccm64; 192 bit AES-CCM with 64 bit ICV
+val_help: aes256ccm64; 256 bit AES-CCM with 64 bit ICV
+val_help: aes128ccm96; 128 bit AES-CCM with 96 bit ICV
+val_help: aes192ccm96; 192 bit AES-CCM with 96 bit ICV
+val_help: aes256ccm96; 256 bit AES-CCM with 96 bit ICV
+val_help: aes128ccm128; 128 bit AES-CCM with 128 bit ICV
+val_help: aes192ccm128; 192 bit AES-CCM with 128 bit ICV
+val_help: aes256ccm128; 256 bit AES-CCM with 128 bit ICV
+val_help: aes128gcm64; 128 bit AES-GCM with 64 bit ICV
+val_help: aes192gcm64; 192 bit AES-GCM with 64 bit ICV
+val_help: aes256gcm64; 256 bit AES-GCM with 64 bit ICV
+val_help: aes128gcm96; 128 bit AES-GCM with 96 bit ICV
+val_help: aes192gcm96; 192 bit AES-GCM with 96 bit ICV
+val_help: aes256gcm96; 256 bit AES-GCM with 96 bit ICV
+val_help: aes128gcm128; 128 bit AES-GCM with 128 bit ICV
+val_help: aes192gcm128; 192 bit AES-GCM with 128 bit ICV
+val_help: aes256gcm128; 256 bit AES-GCM with 128 bit ICV
+val_help: aes128gmac; Null encryption with 128 bit AES-GMAC
+val_help: aes192gmac; Null encryption with 192 bit AES-GMAC
+val_help: aes256gmac; Null encryption with 256 bit AES-GMAC
+val_help: 3des; 168 bit 3DES-EDE-CBC
+val_help: blowfish128; 128 bit Blowfish-CBC
+val_help: blowfish192; 192 bit Blowfish-CBC
+val_help: blowfish256; 256 bit Blowfish-CBC
+val_help: camellia128; 128 bit Camellia-CBC
+val_help: camellia192; 192 bit Camellia-CBC
+val_help: camellia256; 256 bit Camellia-CBC
+val_help: camellia128ctr; 128 bit Camellia-COUNTER
+val_help: camellia192ctr; 192 bit Camellia-COUNTER
+val_help: camellia256ctr; 256 bit Camellia-COUNTER
+val_help: camellia128ccm64; 128 bit Camellia-CCM with 64 bit ICV
+val_help: camellia192ccm64; 192 bit Camellia-CCM with 64 bit ICV
+val_help: camellia256ccm64; 256 bit Camellia-CCM with 64 bit ICV
+val_help: camellia128ccm96; 128 bit Camellia-CCM with 96 bit ICV
+val_help: camellia192ccm96; 192 bit Camellia-CCM with 96 bit ICV
+val_help: camellia256ccm96; 256 bit Camellia-CCM with 96 bit ICV
+val_help: camellia128ccm128; 128 bit Camellia-CCM with 128 bit ICV
+val_help: camellia192ccm128; 192 bit Camellia-CCM with 128 bit ICV
+val_help: camellia256ccm128; 256 bit Camellia-CCM with 128 bit ICV
+val_help: serpent128; 128 bit Serpent-CBC
+val_help: serpent192; 192 bit Serpent-CBC
+val_help: serpent256; 256 bit Serpent-CBC
+val_help: twofish128; 128 bit Twofish-CBC
+val_help: twofish192; 192 bit Twofish-CBC
+val_help: twofish256; 256 bit Twofish-CBC
+val_help: cast128; 128 bit CAST-CBC
+val_help: chacha20poly1305; 256 bit ChaCha20/Poly1305 with 128 bit ICV
