@@ -1,9 +1,17 @@
 help: Hash algorithm
 type: txt
 default: "sha1"
-syntax:expression: $VAR(@) in "md5", "sha1", "sha256", "sha384", "sha512"; "must be md5, sha1, sha256, sha384 or sha512"
-val_help: md5; MD5 hash
-val_help: sha1; SHA1 hash (default)
-val_help: sha256; SHA2-256 hash
-val_help: sha384; SHA2-384 hash
-val_help: sha512; SHA2-512 hash
+syntax:expression: $VAR(@) in "md5", "md5_128", "sha1", "sha1_160", "sha256", "sha256_96", "sha384", "sha512", "aesxcbc", "aescmac", "aes128gmac", "aes192gmac", "aes256gmac"; "Wrong hash algorithm"
+val_help: md5; MD5 HMAC
+val_help: md5_128; MD5_128 HMAC
+val_help: sha1; SHA1 HMAC (default)
+val_help: sha1_160; SHA1_160 HMAC
+val_help: sha256; SHA2_256_128 HMAC
+val_help: sha256_96; SHA2_256_96 HMAC
+val_help: sha384; SHA2_384_192 HMAC
+val_help: sha512; SHA2_512_256 HMAC
+val_help: aesxcbc; AES XCBC
+val_help: aescmac; AES CMAC
+val_help: aes128gmac; 128-bit AES-GMAC
+val_help: aes192gmac; 192-bit AES-GMAC
+val_help: aes256gmac; 256-bit AES-GMAC
