@@ -45,21 +45,27 @@ my $gencmds = "";
 my $result = 0;
 my $updown="";
 my $intfName="";
+my $conn_name="";
 my $action="";
 my $checkref="";
 
 GetOptions(
     "updown" => \$updown,
     "intf=s"   => \$intfName,
+    "conn=s"   => \$conn_name,
     "action=s" => \$action,
     "checkref" => \$checkref,
 );
 
 #
-# --updown intfName --action=[up|down]
+# --updown --intf=vtiX --conn=peer-X.X.X.X-tunnel-vti --action=[up|down]
 #
 if ($updown ne '') {
     if (!(defined $intfName) || $intfName eq '') {
+        # invalid
+        exit -1;
+    }
+    if (!(defined $conn_name) || $conn_name eq '' || $conn_name !~ m/^peer-[a-zA-Z0-9_.:-]+-tunnel-vti$/) {
         # invalid
         exit -1;
     }
@@ -67,7 +73,7 @@ if ($updown ne '') {
         # invalid
         exit -1;
     }
-    vti_handle_updown($intfName, $action);
+    vti_handle_updown($intfName, $conn_name, $action);
     exit 0;
 }
 
@@ -230,7 +236,7 @@ exit $result;
 # Handle VTI tunnel state based on input from strongswan and configuration.
 #
 sub vti_handle_updown {
-    my ($intfName, $action) = @_;
+    my ($intfName, $conn_name, $action) = @_;
     my $vcIntf = new Vyatta::Config();
     $vcIntf->setLevel('interfaces');
     my $disabled = $vcIntf->existsOrig("vti $intfName disabled");
@@ -254,7 +260,15 @@ sub vti_handle_updown {
                     }
                 }
             }
-            system("sudo /sbin/ip link set $intfName $action\n");
+            # check if child SA is in ISTALLED state (connection already fully established)
+            # we are inverting exit code to convert 0 value to True in Perl
+            my $child_sa_installed = !system("sudo swanctl -l -r -i $conn_name | grep -s -q state=INSTALLED");
+            # change interface state only if one of these is true:
+            # - VTI interface is in UP state, no active child SA was found, and event is down-client or down-host
+            # - VTI interface is in DOWN state, active child SA was found, and event is up-client or up-host
+            if (($state && !$child_sa_installed && ($action eq "down")) || (!$state && $child_sa_installed && ($action eq "up"))) {
+                system("sudo /sbin/ip link set $intfName $action\n");
+            }
         }
     }
 }
