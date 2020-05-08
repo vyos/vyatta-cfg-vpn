@@ -6,4 +6,4 @@ allowed: echo "any"
 val_help: ipv4; IPv4 address of a local interface for VPN
 val_help: ipv6; IPv6 address of a local interface for VPN
 val_help: any; Allow any IPv4 address present on the system to be used for VPN
-syntax:expression: exec "${vyos_libexec_dir}/validate-value.py  --exec \"ipaddrcheck --verbose --is-any-single\" --regex \'any\' --value $VAR(@)"
+syntax:expression: exec "${vyos_libexec_dir}/validate-value  --exec \"ipaddrcheck --verbose --is-any-single\" --regex \'any\' --value $VAR(@)"
