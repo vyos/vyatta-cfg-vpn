@@ -670,6 +670,11 @@ if ($vcVPN->exists('ipsec')) {
                     if ($remotesubnet_object == $localsubnet_object) {
                         vpn_die(["vpn","ipsec","site-to-site","peer",$peer],"$vpn_cfg_err local prefix and remote prefix cannot be the same.\n");
                     }
+                    my $check_local_route = qx(ip route show table 254 $localsubnet_object);
+                    if (!$check_local_route){
+                        print "Warning: local prefix $localsubnet_object specified for peer \"$peer\"\n";
+                        print "is not configured on any interfaces\n";
+                    }
                     if ($remotesubnet_object->contains($localsubnet_object)) {
                         $needs_passthrough = 'true';
                     }
