@@ -868,8 +868,10 @@ if ($vcVPN->exists('ipsec')) {
                     }
                     if (defined($pfs)) {
                         if ($pfs eq 'enable') {
+                            # Get list of IKE proposals
+                            my @ike_proposals = $vcVPN->listNodes("ipsec ike-group $ike_group proposal");
                             # Get the first IKE group's dh-group and use that as our PFS setting
-                            my $default_pfs = $vcVPN->returnValue("ipsec ike-group $ike_group proposal 1 dh-group");
+                            my $default_pfs = $vcVPN->returnValue("ipsec ike-group $ike_group proposal $ike_proposals[0] dh-group");
                             $pfs = get_dh_cipher_result($default_pfs);
                         } elsif ($pfs eq 'disable') {
                             undef $pfs;
