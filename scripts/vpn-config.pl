@@ -928,6 +928,29 @@ if ($vcVPN->exists('ipsec')) {
                     if ($isVti == 1) {
                         vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"$tunKeyword"],"$vpn_cfg_err Can not use transport mode for \"$peer\" with vti\n");
                     }
+                    # Processing protocol selector for a tunnel
+                    my $protocol = $vcVPN->returnValue("ipsec site-to-site peer $peer $tunKeyword protocol");
+                    if (defined($protocol)) {
+                        # Replace 'all' with the proper variant for strongSwan
+                        if ($protocol eq 'all') {
+                            $protocol = '%any';
+                        }
+                        # Transport mode with protocol selector can be used only together with left|rightsubnet
+                        # Thus, we need to be sure that it is possible to generate their values from left/right
+                        my $left_ip = new NetAddr::IP $vcVPN->returnValue("ipsec site-to-site peer $peer local-address");
+                        if ($left_ip->addr eq '0.0.0.0') {
+                            vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"$tunKeyword"],"$vpn_cfg_err It is not possible to use transport mode ESP ".
+                            "group and protocol selector without predefined static \"local-address\"\n");
+                        }
+                        my $right_ip = new NetAddr::IP $peer;
+                        if ($right_ip->addr eq '0.0.0.0') {
+                            vpn_die(["vpn","ipsec","site-to-site","peer",$peer,"$tunKeyword"],"$vpn_cfg_err It is not possible to use transport mode ESP ".
+                            "group and protocol selector together with a peer without predefined IP address\n");
+                        }
+                        # Generate a config for using with the protocol selector
+                        $genout .= "\tleftsubnet=$left_ip\[$protocol\]\n";
+                        $genout .= "\trightsubnet=$right_ip\[$protocol\]\n";
+                    }
                 }
                 $genout .= "\ttype=$espmode\n";
 
