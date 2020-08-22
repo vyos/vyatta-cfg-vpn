@@ -286,16 +286,13 @@ if ($vcVPN->exists('ipsec')) {
         $genout .= "\"\n";
     }
 
-    # Set plutoopts:
-    # Disable uniqreqids?
+    #
+    # Disable uniqueids
     #
     if ($vcVPN->exists('ipsec disable-uniqreqids')) {
-        $genout .= "\tdisableuniqreqids=yes\n";
+        $genout .= "\tuniqueids=no\n";
     }
 
-    #
-    # Default keyengine is ikev1
-    #
     $genout .= "\n";
     $genout .= "conn %default\n";
     $genout .= "\tkeyexchange=ikev1\n\n";
