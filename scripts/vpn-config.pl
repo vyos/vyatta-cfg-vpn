@@ -528,10 +528,6 @@ if ($vcVPN->exists('ipsec')) {
                 $leftsubnet = '0.0.0.0/0';
             }
 
-            if (defined($leftsubnet)) {
-                $genout .= "\tleftsubnet=$leftsubnet\n";
-            }
-
             my $remotesubnet = $vcVPN->returnValue("ipsec site-to-site peer $peer $tunKeyword remote prefix");
             if ($isVti) {
                 $remotesubnet = 'any';
