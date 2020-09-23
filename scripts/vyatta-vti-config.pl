@@ -239,7 +239,7 @@ sub vti_handle_updown {
     my ($intfName, $conn_name, $action) = @_;
     my $vcIntf = new Vyatta::Config();
     $vcIntf->setLevel('interfaces');
-    my $disabled = $vcIntf->existsOrig("vti $intfName disabled");
+    my $disabled = $vcIntf->existsOrig("vti $intfName disable");
     if (!defined($disabled) || !$disabled) {
         my $vcVPN = new Vyatta::Config();
         $vcVPN->setLevel('vpn ipsec site-to-site');
