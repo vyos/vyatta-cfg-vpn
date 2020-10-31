@@ -540,15 +540,6 @@ if ($vcVPN->exists('ipsec')) {
                 vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer, "tunnel", $tunnel],"$vpn_cfg_err The 'remote prefix' and 'local prefix' protocols "."do not match");
             }
 
-            # Check remote/local and peer protocol consistency
-            # IPv6 over IPv6 scenario is actually supported by StrongS/WAN,
-            # we do not allow it in this version because of design and QA issues.
-            if (($conn_proto != 6) && ($leftsubnet_proto == 6)) {
-                vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer, "tunnel", $tunnel],"$vpn_cfg_err IPv6 over IPv4 IPsec is not supported");
-            } elsif (($conn_proto == 6) && ($leftsubnet_proto != 6)) {
-                vpn_die(["vpn", "ipsec", "site-to-site", "peer", $peer, "tunnel", $tunnel],"$vpn_cfg_err IPv4 over IPv6 IPsec is not supported");
-            }
-
             my $rightsubnet;
             my $allow_nat_networks = $vcVPN->returnValue("ipsec site-to-site peer $peer $tunKeyword allow-nat-networks");
             my $allow_public_networks = $vcVPN->returnValue("ipsec site-to-site peer $peer $tunKeyword allow-public-networks");
