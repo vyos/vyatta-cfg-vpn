@@ -3,6 +3,6 @@ type: txt
 
 comp_help:
 Use of single quotes to set pre-shared secret key is recommended.  If you are
-using special characters in the pre-shared scret key then single quotes are
+using special characters in the pre-shared secret key then single quotes are
 required.
 Example usage : 'aA1-&!@,.:_2Bb'
