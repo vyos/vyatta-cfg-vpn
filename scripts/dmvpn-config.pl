@@ -505,7 +505,7 @@ else {
 			$counter--;
 			sleep(1);
 			if($counter == 0){
-				vpn_die("$vpn_cfg_err Ipsec is not running.");
+				vpn_die(["vpn", "ipsec"], "$vpn_cfg_err IPsec is not running.\n");
 			}
 		}
 	}
@@ -522,7 +522,7 @@ else {
 			$counter--;
 			sleep(1);
 			if($counter == 0){
-				vpn_die("$vpn_cfg_err Ipsec is not running.");
+				vpn_die(["vpn", "ipsec"], "$vpn_cfg_err IPsec is not running.\n");
 			}
 		}
 	}
