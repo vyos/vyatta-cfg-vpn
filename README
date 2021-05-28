@@ -1,1 +1,6 @@
 This package has the Vyatta VPN configuration templates and scripts.
+
+# NOTE
+
+This package is deprecated and all it's content was rewritten. You can find the
+new implementation here: https://github.com/vyos/vyos-1x
