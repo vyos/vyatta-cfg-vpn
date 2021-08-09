@@ -48,6 +48,8 @@ my $intfName="";
 my $conn_name="";
 my $action="";
 my $checkref="";
+my $dhcp_wait_attempts = 3;
+my $dhcp_wait_sleep = 1;
 
 GetOptions(
     "updown" => \$updown,
@@ -355,6 +357,13 @@ sub get_dhcp_addr {
         if (!(Vyatta::Misc::is_dhcp_enabled($dhcp_iface,0)));
     my @dhcp_addr = Vyatta::Misc::getIP($dhcp_iface,4);
     my $addr = pop(@dhcp_addr);
+    my $count = 0;
+    while (!defined($addr) and $count < $dhcp_wait_attempts){
+        @dhcp_addr = Vyatta::Misc::getIP($dhcp_iface,4);
+        $addr = pop(@dhcp_addr);
+        $count++;
+        sleep($dhcp_wait_sleep);
+    }
     if (!defined($addr)){
         $addr = '';
         return $addr;
