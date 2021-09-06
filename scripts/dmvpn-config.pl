@@ -485,6 +485,11 @@ if (!(defined($config_file) && ( $config_file ne '' ))) {
 
 write_config( $genout, $config_file);
 
+# Now exit, if 'vpn ipsec' has been deleted.
+if ( !$vcVPN->exists('ipsec') ) {
+    exit(0);
+}
+
 my $update_interval      = $vcVPN->returnValue("ipsec auto-update");
 my $update_interval_orig = $vcVPN->returnOrigValue("ipsec auto-update");
 $update_interval_orig = 0 if !defined($update_interval_orig);
