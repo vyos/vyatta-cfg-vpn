@@ -723,7 +723,7 @@ if ($vcVPN->exists('ipsec')) {
                         $genout .= "\tkeyexchange=ikev2\n";
                     }
                 }else {
-                    $genout .= "\tkeyexchange=ikev1\n";
+                    $genout .= "\tkeyexchange=ike\n";
                 }
 
                 #

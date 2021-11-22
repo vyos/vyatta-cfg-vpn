@@ -1,6 +1,5 @@
-help: Key Exchange Version
+help: Key Exchange Version. If not set, both versions of IKE will be allowed (with priority to IKEv2)
 type: txt
-default: "ikev1"
 syntax:expression: $VAR(@) in "ikev1", "ikev2"; "must be ikev1 or ikev2"
-val_help: ikev1; Use IKEv1 for Key Exchange [DEFAULT]
+val_help: ikev1; Use IKEv1 for Key Exchange
 val_help: ikev2; Use IKEv2 for Key Exchange
