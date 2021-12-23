@@ -273,13 +273,13 @@ if ( $vcVPN->exists('ipsec') ) {
 				if (defined($mob_ike)) {
 					if (defined($key_exchange) && $key_exchange eq 'ikev2') {
 						if ($mob_ike eq 'enable') {
-							$genout .= "\t\tmobike = yes";
+							$genout .= "\t\tmobike = yes\n";
 						}
 						if ($mob_ike eq 'disable') {
-							$genout .= "\t\tmobike = no";
+							$genout .= "\t\tmobike = no\n";
 						}
 					}else {
-						$genout .= "\t\tmobike = no";
+						$genout .= "\t\tmobike = no\n";
 					}
 				}
 
