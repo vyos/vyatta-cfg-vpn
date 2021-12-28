@@ -31,7 +31,7 @@ use constant ESPLIFETIME_DEFAULT => 3600;     # 1 hour
 use constant REKEYMARGIN_DEFAULT => 540;      # 9 minutes
 use constant REKEYFUZZ_DEFAULT   => 100;
 use constant INVALID_LOCAL_IP    => 254;
-use constant VPN_MAX_PROPOSALS   => 10;
+use constant VPN_MAX_PROPOSALS   => 1000;
 
 use Vyatta::TypeChecker;
 use Vyatta::VPN::Util;
