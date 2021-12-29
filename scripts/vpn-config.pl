@@ -1295,6 +1295,21 @@ if (   $vcVPN->isDeleted('.')
         my @logmodes = $vcVPN->returnValues('ipsec logging log-modes');
         my @oldmodes = $vcVPN->returnOrigValues('ipsec logging log-modes');
         my $charonloglevel = $vcVPN->returnValue('ipsec logging log-level');
+
+        # Charon is not yet fully loaded when trying to change logLevel
+        # Set a small timeout for waiting for charon will be loaded
+        # 0 => process not found, 1 => process found
+        my $timeout = 7;
+        if (system("pgrep charon | wc -l" == 0)) {
+            while ($timeout >= 1){
+                sleep(1);
+                if (system("pgrep charon | wc -l" == 1)){
+                    last;
+                }
+                $timeout--;
+            }
+        }
+
         # Clean up any logging modes if present
         if (@oldmodes > 0) {
             foreach my $mode (@oldmodes) {
