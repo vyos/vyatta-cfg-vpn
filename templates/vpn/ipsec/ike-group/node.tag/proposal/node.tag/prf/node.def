@@ -1,0 +1,11 @@
+help: Pseudo-Random Function
+type: txt
+allowed: echo "prfmd5 prfsha1 prfaesxcbc prfaescmac prfsha256 prfsha384 prfsha512"
+syntax:expression: $VAR(@) in "prfmd5", "prfsha1", "prfsha256", "prfsha384", "prfsha512", "prfaesxcbc", "prfaescmac"; "Wrong Pseudo-Random Function"
+val_help: prfmd5; MD5 PRF
+val_help: prfsha1; SHA1 PRF
+val_help: prfsha256; SHA2_256 PRF
+val_help: prfsha384; SHA2_384 PRF
+val_help: prfsha512; SHA2_512 PRF
+val_help: prfaesxcbc; AES XCBC PRF
+val_help: prfaescmac; AES CMAC PRF

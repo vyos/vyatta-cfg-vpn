@@ -683,6 +683,7 @@ if ($vcVPN->exists('ipsec')) {
                     my $encryption = $vcVPN->returnValue("ipsec ike-group $ike_group proposal $ike_proposal encryption");
                     my $hash = $vcVPN->returnValue("ipsec ike-group $ike_group proposal $ike_proposal hash");
                     my $dh_group = $vcVPN->returnValue("ipsec ike-group $ike_group proposal $ike_proposal dh-group");
+                    my $prf = $vcVPN->returnValue("ipsec ike-group $ike_group proposal $ike_proposal prf");
 
                     #
                     # Write separator if not first proposal
@@ -698,6 +699,9 @@ if ($vcVPN->exists('ipsec')) {
                     #
                     if (defined($encryption) && defined($hash)) {
                         $genout .= "$encryption-$hash";
+                        if (defined($prf) && $prf ne "") {
+                            $genout .= "-$prf";
+                        }
                         if (defined($dh_group)) {
                             my $cipher_out = get_dh_cipher_result($dh_group);
                             if ($cipher_out eq 'unknown') {
